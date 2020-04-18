@@ -51,18 +51,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnLetsFeast"
-            android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/buutin_on_main"
-            android:text="Lets Feast"
-            android:textColor="#fbb83e"
-            android:textStyle="italic" />
-
-        <com.varunest.sparkbutton.SparkButton
+ <com.varunest.sparkbutton.SparkButton
             android:id="@+id/spark_button"
             android:layout_width="250dp"
             android:layout_height="200dp"
