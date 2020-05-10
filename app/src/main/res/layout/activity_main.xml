@@ -33,11 +33,11 @@
         </ImageView>
 
         <Spinner
+            android:id="@+id/spinnerMain"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-
-            tools:listitem="@android:layout/simple_list_item_1" />
+/>
 
     </LinearLayout>
 

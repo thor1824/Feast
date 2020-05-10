@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Feast</string>
+
+
+    <string-array name="minutesForSpinner">
+        <item>15</item>
+        <item>25</item>
+        <item>35</item>
+        <item>45</item>
+        <item>55</item>
+        <item>65</item>
+    </string-array>
 </resources>
