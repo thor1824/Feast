@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "554113548886-ufb9sr96kul8i03c60s0p17pg9lnmben.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.feast",
+            "certificate_hash": "58a6a24c868de15697e1294cd16740406d8531a9"
+          }
+        },
+        {
           "client_id": "554113548886-k7dfs1jgoq1u601ejb8o2sdk0hjm7jlm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
