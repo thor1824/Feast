@@ -9,11 +9,15 @@
     </style>
 
 
+
+
     <style name="AppTheme.noBar">
-        <item name="windowActionBar">false</item>
+        <item name="windowActionBar">true</item>
         <item name="windowNoTitle">true</item>
         <item name="actionBarItemBackground">@color/black</item>
 
     </style>
+
+
 
 </resources>
