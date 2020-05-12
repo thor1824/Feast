@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.feast.Models.Ingredient;
 import com.example.feast.Models.Recipes;
 import com.example.feast.Models.data.DBInitializer;
 
@@ -36,9 +37,9 @@ public class DisplayRecipe extends AppCompatActivity {
 
         ScrollView layout = findViewById(R.id.LinLayIngredients);
 
-        for (String s : recipeToBeDisplayed.getIngredients()) {
+        for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
             TextView newTextView = new TextView(this);
-            newTextView.setText(s);
+            newTextView.setText(s.getName());
 
             layout.addView(newTextView);
         }

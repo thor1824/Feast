@@ -1,12 +1,13 @@
 package com.example.feast.Models.data;
 
+import com.example.feast.Models.Ingredient;
 import com.example.feast.Models.Recipes;
 
 import java.util.ArrayList;
 
 public class DBInitializer {
 
-    private ArrayList<String> ingredients = new ArrayList<String>();
+    private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
     private ArrayList<Recipes> recipes = new ArrayList<Recipes>();
 
     public DBInitializer() {
@@ -45,45 +46,16 @@ public class DBInitializer {
     }
 
     private void generateIngredients() {
-        ingredients.add("i Wanna Die");
-        ingredients.add("i Wanna kill");
-        ingredients.add("i Wanna commit suicide");
-        ingredients.add("i Wanna flee");
-        ingredients.add("i Wanna jump of a bridge");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
-        ingredients.add("i Wanna run");
+        ingredients.add(new Ingredient("Hvad er Mock?", 2));
+        ingredients.add(new Ingredient("noget der simulere noget andet?", 4));
+        ingredients.add(new Ingredient("nå ja!", 100));
     }
 
     public ArrayList<Recipes> getRecipes() {
         return recipes;
     }
 
-    public ArrayList<String> getIngredients() {
+    public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
 }

@@ -4,16 +4,16 @@ import java.util.ArrayList;
 
 public class Recipes {
 
-    private ArrayList<String> ingredients;
+    private ArrayList<Ingredient> ingredients;
 
-    private Integer estimatedTime;
+    private long estimatedTime;
 
     private String id;
 
     private String name;
 
 
-    public Recipes(ArrayList<String> listOfIngredients, String id, Integer time, String name) {
+    public Recipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name) {
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
@@ -28,19 +28,19 @@ public class Recipes {
         this.id = id;
     }
 
-    public ArrayList<String> getIngredients() {
+    public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(ArrayList<String> ingredients) {
+    public void setIngredients(ArrayList<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public Integer getEstimatedTime() {
+    public long getEstimatedTime() {
         return estimatedTime;
     }
 
-    public void setEstimatedTime(Integer estimatedTime) {
+    public void setEstimatedTime(long estimatedTime) {
         this.estimatedTime = estimatedTime;
     }
 
