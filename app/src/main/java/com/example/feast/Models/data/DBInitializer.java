@@ -3,6 +3,7 @@ package com.example.feast.Models.data;
 import com.example.feast.Models.Ingredient;
 import com.example.feast.Models.Recipes;
 import com.example.feast.Models.User;
+import com.example.feast.Models.UserRecipes;
 
 import java.util.ArrayList;
 
@@ -10,14 +11,16 @@ public class DBInitializer {
 
     private ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
     private ArrayList<Recipes> recipes = new ArrayList<Recipes>();
+    private ArrayList<UserRecipes> userRecipes = new ArrayList<UserRecipes>();
 
     public DBInitializer() {
         generateIngredients();
         generateRecipes();
+        generateUserRecipes();
     }
 
     private void generateRecipes() {
-        Recipes recipe1 = new Recipes(ingredients, "someID", 20, "Flue i suppe");
+        Recipes recipe1 = new Recipes(ingredients, "someID", 20, "Ikke Flue i suppe");
         Recipes recipe2 = new Recipes(ingredients, "nextID", 30, "lort i nutella");
         Recipes recipe3 = new Recipes(ingredients, "AfterThatId", 20, "Skipperlapskov");
         Recipes recipe4 = new Recipes(ingredients, "WOWid", 40, "Fransk løgsuppe");
@@ -46,6 +49,34 @@ public class DBInitializer {
         recipes.add(recipe13);
     }
 
+    public void generateUserRecipes() {
+
+        UserRecipes recipe1 = new UserRecipes(ingredients, "someID1", 10, "Flue i suppe");
+        UserRecipes recipe2 = new UserRecipes(ingredients, "someID2", 15, "Flue i suppe");
+        UserRecipes recipe3 = new UserRecipes(ingredients, "someID3", 20, "Flue i suppe");
+        UserRecipes recipe4 = new UserRecipes(ingredients, "someID4", 25, "Flue i suppe");
+        UserRecipes recipe5 = new UserRecipes(ingredients, "someID5", 30, "Flue i suppe");
+        UserRecipes recipe6 = new UserRecipes(ingredients, "someID6", 45, "Flue i suppe");
+        UserRecipes recipe7 = new UserRecipes(ingredients, "someID7", 50, "Flue i suppe");
+        UserRecipes recipe8 = new UserRecipes(ingredients, "someID8", 20, "Flue i suppe");
+        UserRecipes recipe9 = new UserRecipes(ingredients, "someID9", 20, "Flue i suppe");
+        UserRecipes recipe10 = new UserRecipes(ingredients, "someID10", 20, "Flue i suppe");
+
+        userRecipes.add(recipe1);
+        userRecipes.add(recipe2);
+        userRecipes.add(recipe3);
+        userRecipes.add(recipe4);
+        userRecipes.add(recipe5);
+        userRecipes.add(recipe6);
+        userRecipes.add(recipe7);
+        userRecipes.add(recipe8);
+        userRecipes.add(recipe9);
+        userRecipes.add(recipe10);
+
+
+
+    }
+
     private void generateIngredients() {
         ingredients.add(new Ingredient("Hvad er Mock?", 2));
         ingredients.add(new Ingredient("noget der simulere noget andet?", 4));
@@ -60,9 +91,8 @@ public class DBInitializer {
         return ingredients;
     }
 
-
-    public User getUser() {
-        User user = new User("Bob", "someId", "someEmail");
-        return user;
+    public ArrayList<UserRecipes> getUserRecipes() {
+        return userRecipes;
     }
+
 }

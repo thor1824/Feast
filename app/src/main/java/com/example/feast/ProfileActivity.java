@@ -86,8 +86,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(recipe_intent);
                 break;
             case R.id.nav_profile:
-                Intent profile_intent = new Intent(ProfileActivity.this, ProfileActivity.class);
-                startActivity(profile_intent);
                 break;
 
             case R.id.nav_settings:

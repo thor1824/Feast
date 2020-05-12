@@ -4,24 +4,27 @@ import java.util.ArrayList;
 
 public class UserRecipes {
 
-    private ArrayList<String> ingredients;
+    private ArrayList<Ingredient> ingredients;
 
     private Integer estimatedTime;
 
     private String id;
 
+    private String name;
 
-    public UserRecipes(ArrayList<String> listOfIngredients, String id, Integer time) {
+
+    public UserRecipes(ArrayList<Ingredient> listOfIngredients, String id, Integer time, String name) {
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
+        this.name = name;
     }
 
     public String getId() {
         return id;
     }
 
-    public ArrayList<String> getIngredients() {
+    public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
 
@@ -29,6 +32,7 @@ public class UserRecipes {
         return estimatedTime;
     }
 
+    public String getName(){ return name; }
 
 }
 
