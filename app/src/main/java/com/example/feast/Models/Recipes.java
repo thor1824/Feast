@@ -1,8 +1,9 @@
 package com.example.feast.Models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipes {
+public class Recipes implements Serializable {
 
     private ArrayList<Ingredient> ingredients;
 

@@ -17,7 +17,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DisplayRecipe extends AppCompatActivity {
+public class DisplayRecipeActivity extends AppCompatActivity {
 
     DBInitializer db = new DBInitializer();
 

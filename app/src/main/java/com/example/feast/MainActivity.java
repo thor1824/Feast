@@ -3,6 +3,7 @@ package com.example.feast;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,17 +19,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.feast.Models.Recipes;
-import com.example.feast.repository.GetRecipeTask;
+import com.example.feast.Models.RecipeContainer;
+import com.example.feast.tasks.AsyncGetAllRecipes;
+import com.example.feast.tasks.AsyncUpdate;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.varunest.sparkbutton.SparkButton;
 
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener, onGetRecipesComplete {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener, AsyncUpdate<RecipeContainer> {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     Spinner mainSpinner;
     SparkButton sparkButton;
@@ -72,8 +72,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mAuth = FirebaseAuth.getInstance();
 
-        AsyncTask<Void, Void, ArrayList<Recipes>> next = new GetRecipeTask(this);
-        next.execute();
+
     }
 
     @Override
@@ -85,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivityForResult(intent, 10);
         } else {
             test.setText(mAuth.getCurrentUser().getDisplayName());
+            AsyncTask<Void, Void, RecipeContainer> next = new AsyncGetAllRecipes(this, mAuth.getCurrentUser().getUid());
+            next.execute();
         }
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -117,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     public void goToNextActivity() {
-        Intent intent = new Intent(this, DisplayRecipe.class);
+        Intent intent = new Intent(this, DisplayRecipeActivity.class);
         mainSpinner = findViewById(R.id.spinnerMain);
         String message = mainSpinner.getSelectedItem().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
@@ -155,11 +156,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
-    public void onGetRecipesComplete(ArrayList<Recipes> list) {
-        for (Recipes re : list) {
-        }
-
+    @Override
+    public void Update(RecipeContainer entity) {
+        Log.d(TAG, "Update: " + entity);
     }
-
-
 }
