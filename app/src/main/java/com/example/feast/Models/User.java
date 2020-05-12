@@ -7,25 +7,29 @@ import java.util.ArrayList;
 public class User implements Serializable {
 
     private String _userName;
-    private String _password;
     private String _id;
+    private String _email;
     private ArrayList<UserRecipes> userRecipes;
 
-    public User(String userName, String password, String id){
+    public User(String userName, String id, String email) {
         this._userName = userName;
-        this._password = password;
+        this._email = email;
         this._id = id;
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return _userName;
     }
 
-    public String getId(){
+    public String getId() {
         return _id;
     }
 
-    public ArrayList<UserRecipes> getUserRecipes(){
+    public String get_email(){
+        return _email;
+    }
+
+    public ArrayList<UserRecipes> getUserRecipes() {
         return userRecipes;
     }
 
