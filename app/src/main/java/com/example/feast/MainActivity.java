@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         });
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_home);
         String[] spinnerValues = getResources().getStringArray(R.array.minutesForSpinner);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerValues);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -103,11 +106,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    public void onBackPressed(){
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
-        }
-        else {
+        } else {
             super.onBackPressed();
         }
     }
@@ -137,6 +139,34 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                break;
+            case R.id.nav_addRecipe:
+                Intent recipe_intent = new Intent(MainActivity.this, RecipesActivity.class);
+                startActivity(recipe_intent);
+                break;
+            case R.id.nav_profile:
+                Intent profile_intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(profile_intent);
+                break;
+
+            case R.id.nav_settings:
+                Toast.makeText(this, "We Have No Settings", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_contact:
+                Toast.makeText(this, "We Can't Be Contacted", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_rating:
+                Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
 }

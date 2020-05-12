@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".RecipesActivity">
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recipes"
+        tools:layout_editor_absoluteX="182dp"
+        tools:layout_editor_absoluteY="293dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
