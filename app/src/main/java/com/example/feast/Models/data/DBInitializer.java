@@ -50,6 +50,17 @@ public class DBInitializer {
         ingredients.add(new Ingredient("Hvad er Mock?", 2));
         ingredients.add(new Ingredient("noget der simulere noget andet?", 4));
         ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+
     }
 
     public ArrayList<Recipes> getRecipes() {
