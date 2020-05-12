@@ -1,13 +1,11 @@
 package com.example.feast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.feast.Models.Recipes;
 import com.example.feast.Models.data.DBInitializer;
@@ -30,7 +28,7 @@ public class DisplayRecipe extends AppCompatActivity {
         Recipes recipeToBeDisplayed = getRecipe(message);
 
         TextView textView = findViewById(R.id.txtHeader);
-        if(recipeToBeDisplayed != null){
+        if (recipeToBeDisplayed != null) {
             textView.setText(recipeToBeDisplayed.getName());
         } else {
             textView.setText("No Recipe Found");
@@ -38,8 +36,7 @@ public class DisplayRecipe extends AppCompatActivity {
 
         ScrollView layout = findViewById(R.id.LinLayIngredients);
 
-        for(String s : recipeToBeDisplayed.getIngredients())
-        {
+        for (String s : recipeToBeDisplayed.getIngredients()) {
             TextView newTextView = new TextView(this);
             newTextView.setText(s);
 
@@ -54,14 +51,13 @@ public class DisplayRecipe extends AppCompatActivity {
         ArrayList<Recipes> recipes = db.getRecipes();
         ArrayList<Recipes> recipesWithEstimatedTime = new ArrayList<Recipes>();
 
-        for (Recipes recipe : recipes)
-        {
+        for (Recipes recipe : recipes) {
             if (recipe.getEstimatedTime() == estimatedTime) {
                 recipesWithEstimatedTime.add(recipe);
             }
         }
 
-        if (recipesWithEstimatedTime.isEmpty()){
+        if (recipesWithEstimatedTime.isEmpty()) {
             return null;
         } else {
             Random randomGenerator = new Random();

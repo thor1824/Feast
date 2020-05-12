@@ -1,7 +1,5 @@
 package com.example.feast.Models;
 
-import android.content.Intent;
-
 import java.util.ArrayList;
 
 public class Recipes {
@@ -22,30 +20,32 @@ public class Recipes {
         this.name = name;
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
-    public ArrayList<String> getIngredients(){
-       return ingredients;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public Integer getEstimatedTime(){
-        return estimatedTime;
+    public ArrayList<String> getIngredients() {
+        return ingredients;
     }
-
-    public String getName() { return name; }
 
     public void setIngredients(ArrayList<String> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public Integer getEstimatedTime() {
+        return estimatedTime;
     }
 
     public void setEstimatedTime(Integer estimatedTime) {
         this.estimatedTime = estimatedTime;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {

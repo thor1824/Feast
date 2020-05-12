@@ -1,7 +1,6 @@
 package com.example.feast.Models;
 
 import java.io.Serializable;
-import java.security.PrivateKey;
 import java.util.ArrayList;
 
 public class User implements Serializable {
@@ -11,21 +10,21 @@ public class User implements Serializable {
     private String _id;
     private ArrayList<UserRecipes> userRecipes;
 
-    public User(String userName, String password, String id){
+    public User(String userName, String password, String id) {
         this._userName = userName;
         this._password = password;
         this._id = id;
     }
 
-    public String getUserName(){
+    public String getUserName() {
         return _userName;
     }
 
-    public String getId(){
+    public String getId() {
         return _id;
     }
 
-    public ArrayList<UserRecipes> getUserRecipes(){
+    public ArrayList<UserRecipes> getUserRecipes() {
         return userRecipes;
     }
 

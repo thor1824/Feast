@@ -1,15 +1,8 @@
 package com.example.feast;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -18,9 +11,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.Models.Recipes;
@@ -30,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.varunest.sparkbutton.SparkButton;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener, onGetRecipesComplete {
@@ -39,13 +35,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     String valueFromSpinner;
 
     TextView test;
-    private FirebaseAuth mAuth;
-
-    private String TAG = "app";
-
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
+    private FirebaseAuth mAuth;
+    private String TAG = "app";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

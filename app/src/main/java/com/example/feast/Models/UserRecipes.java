@@ -1,4 +1,5 @@
 package com.example.feast.Models;
+
 import java.util.ArrayList;
 
 public class UserRecipes {
@@ -10,21 +11,21 @@ public class UserRecipes {
     private String id;
 
 
-    public UserRecipes(ArrayList<String> listOfIngredients, String id, Integer time){
+    public UserRecipes(ArrayList<String> listOfIngredients, String id, Integer time) {
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
-    public ArrayList<String> getIngredients(){
+    public ArrayList<String> getIngredients() {
         return ingredients;
     }
 
-    public Integer getTime(){
+    public Integer getTime() {
         return estimatedTime;
     }
 
