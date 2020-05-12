@@ -27,9 +27,9 @@ public class DBInitializer {
         Recipes recipe5 = new Recipes(ingredients, "WOWeeeeeid", 20, "Knepkager");
         Recipes recipe6 = new Recipes(ingredients, "WOWqweqweid", 30, "Arme riddere");
         Recipes recipe7 = new Recipes(ingredients, "WOwqerohkjgfWid", 40, "Benløse fugle");
-        Recipes recipe8 = new Recipes(ingredients, "WOWioashfhd", 20, "Bøf Stroganoff");
+        Recipes recipe8 = new Recipes(ingredients, "WOWioashfhd", 30, "Bøf Stroganoff");
         Recipes recipe9 = new Recipes(ingredients, "WOWiyasdfiuaod", 15, "Klapsammen mad");
-        Recipes recipe10 = new Recipes(ingredients, "WOWbnasdfjgid", 10, "Bare kaffe");
+        Recipes recipe10 = new Recipes(ingredients, "WOWbnasdfjgid", 30, "Bare kaffe");
         Recipes recipe11 = new Recipes(ingredients, "WOWijahgsdfhlaid", 60, "Italiansk pizza snitter");
         Recipes recipe12 = new Recipes(ingredients, "WOWijsghfahjugsdfd", 60, "After 8 Snitter");
         Recipes recipe13 = new Recipes(ingredients, "WOuhafgsukgasfWid", 20, "Elgiganten er klam");

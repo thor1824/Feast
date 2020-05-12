@@ -65,7 +65,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
         int maxRandom = recipesWithEstimatedTime.size() + userRecipesWithEstimatedTime.size();
         Random randomGenerator = new Random();
-        randomInt = randomGenerator.nextInt(maxRandom + 1);
+        randomInt = randomGenerator.nextInt(maxRandom);
 
 
         //---------------------instantiate----------------------\\
