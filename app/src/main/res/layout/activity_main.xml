@@ -2,95 +2,92 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start"
-    android:id="@+id/drawLayout">
+    tools:openDrawer="start">
 
 
-
-<com.google.android.material.navigation.NavigationView
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:id="@+id/navigation_view"
-    app:headerLayout="@layout/header"
-    app:menu="@menu/main_menu"
-    android:layout_gravity="start"/>
-
-
-
-
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <include layout="@layout/toolbar"/>
-
-
-
-    <ImageView
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
-        android:layout_height="140dp"
-        android:src="@drawable/logo5">
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/main_menu" />
 
-
-    </ImageView>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
         android:orientation="vertical">
+
+        <include layout="@layout/toolbar" />
 
 
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="50px"
-            android:layout_marginBottom="50dp"
-            android:src="@drawable/fork">
+            android:layout_width="236dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo6">
+
 
         </ImageView>
 
-        <Spinner
-            android:id="@+id/spinnerMain"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="50px"
+                android:layout_marginBottom="50dp"
+                android:src="@drawable/fork">
+
+            </ImageView>
+
+            <Spinner
+                android:id="@+id/spinnerMain"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="358dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="100px"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.varunest.sparkbutton.SparkButton
+                android:id="@+id/spark_button"
+                android:layout_width="250dp"
+                android:layout_height="200dp"
+                android:text="Lets Feast"
+                app:sparkbutton_activeImage="@drawable/button"
+                app:sparkbutton_iconSize="800px"
+                app:sparkbutton_primaryColor="@color/darkpur"
+                app:sparkbutton_secondaryColor="@color/lightpur" />
+
+            <TextView
+                android:id="@+id/test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="358dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100px"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <com.varunest.sparkbutton.SparkButton
-            android:id="@+id/spark_button"
-            android:layout_width="250dp"
-            android:layout_height="200dp"
-            android:text="Lets Feast"
-            app:sparkbutton_activeImage="@drawable/button"
-            app:sparkbutton_iconSize="800px"
-            app:sparkbutton_primaryColor="@color/darkpur"
-            app:sparkbutton_secondaryColor="@color/lightpur" />
-
-        <TextView
-            android:id="@+id/test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-</LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

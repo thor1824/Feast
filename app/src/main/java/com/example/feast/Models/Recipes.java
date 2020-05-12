@@ -12,11 +12,14 @@ public class Recipes {
 
     private String id;
 
+    private String name;
 
-    public Recipes(ArrayList<String> listOfIngredients, String id, Integer time){
+
+    public Recipes(ArrayList<String> listOfIngredients, String id, Integer time, String name) {
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
+        this.name = name;
     }
 
     public String getId(){
@@ -27,9 +30,25 @@ public class Recipes {
        return ingredients;
     }
 
-    public Integer getTime(){
+    public Integer getEstimatedTime(){
         return estimatedTime;
     }
 
+    public String getName() { return name; }
 
+    public void setIngredients(ArrayList<String> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public void setEstimatedTime(Integer estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

@@ -4,23 +4,38 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/profile"
+            android:id="@+id/nav_home"
+            android:icon="@drawable/home_icon"
+            android:title="Home" />
+
+        <item
+            android:id="@+id/nav_addRecipe"
+            android:icon="@drawable/add_recipe_icon"
+            android:title="Your Own Recipe" />
+
+        <item
+            android:id="@+id/nav_profile"
             android:icon="@drawable/profile_icon"
             android:title="Profile" />
 
-        <item
-            android:id="@+id/addRecipeIcon"
-            android:icon="@drawable/add_recipe_icon"
-            android:title="Add Your Own Recipe" />
 
         <item
-            android:id="@+id/contactIcon"
+            android:id="@+id/nav_contact"
             android:icon="@drawable/contact_icon"
             android:title="Contact Us" />
 
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/settings_icon"
+            android:title="Settings" />
+
+        <item
+            android:id="@+id/nav_rating"
+            android:icon="@drawable/rating_icon"
+            android:title="Rate Us" />
+
 
     </group>
-
 
 
 </menu>

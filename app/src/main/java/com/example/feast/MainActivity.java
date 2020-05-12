@@ -1,13 +1,22 @@
 package com.example.feast;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,10 +30,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.varunest.sparkbutton.SparkButton;
-
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, onGetRecipesComplete {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener, onGetRecipesComplete {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
     Spinner mainSpinner;
     SparkButton sparkButton;
@@ -58,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 goToNextActivity();
             }
         });
+        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_home);
         String[] spinnerValues = getResources().getStringArray(R.array.minutesForSpinner);
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerValues);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -88,6 +99,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         toggle.syncState();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -112,7 +131,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                break;
+            case R.id.nav_addRecipe:
+                Intent recipe_intent = new Intent(MainActivity.this, RecipesActivity.class);
+                startActivity(recipe_intent);
+                break;
+            case R.id.nav_profile:
+                Intent profile_intent = new Intent(MainActivity.this, ProfileActivity.class);
+                startActivity(profile_intent);
+                break;
+
+            case R.id.nav_settings:
+                Toast.makeText(this, "We Have No Settings", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_contact:
+                Toast.makeText(this, "We Can't Be Contacted", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_rating:
+                Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
+                break;
+
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
     public void onGetRecipesComplete(ArrayList<Recipes> list) {
 
     }
+
+
 }
