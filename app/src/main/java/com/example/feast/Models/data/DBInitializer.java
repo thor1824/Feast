@@ -61,7 +61,7 @@ public class DBInitializer {
     }
 
 
-    public User getUser(){
+    public User getUser() {
         User user = new User("Bob", "someId", "someEmail");
         return user;
     }

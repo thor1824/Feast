@@ -24,7 +24,7 @@ public class User implements Serializable {
         return _id;
     }
 
-    public String get_email(){
+    public String get_email() {
         return _email;
     }
 
