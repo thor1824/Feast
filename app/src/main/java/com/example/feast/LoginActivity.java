@@ -1,15 +1,11 @@
 package com.example.feast;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -93,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            backtoMain();
+                            backToMain();
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
@@ -104,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void backtoMain() {
+    private void backToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivityForResult(intent, 10);
     }
