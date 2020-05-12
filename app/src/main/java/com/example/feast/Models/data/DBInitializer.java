@@ -2,6 +2,7 @@ package com.example.feast.Models.data;
 
 import com.example.feast.Models.Ingredient;
 import com.example.feast.Models.Recipes;
+import com.example.feast.Models.User;
 
 import java.util.ArrayList;
 
@@ -57,5 +58,11 @@ public class DBInitializer {
 
     public ArrayList<Ingredient> getIngredients() {
         return ingredients;
+    }
+
+
+    public User getUser(){
+        User user = new User("Bob", "someId", "someEmail");
+        return user;
     }
 }

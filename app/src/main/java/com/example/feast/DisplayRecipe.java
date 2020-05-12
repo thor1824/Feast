@@ -35,7 +35,7 @@ public class DisplayRecipe extends AppCompatActivity {
             textView.setText("No Recipe Found");
         }
 
-        ScrollView layout = findViewById(R.id.LinLayIngredients);
+        LinearLayout layout = findViewById(R.id.LinLayIngredients);
 
         for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
             TextView newTextView = new TextView(this);
