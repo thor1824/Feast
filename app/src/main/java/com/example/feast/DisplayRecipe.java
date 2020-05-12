@@ -4,6 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.feast.Models.Recipes;
@@ -26,11 +29,21 @@ public class DisplayRecipe extends AppCompatActivity {
 
         Recipes recipeToBeDisplayed = getRecipe(message);
 
-        TextView textView = findViewById(R.id.TextView);
+        TextView textView = findViewById(R.id.txtHeader);
         if(recipeToBeDisplayed != null){
             textView.setText(recipeToBeDisplayed.getName());
         } else {
             textView.setText("No Recipe Found");
+        }
+
+        ScrollView layout = findViewById(R.id.LinLayIngredients);
+
+        for(String s : recipeToBeDisplayed.getIngredients())
+        {
+            TextView newTextView = new TextView(this);
+            newTextView.setText(s);
+
+            layout.addView(newTextView);
         }
 
     }
