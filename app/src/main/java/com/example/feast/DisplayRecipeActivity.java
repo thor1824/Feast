@@ -3,6 +3,7 @@ package com.example.feast;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,17 +14,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.example.feast.Models.Ingredient;
 import com.example.feast.Models.Recipes;
 import com.example.feast.Models.UserRecipes;
 import com.example.feast.Models.data.DBInitializer;
 import com.google.android.material.navigation.NavigationView;
-
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DisplayRecipe extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DBInitializer db = new DBInitializer();
     DrawerLayout drawerLayout;
@@ -34,13 +35,16 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
 
     ArrayList<Recipes> recipesWithEstimatedTime = new ArrayList<Recipes>();
     ArrayList<UserRecipes> userRecipesWithEstimatedTime = new ArrayList<UserRecipes>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_recipe);
 
-
+        //-------------------------logic for recipe list--------------------------------\\
         Intent intent = getIntent();
+
+
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         estimatedTime = Integer.parseInt(message);
 
@@ -54,7 +58,7 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
         ArrayList<UserRecipes> userRecipes = db.getUserRecipes();
 
         for (UserRecipes userRecipe : userRecipes) {
-            if (userRecipe.getTime() == estimatedTime) {
+            if (userRecipe.getEstimatedTime() == estimatedTime) {
                 userRecipesWithEstimatedTime.add(userRecipe);
             }
         }
@@ -72,6 +76,14 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
         UserRecipes userRecipeToDisplay = getUserRecipe();
         LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
         TextView textView = findViewById(R.id.txtHeader);
+        LinearLayout layoutForGram = findViewById(R.id.LinLayAmount);
+        FloatingActionButton btnShare = findViewById(R.id.fab);
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToSMS();
+            }
+        });
 
 
         //--------------------setData--------------------------\\
@@ -79,7 +91,6 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
-
 
 
         //------------------component generator-----------------\\
@@ -93,26 +104,31 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
             textView.setText("No Recipe Found");
         }
 
+
         if (recipeToBeDisplayed != null) {
             for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
-                TextView newTextView = new TextView(this);
+                TextView newTextViewIng = new TextView(this);
+                TextView newTextViewAmount = new TextView(this);
+                newTextViewIng.setText(s.getName());
+                newTextViewAmount.setText(s.getAmount() + " Gram");
 
-                newTextView.setText(s.getName() + s.getAmount());
-
-                layoutForName.addView(newTextView);
+                layoutForName.addView(newTextViewIng);
+                layoutForGram.addView(newTextViewAmount);
             }
         }
 
         if (userRecipeToDisplay != null) {
             for (Ingredient s : userRecipeToDisplay.getIngredients()) {
-                TextView newTextView = new TextView(this);
+                TextView newTextViewIng = new TextView(this);
+                TextView newTextViewAmount = new TextView(this);
+                newTextViewIng.setText(s.getName());
+                newTextViewAmount.setText(s.getAmount() + " Gram");
 
-                newTextView.setText(s.getName() + s.getAmount());
-
-                layoutForName.addView(newTextView);
+                layoutForName.addView(newTextViewIng);
+                layoutForGram.addView(newTextViewAmount);
             }
-        }
 
+        }
     }
 
 
@@ -164,15 +180,15 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                Intent home_intent = new Intent(DisplayRecipe.this, MainActivity.class);
+                Intent home_intent = new Intent(DisplayRecipeActivity.this, MainActivity.class);
                 startActivity(home_intent);
                 break;
             case R.id.nav_addRecipe:
-                Intent recipe_intent = new Intent(DisplayRecipe.this, RecipesActivity.class);
+                Intent recipe_intent = new Intent(DisplayRecipeActivity.this, RecipesActivity.class);
                 startActivity(recipe_intent);
                 break;
             case R.id.nav_profile:
-                Intent profile_intent = new Intent(DisplayRecipe.this, ProfileActivity.class);
+                Intent profile_intent = new Intent(DisplayRecipeActivity.this, ProfileActivity.class);
                 startActivity(profile_intent);
                 break;
 
@@ -191,5 +207,12 @@ public class DisplayRecipe extends AppCompatActivity implements NavigationView.O
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void goToSMS() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_APP_MESSAGING);
+        startActivity(intent);
+        //TODO
     }
 }

@@ -5,6 +5,7 @@
     android:id="@+id/drawLayout_display_recipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:layout_gravity="center_horizontal"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
@@ -30,6 +31,8 @@
 
     <include layout = "@layout/toolbar" />
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -49,15 +52,13 @@
             android:id="@+id/ScrollView"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:gravity="center">
-
-
 
 
 
@@ -75,23 +76,45 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_marginLeft="20dp"
                         android:id="@+id/LinLayIngredients"
-                        android:layout_height="wrap_content"
                         android:layout_width="wrap_content"
-                        android:orientation="vertical"
-                        />
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"/>
 
+                    <LinearLayout
+                        android:id="@+id/LinLayAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="20dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical"/>
 
                 </LinearLayout>
 
             </LinearLayout>
 
         </ScrollView>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end|bottom">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_share_black_24dp" />
+
+        </RelativeLayout>
 
     </LinearLayout>
 

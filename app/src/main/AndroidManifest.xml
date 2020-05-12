@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme.noBar">
         <activity android:name=".RecipesActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".DisplayRecipe" />
+        <activity android:name=".DisplayRecipeActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

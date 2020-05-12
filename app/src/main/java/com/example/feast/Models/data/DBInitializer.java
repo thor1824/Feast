@@ -51,16 +51,16 @@ public class DBInitializer {
 
     public void generateUserRecipes() {
 
-        UserRecipes recipe1 = new UserRecipes(ingredients, "someID1", 10, "Flue i suppe");
-        UserRecipes recipe2 = new UserRecipes(ingredients, "someID2", 15, "Flue i suppe");
-        UserRecipes recipe3 = new UserRecipes(ingredients, "someID3", 20, "Flue i suppe");
-        UserRecipes recipe4 = new UserRecipes(ingredients, "someID4", 25, "Flue i suppe");
-        UserRecipes recipe5 = new UserRecipes(ingredients, "someID5", 30, "Flue i suppe");
-        UserRecipes recipe6 = new UserRecipes(ingredients, "someID6", 45, "Flue i suppe");
-        UserRecipes recipe7 = new UserRecipes(ingredients, "someID7", 50, "Flue i suppe");
-        UserRecipes recipe8 = new UserRecipes(ingredients, "someID8", 20, "Flue i suppe");
-        UserRecipes recipe9 = new UserRecipes(ingredients, "someID9", 20, "Flue i suppe");
-        UserRecipes recipe10 = new UserRecipes(ingredients, "someID10", 20, "Flue i suppe");
+        UserRecipes recipe1 = new UserRecipes(ingredients, "someID1", 10, "Flue i suppe", "1");
+        UserRecipes recipe2 = new UserRecipes(ingredients, "someID2", 15, "Flue i suppe", "2");
+        UserRecipes recipe3 = new UserRecipes(ingredients, "someID3", 20, "Flue i suppe", "3");
+        UserRecipes recipe4 = new UserRecipes(ingredients, "someID4", 25, "Flue i suppe", "4");
+        UserRecipes recipe5 = new UserRecipes(ingredients, "someID5", 30, "Flue i suppe", "5");
+        UserRecipes recipe6 = new UserRecipes(ingredients, "someID6", 45, "Flue i suppe", "6");
+        UserRecipes recipe7 = new UserRecipes(ingredients, "someID7", 50, "Flue i suppe", "7");
+        UserRecipes recipe8 = new UserRecipes(ingredients, "someID8", 20, "Flue i suppe", "8");
+        UserRecipes recipe9 = new UserRecipes(ingredients, "someID9", 20, "Flue i suppe", "9");
+        UserRecipes recipe10 = new UserRecipes(ingredients, "someID10", 20, "Flue i suppe", "10");
 
         userRecipes.add(recipe1);
         userRecipes.add(recipe2);
@@ -81,6 +81,17 @@ public class DBInitializer {
         ingredients.add(new Ingredient("Hvad er Mock?", 2));
         ingredients.add(new Ingredient("noget der simulere noget andet?", 4));
         ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+        ingredients.add(new Ingredient("nå ja!", 100));
+
     }
 
     public ArrayList<Recipes> getRecipes() {
