@@ -35,13 +35,15 @@ public class DisplayRecipe extends AppCompatActivity {
             textView.setText("No Recipe Found");
         }
 
-        LinearLayout layout = findViewById(R.id.LinLayIngredients);
+        LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
+
 
         for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
             TextView newTextView = new TextView(this);
+
             newTextView.setText(s.getName());
 
-            layout.addView(newTextView);
+            layoutForName.addView(newTextView);
         }
 
     }
