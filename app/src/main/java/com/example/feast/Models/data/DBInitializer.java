@@ -7,15 +7,15 @@ import java.util.ArrayList;
 
 public class DBInitializer {
 
-    ArrayList<String> ingredients = new ArrayList<String>();
-    ArrayList<Recipes> recipes = new ArrayList<Recipes>();
+    private ArrayList<String> ingredients = new ArrayList<String>();
+    private ArrayList<Recipes> recipes = new ArrayList<Recipes>();
 
     public DBInitializer() {
         generateIngredients();
         generateRecipes();
     }
 
-    public void generateRecipes() {
+    private void generateRecipes() {
         Recipes recipe1 = new Recipes(ingredients, "someID", 20, "Flue i suppe");
         Recipes recipe2 = new Recipes(ingredients, "nextID", 30, "lort i nutella");
         Recipes recipe3 = new Recipes(ingredients, "AfterThatId", 20, "Skipperlapskov");
@@ -45,12 +45,38 @@ public class DBInitializer {
         recipes.add(recipe13);
     }
 
-    public void generateIngredients() {
+    private void generateIngredients() {
         ingredients.add("i Wanna Die");
         ingredients.add("i Wanna kill");
         ingredients.add("i Wanna commit suicide");
         ingredients.add("i Wanna flee");
         ingredients.add("i Wanna jump of a bridge");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
+        ingredients.add("i Wanna run");
         ingredients.add("i Wanna run");
     }
 
