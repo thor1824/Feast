@@ -133,7 +133,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
 
     public boolean shutItBeRecipe() {
-        if (randomInt < recipesWithEstimatedTime.size()) {
+        if (randomInt <= recipesWithEstimatedTime.size()) {
             return true;
         }
         return false;
