@@ -136,12 +136,16 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
 
     public boolean shutItBeRecipe() {
-        return randomInt <= recipesWithEstimatedTime.size();
+        if(randomInt <= recipesWithEstimatedTime.size()){
+            return true;
+
+    }
+        else return false;
     }
 
 
     public Recipes getRecipe() {
-        if (shutItBeRecipe()) {
+        if (shutItBeRecipe() && recipesWithEstimatedTime.size() > 0) {
             return recipesWithEstimatedTime.get(randomInt);
         }
 
@@ -149,7 +153,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     }
 
     public UserRecipes getUserRecipe() {
-        if (!shutItBeRecipe()) {
+        if (!shutItBeRecipe() && userRecipesWithEstimatedTime.size() > 0) {
             return userRecipesWithEstimatedTime.get(randomInt - recipesWithEstimatedTime.size());
         }
 
