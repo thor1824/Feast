@@ -1,8 +1,6 @@
 package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,35 +20,24 @@ import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.Ingredient;
-import com.example.feast.core.entities.Recipe;
-import com.example.feast.core.entities.UserRecipe;
-import com.example.feast.data.mock.DBInitializer;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
-    int estimatedTime;
-    int randomInt;
-    ImageView recipeImage;
-    Recipe recipeToBeDisplayed;
+    private StorageReference storageRef = storage.getReference();
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private int estimatedTime;
+    private int randomInt;
+    private ImageView recipeImage;
+    private IRecipe recipeToBeDisplayed;
 
-    ArrayList<Recipe> recipesWithEstimatedTime = new ArrayList<Recipe>();
-    ArrayList<UserRecipe> userRecipesWithEstimatedTime = new ArrayList<UserRecipe>();
-    DBInitializer db = new DBInitializer();
     private Model model;
 
     @Override
@@ -58,39 +45,11 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_recipe);
 
-        //-------------------------logic for recipe list--------------------------------\\
-        Intent intent = getIntent();
-
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        estimatedTime = Integer.parseInt(message);
-
-        ArrayList<Recipe> recipes = db.getRecipes();
-        for (Recipe recipe : recipes) {
-            if (recipe.getEstimatedTime() == estimatedTime) {
-                recipesWithEstimatedTime.add(recipe);
-            }
-        }
-
-        ArrayList<UserRecipe> userRecipes = db.getUserRecipes();
-
-        for (UserRecipe userRecipe : userRecipes) {
-            if (userRecipe.getEstimatedTime() == estimatedTime) {
-                userRecipesWithEstimatedTime.add(userRecipe);
-            }
-        }
-
-        int maxRandom = recipesWithEstimatedTime.size() + userRecipesWithEstimatedTime.size();
-        Random randomGenerator = new Random();
-        randomInt = randomGenerator.nextInt(maxRandom);
-
-
         //---------------------instantiate----------------------\\
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
         recipeImage = findViewById(R.id.imgRecipe);
-        IRecipe recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
-        IRecipe userRecipeToDisplay = model.getRandomRecipe(estimatedTime);
         LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
         TextView textView = findViewById(R.id.txtHeader);
         LinearLayout layoutForGram = findViewById(R.id.LinLayAmount);
@@ -110,8 +69,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.setCheckedItem(R.id.nav_profile);
 
         //------------------component generator-----------------\\
-        intent = getIntent();
-        message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         estimatedTime = Integer.parseInt(message);
         model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
@@ -130,25 +89,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 layoutForGram.addView(newTextViewAmount);
             }
         }
-
-        if (userRecipeToDisplay != null) {
-            for (Ingredient s : userRecipeToDisplay.getIngredients()) {
-                TextView newTextViewIng = new TextView(this);
-                TextView newTextViewAmount = new TextView(this);
-                newTextViewIng.setText(s.getName());
-                newTextViewAmount.setText(s.getAmount() + " Gram");
-
-                layoutForName.addView(newTextViewIng);
-                layoutForGram.addView(newTextViewAmount);
-            }
-        }
-
-        StorageReference gsReference;
-        if (shutItBeRecipe()) {
-            gsReference = storage.getReferenceFromUrl(recipeToBeDisplayed.getImageUrl());
-        } else {
-            gsReference = storage.getReferenceFromUrl(userRecipeToDisplay.getImageUrl());
-        }
+        /*StorageReference gsReference = storage.getReferenceFromUrl(recipeToBeDisplayed.getImageUrl());
 
 
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -163,17 +104,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
             public void onFailure(@NonNull Exception exception) {
                 System.out.println("failed");
             }
-        });
+        })*/
     }
 
-
-    public boolean shutItBeRecipe() {
-        if(randomInt <= recipesWithEstimatedTime.size()){
-            return true;
-
-    }
-        else return false;
-    }
 
     private void sendIngredientsAsSMS() {
         Intent sendIntent = new Intent();

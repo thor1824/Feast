@@ -19,19 +19,19 @@ public class DBInitializer {
     }
 
     private void generateRecipes() {
-        Recipes recipe1 = new Recipes(ingredients, "someID", 20, "Ikke Flue i suppe", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
-        Recipes recipe2 = new Recipes(ingredients, "nextID", 30, "lort i nutella", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
-        Recipes recipe3 = new Recipes(ingredients, "AfterThatId", 20, "Skipperlapskov", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
-        Recipes recipe4 = new Recipes(ingredients, "WOWid", 40, "Fransk løgsuppe", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
-        Recipes recipe5 = new Recipes(ingredients, "WOWeeeeeid", 20, "Knepkager", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
-        Recipes recipe6 = new Recipes(ingredients, "WOWqweqweid", 30, "Arme riddere", "gs://feast-782f3.appspot.com/images/recipe/lars bilde.PNG");
-        Recipes recipe7 = new Recipes(ingredients, "WOwqerohkjgfWid", 40, "Benløse fugle", "gs://feast-782f3.appspot.com/images/recipe/lars bilde.PNG");
-        Recipes recipe8 = new Recipes(ingredients, "WOWioashfhd", 30, "Bøf Stroganoff", "gs://feast-782f3.appspot.com/images/recipe/lars bilde.PNG");
-        Recipes recipe9 = new Recipes(ingredients, "WOWiyasdfiuaod", 15, "Klapsammen mad", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
-        Recipes recipe10 = new Recipes(ingredients, "WOWbnasdfjgid", 30, "Bare kaffe", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
-        Recipes recipe11 = new Recipes(ingredients, "WOWijahgsdfhlaid", 60, "Italiansk pizza snitter", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
-        Recipes recipe12 = new Recipes(ingredients, "WOWijsghfahjugsdfd", 60, "After 8 Snitter", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
-        Recipes recipe13 = new Recipes(ingredients, "WOuhafgsukgasfWid", 20, "Elgiganten er klam", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
+        Recipe recipe1 = new Recipe(ingredients, "someID", 20, "Ikke Flue i suppe", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
+        Recipe recipe2 = new Recipe(ingredients, "nextID", 30, "lort i nutella", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
+        Recipe recipe3 = new Recipe(ingredients, "AfterThatId", 20, "Skipperlapskov", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
+        Recipe recipe4 = new Recipe(ingredients, "WOWid", 40, "Fransk løgsuppe", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
+        Recipe recipe5 = new Recipe(ingredients, "WOWeeeeeid", 20, "Knepkager", "gs://feast-782f3.appspot.com/images/recipe/salt-i-kaffe.jpg");
+        Recipe recipe6 = new Recipe(ingredients, "WOWqweqweid", 30, "Arme riddere", "gs://feast-782f3.appspot.com/images/recipe/lars bilde.PNG");
+        Recipe recipe7 = new Recipe(ingredients, "WOwqerohkjgfWid", 40, "Benløse fugle", "gs://feast-782f3.appspot.com/images/recipe/lars bilde.PNG");
+        Recipe recipe8 = new Recipe(ingredients, "WOWioashfhd", 30, "Bøf Stroganoff", "gs://feast-782f3.appspot.com/images/recipe/lars bilde.PNG");
+        Recipe recipe9 = new Recipe(ingredients, "WOWiyasdfiuaod", 15, "Klapsammen mad", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
+        Recipe recipe10 = new Recipe(ingredients, "WOWbnasdfjgid", 30, "Bare kaffe", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
+        Recipe recipe11 = new Recipe(ingredients, "WOWijahgsdfhlaid", 60, "Italiansk pizza snitter", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
+        Recipe recipe12 = new Recipe(ingredients, "WOWijsghfahjugsdfd", 60, "After 8 Snitter", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
+        Recipe recipe13 = new Recipe(ingredients, "WOuhafgsukgasfWid", 20, "Elgiganten er klam", "gs://feast-782f3.appspot.com/images/recipe/gmod.png");
 
         recipes.add(recipe1);
         recipes.add(recipe2);
