@@ -30,7 +30,7 @@ public class Ingredient implements Serializable {
 
     @Override
     public String toString() {
-        return name + ", " + Integer.toString(amount) + " Gram";
+        return name + ", " + amount + " Gram";
 
     }
 }

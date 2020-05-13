@@ -1,7 +1,6 @@
 package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -137,10 +136,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
 
     public boolean shutItBeRecipe() {
-        if (randomInt <= recipesWithEstimatedTime.size()) {
-            return true;
-        }
-        return false;
+        return randomInt <= recipesWithEstimatedTime.size();
     }
 
 

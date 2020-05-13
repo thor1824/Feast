@@ -1,11 +1,12 @@
-package com.example.feast;
+package com.example.feast.client.internal.controller;
+
+import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.os.Bundle;
-
+import com.example.feast.R;
 import com.google.android.material.navigation.NavigationView;
 
 public class AddUserRecipeActivity extends AppCompatActivity {
