@@ -22,14 +22,18 @@ import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.Ingredient;
-import com.example.feast.core.entities.Recipes;
-import com.example.feast.core.entities.UserRecipes;
+import com.example.feast.core.entities.Recipe;
+import com.example.feast.core.entities.UserRecipe;
+import com.example.feast.data.mock.DBInitializer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -42,10 +46,11 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     int estimatedTime;
     int randomInt;
     ImageView recipeImage;
-    IRecipe recipeToBeDisplayed;
+    Recipe recipeToBeDisplayed;
 
-    ArrayList<IRecipe> recipesWithEstimatedTime = new ArrayList<Recipes>();
-    ArrayList<UserRecipes> userRecipesWithEstimatedTime = new ArrayList<UserRecipes>();
+    ArrayList<Recipe> recipesWithEstimatedTime = new ArrayList<Recipe>();
+    ArrayList<UserRecipe> userRecipesWithEstimatedTime = new ArrayList<UserRecipe>();
+    DBInitializer db = new DBInitializer();
     private Model model;
 
     @Override
@@ -59,16 +64,16 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         estimatedTime = Integer.parseInt(message);
 
-        ArrayList<Recipes> recipes = db.getRecipes();
-        for (Recipes recipe : recipes) {
+        ArrayList<Recipe> recipes = db.getRecipes();
+        for (Recipe recipe : recipes) {
             if (recipe.getEstimatedTime() == estimatedTime) {
                 recipesWithEstimatedTime.add(recipe);
             }
         }
 
-        ArrayList<UserRecipes> userRecipes = db.getUserRecipes();
+        ArrayList<UserRecipe> userRecipes = db.getUserRecipes();
 
-        for (UserRecipes userRecipe : userRecipes) {
+        for (UserRecipe userRecipe : userRecipes) {
             if (userRecipe.getEstimatedTime() == estimatedTime) {
                 userRecipesWithEstimatedTime.add(userRecipe);
             }
@@ -84,8 +89,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
         recipeImage = findViewById(R.id.imgRecipe);
-        Recipes recipeToBeDisplayed = getRecipe();
-        UserRecipes userRecipeToDisplay = getUserRecipe();
+        IRecipe recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
+        IRecipe userRecipeToDisplay = model.getRandomRecipe(estimatedTime);
         LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
         TextView textView = findViewById(R.id.txtHeader);
         LinearLayout layoutForGram = findViewById(R.id.LinLayAmount);
@@ -105,8 +110,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.setCheckedItem(R.id.nav_profile);
 
         //------------------component generator-----------------\\
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        intent = getIntent();
+        message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         estimatedTime = Integer.parseInt(message);
         model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);

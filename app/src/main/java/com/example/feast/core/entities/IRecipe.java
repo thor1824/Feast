@@ -19,4 +19,8 @@ public interface IRecipe extends Serializable {
     String getName();
 
     void setName(String name);
+
+    String getImageUrl();
+
+    void setImageUrl(String imageUrl);
 }
