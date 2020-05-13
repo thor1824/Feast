@@ -12,7 +12,9 @@
         <activity android:name=".client.internal.controller.RecipesActivity" />
         <activity android:name=".client.internal.controller.ProfileActivity" />
         <activity android:name=".client.internal.controller.DisplayRecipeActivity" />
+        <activity android:name=".client.internal.controller.AddUserRecipeActivity"/>
         <activity android:name=".client.internal.controller.MainActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
