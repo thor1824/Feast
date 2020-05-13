@@ -1,6 +1,7 @@
 package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -213,9 +214,32 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     }
 
     private void goToSMS() {
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_APP_MESSAGING);
-        startActivity(intent);
-        //TODO
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        StringBuilder builder = new StringBuilder();
+
+        if (shutItBeRecipe()) {
+            builder.append(getRecipe().getName());
+            builder.append("\n");
+            for (Ingredient i : getRecipe().getIngredients()) {
+                builder.append(i.toString());
+                builder.append('\n');
+            }
+        } else {
+            builder.append(getUserRecipe().getName());
+            builder.append("\n");
+            for (Ingredient i : getUserRecipe().getIngredients()) {
+                builder.append(i.toString());
+                builder.append('\n');
+            }
+        }
+
+        builder.append("Tak fordi du bruger Feast");
+
+        sendIntent.putExtra("sms_body", builder.toString());
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 }
