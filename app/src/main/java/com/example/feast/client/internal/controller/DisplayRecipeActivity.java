@@ -2,6 +2,7 @@ package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import com.example.feast.data.mock.DBInitializer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -53,7 +55,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
         ArrayList<Recipes> recipes = db.getRecipes();
         for (Recipes recipe : recipes) {
-            if (recipe.getEstimatedTime() == estimatedTime) {
+            if (recipe.getEstimatedTime() <= estimatedTime) {
                 recipesWithEstimatedTime.add(recipe);
             }
         }
@@ -61,22 +63,19 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         ArrayList<UserRecipes> userRecipes = db.getUserRecipes();
 
         for (UserRecipes userRecipe : userRecipes) {
-            if (userRecipe.getEstimatedTime() == estimatedTime) {
+            Log.d("--------------", "" + userRecipe.getEstimatedTime());
+            if (userRecipe.getEstimatedTime() <= estimatedTime) {
+                Log.d("--------------", "" + "bob");
                 userRecipesWithEstimatedTime.add(userRecipe);
             }
         }
-
-        int maxRandom = recipesWithEstimatedTime.size() + userRecipesWithEstimatedTime.size();
-        Random randomGenerator = new Random();
-        randomInt = randomGenerator.nextInt(maxRandom);
 
 
         //---------------------instantiate----------------------\\
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
-        Recipes recipeToBeDisplayed = getRecipe();
-        UserRecipes userRecipeToDisplay = getUserRecipe();
+
         LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
         TextView textView = findViewById(R.id.txtHeader);
         LinearLayout layoutForGram = findViewById(R.id.LinLayAmount);
@@ -98,53 +97,67 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
         //------------------component generator-----------------\\
 
-
-        if (recipeToBeDisplayed != null) {
-            textView.setText(recipeToBeDisplayed.getName());
-        } else if (userRecipeToDisplay != null) {
-            textView.setText(userRecipeToDisplay.getName());
-        } else {
-            textView.setText("No Recipe Found");
-        }
-
-
-        if (recipeToBeDisplayed != null) {
-            for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
-                TextView newTextViewIng = new TextView(this);
-                TextView newTextViewAmount = new TextView(this);
-                newTextViewIng.setText(s.getName());
-                newTextViewAmount.setText(s.getAmount() + " Gram");
-
-                layoutForName.addView(newTextViewIng);
-                layoutForGram.addView(newTextViewAmount);
+        int maxRandom = (recipesWithEstimatedTime.size() - 1) + (userRecipesWithEstimatedTime.size() - 1);
+        if (maxRandom >= 0) {
+            Random randomGenerator = new Random();
+            if (maxRandom > 0) {
+                randomInt = randomGenerator.nextInt(((maxRandom - 0) + 1) + 0);
+            } else {
+                randomInt = 0;
             }
-        }
+            Recipes recipeToBeDisplayed = getRecipe();
+            UserRecipes userRecipeToDisplay = getUserRecipe();
 
-        if (userRecipeToDisplay != null) {
-            for (Ingredient s : userRecipeToDisplay.getIngredients()) {
-                TextView newTextViewIng = new TextView(this);
-                TextView newTextViewAmount = new TextView(this);
-                newTextViewIng.setText(s.getName());
-                newTextViewAmount.setText(s.getAmount() + " Gram");
-
-                layoutForName.addView(newTextViewIng);
-                layoutForGram.addView(newTextViewAmount);
+            if (recipeToBeDisplayed != null) {
+                textView.setText(recipeToBeDisplayed.getName());
+            } else if (userRecipeToDisplay != null) {
+                textView.setText(userRecipeToDisplay.getName());
+            } else {
+                textView.setText("No Recipe Found");
             }
 
+
+            if (recipeToBeDisplayed != null) {
+                for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
+                    TextView newTextViewIng = new TextView(this);
+                    TextView newTextViewAmount = new TextView(this);
+                    newTextViewIng.setText(s.getName());
+                    newTextViewAmount.setText(s.getAmount() + " Gram");
+
+                    layoutForName.addView(newTextViewIng);
+                    layoutForGram.addView(newTextViewAmount);
+                }
+            }
+
+            if (userRecipeToDisplay != null) {
+                for (Ingredient s : userRecipeToDisplay.getIngredients()) {
+                    TextView newTextViewIng = new TextView(this);
+                    TextView newTextViewAmount = new TextView(this);
+                    newTextViewIng.setText(s.getName());
+                    newTextViewAmount.setText(s.getAmount() + " Gram");
+
+                    layoutForName.addView(newTextViewIng);
+                    layoutForGram.addView(newTextViewAmount);
+                }
+
+            }
+
         }
+
     }
 
 
     public boolean shutItBeRecipe() {
-        if(randomInt <= recipesWithEstimatedTime.size()){
+        System.out.println(randomInt);
+        if (randomInt < recipesWithEstimatedTime.size()) {
             return true;
+        } else return false;
 
-    }
-        else return false;
     }
 
 
     public Recipes getRecipe() {
+
         if (shutItBeRecipe() && recipesWithEstimatedTime.size() > 0) {
             return recipesWithEstimatedTime.get(randomInt);
         }
@@ -153,6 +166,10 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     }
 
     public UserRecipes getUserRecipe() {
+        for (UserRecipes recipe : userRecipesWithEstimatedTime) {
+            System.out.println(recipe.getName());
+        }
+
         if (!shutItBeRecipe() && userRecipesWithEstimatedTime.size() > 0) {
             return userRecipesWithEstimatedTime.get(randomInt - recipesWithEstimatedTime.size());
         }
