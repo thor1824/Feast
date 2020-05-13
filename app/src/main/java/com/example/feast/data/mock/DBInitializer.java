@@ -1,9 +1,8 @@
-package com.example.feast.Models.data;
+package com.example.feast.data.mock;
 
-import com.example.feast.Models.Ingredient;
-import com.example.feast.Models.Recipes;
-import com.example.feast.Models.User;
-import com.example.feast.Models.UserRecipes;
+import com.example.feast.core.entities.Ingredient;
+import com.example.feast.core.entities.Recipes;
+import com.example.feast.core.entities.UserRecipes;
 
 import java.util.ArrayList;
 
@@ -72,7 +71,6 @@ public class DBInitializer {
         userRecipes.add(recipe8);
         userRecipes.add(recipe9);
         userRecipes.add(recipe10);
-
 
 
     }

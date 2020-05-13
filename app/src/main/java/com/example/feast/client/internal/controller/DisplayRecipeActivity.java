@@ -1,4 +1,4 @@
-package com.example.feast;
+package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import com.example.feast.Models.Ingredient;
-import com.example.feast.Models.Recipes;
-import com.example.feast.Models.UserRecipes;
-import com.example.feast.Models.data.DBInitializer;
-import com.google.android.material.navigation.NavigationView;
+
+import com.example.feast.R;
+import com.example.feast.core.entities.Ingredient;
+import com.example.feast.core.entities.Recipes;
+import com.example.feast.core.entities.UserRecipes;
+import com.example.feast.data.mock.DBInitializer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
 import java.util.ArrayList;
 import java.util.Random;
 

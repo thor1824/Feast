@@ -1,7 +1,6 @@
-package com.example.feast;
+package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,9 +18,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.example.feast.Models.RecipeContainer;
-import com.example.feast.tasks.AsyncGetAllRecipes;
-import com.example.feast.tasks.AsyncUpdate;
+import com.example.feast.R;
+import com.example.feast.client.internal.model.Model;
+import com.example.feast.client.internal.utility.concurrent.AsyncUpdate;
+import com.example.feast.client.internal.utility.concurrent.Listener;
+import com.example.feast.core.entities.RecipeContainer;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -84,8 +85,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivityForResult(intent, 10);
         } else {
             test.setText(mAuth.getCurrentUser().getDisplayName());
-            AsyncTask<Void, Void, RecipeContainer> next = new AsyncGetAllRecipes(this, mAuth.getCurrentUser().getUid());
-            next.execute();
+            Model m = Model.getInstance();
+            m.readAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
+                @Override
+                public void call(RecipeContainer entity) {
+                    Log.d(TAG, "call: " + entity);
+                }
+            });
         }
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -157,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    public void Update(RecipeContainer entity) {
+    public void update(RecipeContainer entity) {
         Log.d(TAG, "Update: " + entity);
     }
 }

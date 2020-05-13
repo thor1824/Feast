@@ -1,29 +1,43 @@
-package com.example.feast.Models;
+package com.example.feast.core.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipes implements Serializable {
+
+public class UserRecipes implements Serializable {
+
 
     private ArrayList<Ingredient> ingredients;
-
     private long estimatedTime;
-
     private String id;
-
     private String name;
+    private String userId;
 
 
-    public Recipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name) {
+    public UserRecipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String userId) {
+
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
         this.name = name;
+
+        this.userId = userId;
+    }
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+
     }
 
     public String getId() {
         return id;
     }
+
 
     public void setId(String id) {
         this.id = id;
@@ -52,4 +66,7 @@ public class Recipes implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+
 }
+

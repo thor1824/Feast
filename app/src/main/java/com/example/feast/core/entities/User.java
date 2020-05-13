@@ -1,4 +1,4 @@
-package com.example.feast.Models;
+package com.example.feast.core.entities;
 
 import java.io.Serializable;
 import java.util.ArrayList;

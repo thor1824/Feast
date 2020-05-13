@@ -1,13 +1,15 @@
-package com.example.feast.tasks;
+package com.example.feast.client.internal.utility.concurrent;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.example.feast.Models.Ingredient;
-import com.example.feast.Models.RecipeContainer;
-import com.example.feast.Models.Recipes;
-import com.example.feast.Models.UserRecipes;
+import com.example.feast.core.entities.Ingredient;
+import com.example.feast.core.entities.RecipeContainer;
+import com.example.feast.core.entities.Recipes;
+import com.example.feast.core.entities.UserRecipes;
+import com.example.feast.core.services.IRecipeService;
+import com.example.feast.core.services.IUserRecipeService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,10 +24,14 @@ public class AsyncGetAllRecipes extends AsyncUpdateTask<RecipeContainer> {
 
     private static final String TAG = "GetRecipeTask";
     private final String USER_ID;
+    private final IUserRecipeService urServ;
+    private final IRecipeService reServ;
 
-    public AsyncGetAllRecipes(AsyncUpdate<RecipeContainer> listener, String userId) {
+    public AsyncGetAllRecipes(AsyncUpdate<RecipeContainer> listener, String userId, IUserRecipeService urServ, IRecipeService reServ) {
         super(listener);
         this.USER_ID = userId;
+        this.urServ = urServ;
+        this.reServ = reServ;
     }
 
     @Override
@@ -34,8 +40,7 @@ public class AsyncGetAllRecipes extends AsyncUpdateTask<RecipeContainer> {
         try {
             final CountDownLatch latch = new CountDownLatch(2);
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Task<QuerySnapshot> task1 = db.collection("Recipes")
-                    .get()
+            Task<QuerySnapshot> task1 = reServ.ReadAll()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -49,9 +54,7 @@ public class AsyncGetAllRecipes extends AsyncUpdateTask<RecipeContainer> {
                             }
                         }
                     });
-            Task<QuerySnapshot> task2 = db.collection("UserRecipe")
-                    .whereEqualTo("userId", USER_ID)
-                    .get()
+            Task<QuerySnapshot> task2 = urServ.readByUserId(USER_ID)
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {

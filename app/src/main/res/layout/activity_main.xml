@@ -8,7 +8,7 @@
     android:layout_gravity="center_horizontal"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".MainActivity"
+    tools:context=".client.internal.controller.MainActivity"
     tools:openDrawer="start">
 
 

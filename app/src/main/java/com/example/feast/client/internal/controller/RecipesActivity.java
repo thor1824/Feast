@@ -1,8 +1,10 @@
-package com.example.feast;
+package com.example.feast.client.internal.controller;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.feast.R;
 
 public class RecipesActivity extends AppCompatActivity {
 

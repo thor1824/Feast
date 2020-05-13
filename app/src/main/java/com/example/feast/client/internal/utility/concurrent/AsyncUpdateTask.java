@@ -1,4 +1,4 @@
-package com.example.feast.tasks;
+package com.example.feast.client.internal.utility.concurrent;
 
 import android.os.AsyncTask;
 
@@ -14,6 +14,6 @@ public abstract class AsyncUpdateTask<T> extends AsyncTask<Void, Void, T> {
     protected abstract T doInBackground(Void... voids);
 
     protected void onPostExecute(T entity) {
-        listener.Update(entity);
+        listener.update(entity);
     }
 }
