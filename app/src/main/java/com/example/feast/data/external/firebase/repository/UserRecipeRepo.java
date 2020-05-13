@@ -1,4 +1,4 @@
-package com.example.feast.data.external.repository;
+package com.example.feast.data.external.firebase.repository;
 
 import com.example.feast.core.data.adapter.IUserRecipeRepo;
 import com.example.feast.core.entities.UserRecipe;

@@ -1,6 +1,8 @@
 package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,23 +22,22 @@ import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.Ingredient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference storageRef = storage.getReference();
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
     private int estimatedTime;
-    private int randomInt;
     private ImageView recipeImage;
     private IRecipe recipeToBeDisplayed;
+    private TextView textView;
+    private LinearLayout layoutForGram;
 
     private Model model;
 
@@ -51,8 +52,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         toolbar = findViewById(R.id.toolbar);
         recipeImage = findViewById(R.id.imgRecipe);
         LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
-        TextView textView = findViewById(R.id.txtHeader);
-        LinearLayout layoutForGram = findViewById(R.id.LinLayAmount);
+        textView = findViewById(R.id.txtHeader);
+        layoutForGram = findViewById(R.id.LinLayAmount);
         FloatingActionButton btnShare = findViewById(R.id.fab);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,11 +72,18 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         //------------------component generator-----------------\\
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        assert message != null;
         estimatedTime = Integer.parseInt(message);
         model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
 
 
+        setRecipe(layoutForName);
+
+
+    }
+
+    private void setRecipe(LinearLayout layoutForName) {
         if (recipeToBeDisplayed != null) {
             textView.setText(recipeToBeDisplayed.getName());
 
@@ -88,23 +96,22 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 layoutForName.addView(newTextViewIng);
                 layoutForGram.addView(newTextViewAmount);
             }
+
+            if (recipeToBeDisplayed.getImageUrl() != null && recipeToBeDisplayed.getImageUrl().length() > 0) {
+                model.getImage(recipeToBeDisplayed.getImageUrl()).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        recipeImage.setImageBitmap(bitmap);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        System.out.println("failed");
+                    }
+                });
+            }
         }
-        /*StorageReference gsReference = storage.getReferenceFromUrl(recipeToBeDisplayed.getImageUrl());
-
-
-        final long ONE_MEGABYTE = 1024 * 1024;
-        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                recipeImage.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                System.out.println("failed");
-            }
-        })*/
     }
 
 
