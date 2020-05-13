@@ -8,7 +8,7 @@
     android:layout_gravity="center_horizontal"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ProfileActivity"
+    tools:context=".client.internal.controller.AddUserRecipeActivity"
     tools:openDrawer="start">
 
     <com.google.android.material.navigation.NavigationView
