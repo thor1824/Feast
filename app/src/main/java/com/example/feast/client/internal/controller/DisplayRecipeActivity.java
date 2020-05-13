@@ -1,9 +1,12 @@
 package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,8 +23,12 @@ import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.Recipes;
 import com.example.feast.core.entities.UserRecipes;
 import com.example.feast.data.mock.DBInitializer;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -29,12 +36,15 @@ import java.util.Random;
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReference();
     DBInitializer db = new DBInitializer();
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
     int estimatedTime;
     int randomInt;
+    ImageView recipeImage;
 
     ArrayList<Recipes> recipesWithEstimatedTime = new ArrayList<Recipes>();
     ArrayList<UserRecipes> userRecipesWithEstimatedTime = new ArrayList<UserRecipes>();
@@ -46,7 +56,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
         //-------------------------logic for recipe list--------------------------------\\
         Intent intent = getIntent();
-
 
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         estimatedTime = Integer.parseInt(message);
@@ -75,6 +84,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
+        recipeImage = findViewById(R.id.imgRecipe);
         Recipes recipeToBeDisplayed = getRecipe();
         UserRecipes userRecipeToDisplay = getUserRecipe();
         LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
@@ -130,8 +140,29 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 layoutForName.addView(newTextViewIng);
                 layoutForGram.addView(newTextViewAmount);
             }
-
         }
+
+        StorageReference gsReference;
+        if (shutItBeRecipe()) {
+            gsReference = storage.getReferenceFromUrl(recipeToBeDisplayed.getImageUrl());
+        } else {
+            gsReference = storage.getReferenceFromUrl(userRecipeToDisplay.getImageUrl());
+        }
+
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                recipeImage.setImageBitmap(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                System.out.println("failed");
+            }
+        });
     }
 
 

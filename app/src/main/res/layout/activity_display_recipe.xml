@@ -45,8 +45,7 @@
             android:layout_width="605px"
             android:layout_height="500px"
             android:layout_marginTop="0dp"
-            android:contentDescription="RecipeImage"
-            android:src="@drawable/logo6" />
+            android:src="@drawable/foodnotfound" />
 
         <ScrollView
             android:id="@+id/ScrollView"

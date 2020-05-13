@@ -12,6 +12,7 @@ public class UserRecipes implements Serializable {
     private String id;
     private String name;
     private String userId;
+    private String imageUrl;
 
 
     public UserRecipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String userId) {
@@ -67,6 +68,12 @@ public class UserRecipes implements Serializable {
         this.name = name;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
 

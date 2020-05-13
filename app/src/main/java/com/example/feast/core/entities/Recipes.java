@@ -13,12 +13,15 @@ public class Recipes implements Serializable {
 
     private String name;
 
+    private String imageUrl;
 
-    public Recipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name) {
+
+    public Recipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String imageUrl) {
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
         this.name = name;
+        this.imageUrl = imageUrl;
     }
 
     public String getId() {
@@ -51,5 +54,13 @@ public class Recipes implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
