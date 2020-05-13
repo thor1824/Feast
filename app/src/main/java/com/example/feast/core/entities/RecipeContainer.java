@@ -4,27 +4,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class RecipeContainer implements Serializable {
-    private ArrayList<UserRecipes> userRecipes;
-    private ArrayList<Recipes> recipes;
+    private ArrayList<UserRecipe> userRecipes;
+    private ArrayList<Recipe> recipes;
 
-    public RecipeContainer(ArrayList<UserRecipes> userRecipes, ArrayList<Recipes> recipes) {
+    public RecipeContainer(ArrayList<UserRecipe> userRecipes, ArrayList<Recipe> recipes) {
         this.userRecipes = userRecipes;
         this.recipes = recipes;
     }
 
-    public ArrayList<Recipes> getRecipes() {
+    public ArrayList<Recipe> getRecipes() {
         return recipes;
     }
 
-    public void setRecipes(ArrayList<Recipes> recipes) {
+    public void setRecipes(ArrayList<Recipe> recipes) {
         this.recipes = recipes;
     }
 
-    public ArrayList<UserRecipes> getUserRecipes() {
+    public ArrayList<UserRecipe> getUserRecipes() {
         return userRecipes;
     }
 
-    public void setUserRecipes(ArrayList<UserRecipes> userRecipes) {
+    public void setUserRecipes(ArrayList<UserRecipe> userRecipes) {
         this.userRecipes = userRecipes;
     }
 }

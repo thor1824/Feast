@@ -1,9 +1,8 @@
 package com.example.feast.core.entities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipes implements Serializable {
+public class Recipe implements IRecipe {
 
     private ArrayList<Ingredient> ingredients;
 
@@ -24,34 +23,42 @@ public class Recipes implements Serializable {
         this.imageUrl = imageUrl;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
 
+    @Override
     public void setIngredients(ArrayList<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
+    @Override
     public long getEstimatedTime() {
         return estimatedTime;
     }
 
+    @Override
     public void setEstimatedTime(long estimatedTime) {
         this.estimatedTime = estimatedTime;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }

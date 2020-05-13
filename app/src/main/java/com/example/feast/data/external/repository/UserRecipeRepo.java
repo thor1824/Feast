@@ -1,7 +1,7 @@
 package com.example.feast.data.external.repository;
 
 import com.example.feast.core.data.adapter.IUserRecipeRepo;
-import com.example.feast.core.entities.UserRecipes;
+import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,7 +21,7 @@ public class UserRecipeRepo implements IUserRecipeRepo {
     }
 
     @Override
-    public Task<DocumentReference> create(UserRecipes re) {
+    public Task<DocumentReference> create(UserRecipe re) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         return db.collection("UserRecipe").add(re);
 
@@ -35,7 +35,7 @@ public class UserRecipeRepo implements IUserRecipeRepo {
     }
 
     @Override
-    public Task<Void> update(UserRecipes re) {
+    public Task<Void> update(UserRecipe re) {
         Map<String, Object> data = new HashMap<>();
         data.put("name", re.getName());
         data.put("ingredients", re.getIngredients());

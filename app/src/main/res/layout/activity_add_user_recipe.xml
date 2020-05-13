@@ -11,7 +11,7 @@
     tools:context=".client.internal.controller.AddUserRecipeActivity"
     tools:openDrawer="start">
 
-    <com.google.android.material.navigation.NavigationView
+  <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view_addRecipe"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -20,20 +20,22 @@
         app:menu="@menu/main_menu" />
 
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linLayAmount_main">
+        android:id="@+id/linLayAmount_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
         <include layout="@layout/toolbar" />
 
 
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/scrollView">
+
 
             <ImageView
                 android:layout_width="164dp"
@@ -91,8 +93,7 @@
                 android:src="@drawable/plus_icon" />
 
 
-        </ScrollView>
     </LinearLayout>
-
+    </ScrollView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

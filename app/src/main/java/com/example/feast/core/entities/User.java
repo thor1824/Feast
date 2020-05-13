@@ -8,7 +8,7 @@ public class User implements Serializable {
     private String _userName;
     private String _id;
     private String _email;
-    private ArrayList<UserRecipes> userRecipes;
+    private ArrayList<UserRecipe> userRecipes;
 
     public User(String userName, String id, String email) {
         this._userName = userName;
@@ -28,7 +28,7 @@ public class User implements Serializable {
         return _email;
     }
 
-    public ArrayList<UserRecipes> getUserRecipes() {
+    public ArrayList<UserRecipe> getUserRecipes() {
         return userRecipes;
     }
 

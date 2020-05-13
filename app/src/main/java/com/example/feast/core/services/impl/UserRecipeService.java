@@ -1,7 +1,7 @@
 package com.example.feast.core.services.impl;
 
 import com.example.feast.core.data.adapter.IUserRecipeRepo;
-import com.example.feast.core.entities.UserRecipes;
+import com.example.feast.core.entities.UserRecipe;
 import com.example.feast.core.services.IUserRecipeService;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -21,7 +21,7 @@ public class UserRecipeService implements IUserRecipeService {
     }
 
     @Override
-    public Task<DocumentReference> create(UserRecipes re) {
+    public Task<DocumentReference> create(UserRecipe re) {
         return _repo.create(re);
     }
 
@@ -31,7 +31,7 @@ public class UserRecipeService implements IUserRecipeService {
     }
 
     @Override
-    public Task<Void> update(UserRecipes re) {
+    public Task<Void> update(UserRecipe re) {
         return _repo.update(re);
     }
 
