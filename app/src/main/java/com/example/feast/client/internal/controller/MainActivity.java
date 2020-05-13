@@ -20,25 +20,23 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
-import com.example.feast.client.internal.utility.concurrent.AsyncUpdate;
 import com.example.feast.client.internal.utility.concurrent.Listener;
 import com.example.feast.core.entities.RecipeContainer;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.varunest.sparkbutton.SparkButton;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener, AsyncUpdate<RecipeContainer> {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener {
     public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    Spinner mainSpinner;
-    SparkButton sparkButton;
-    String valueFromSpinner;
-
-    TextView test;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
+    private Spinner mainSpinner;
+    private SparkButton sparkButton;
+    private String valueFromSpinner;
+    private Model m;
+    private TextView test;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
     private FirebaseAuth mAuth;
     private String TAG = "app";
 
@@ -85,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             startActivityForResult(intent, 10);
         } else {
             test.setText(mAuth.getCurrentUser().getDisplayName());
-            Model m = Model.getInstance();
+            m = Model.getInstance();
             m.readAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
                 @Override
                 public void call(RecipeContainer entity) {
@@ -114,8 +112,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (parent.getId() == R.id.spinnerMain) {
             this.valueFromSpinner = parent.getItemAtPosition(position).toString();
         }
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -163,7 +159,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    public void update(RecipeContainer entity) {
-        Log.d(TAG, "Update: " + entity);
+    protected void onDestroy() {
+        super.onDestroy();
+        m.CancelTasks();
     }
 }

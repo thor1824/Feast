@@ -94,4 +94,8 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         }
         return null;
     }
+
+    public void CancelTasks() {
+        task.cancel(true);
+    }
 }
