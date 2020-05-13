@@ -2,7 +2,6 @@ package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -17,59 +16,26 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
+import com.example.feast.client.internal.model.Model;
+import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.Ingredient;
-import com.example.feast.core.entities.Recipes;
-import com.example.feast.core.entities.UserRecipes;
-import com.example.feast.data.mock.DBInitializer;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-
-import java.io.Console;
-import java.util.ArrayList;
-import java.util.Random;
 
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    DBInitializer db = new DBInitializer();
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     Toolbar toolbar;
     int estimatedTime;
-    int randomInt;
-
-    ArrayList<Recipes> recipesWithEstimatedTime = new ArrayList<Recipes>();
-    ArrayList<UserRecipes> userRecipesWithEstimatedTime = new ArrayList<UserRecipes>();
+    IRecipe recipeToBeDisplayed;
+    private Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_recipe);
-
-        //-------------------------logic for recipe list--------------------------------\\
-        Intent intent = getIntent();
-
-
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        estimatedTime = Integer.parseInt(message);
-
-        ArrayList<Recipes> recipes = db.getRecipes();
-        for (Recipes recipe : recipes) {
-            if (recipe.getEstimatedTime() <= estimatedTime) {
-                recipesWithEstimatedTime.add(recipe);
-            }
-        }
-
-        ArrayList<UserRecipes> userRecipes = db.getUserRecipes();
-
-        for (UserRecipes userRecipe : userRecipes) {
-            Log.d("--------------", "" + userRecipe.getEstimatedTime());
-            if (userRecipe.getEstimatedTime() <= estimatedTime) {
-                Log.d("--------------", "" + "bob");
-                userRecipesWithEstimatedTime.add(userRecipe);
-            }
-        }
-
 
         //---------------------instantiate----------------------\\
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
@@ -83,7 +49,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                goToSMS();
+                sendIngredientsAsSMS();
             }
         });
 
@@ -94,87 +60,51 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
 
-
         //------------------component generator-----------------\\
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        estimatedTime = Integer.parseInt(message);
+        model = Model.getInstance();
+        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
 
-        int maxRandom = (recipesWithEstimatedTime.size() - 1) + (userRecipesWithEstimatedTime.size() - 1);
-        if (maxRandom >= 0) {
-            Random randomGenerator = new Random();
-            if (maxRandom > 0) {
-                randomInt = randomGenerator.nextInt(((maxRandom - 0) + 1) + 0);
-            } else {
-                randomInt = 0;
+
+        if (recipeToBeDisplayed != null) {
+            textView.setText(recipeToBeDisplayed.getName());
+
+            for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
+                TextView newTextViewIng = new TextView(this);
+                TextView newTextViewAmount = new TextView(this);
+                newTextViewIng.setText(s.getName());
+                newTextViewAmount.setText(s.getAmount() + " Gram");
+
+                layoutForName.addView(newTextViewIng);
+                layoutForGram.addView(newTextViewAmount);
             }
-            Recipes recipeToBeDisplayed = getRecipe();
-            UserRecipes userRecipeToDisplay = getUserRecipe();
-
-            if (recipeToBeDisplayed != null) {
-                textView.setText(recipeToBeDisplayed.getName());
-            } else if (userRecipeToDisplay != null) {
-                textView.setText(userRecipeToDisplay.getName());
-            } else {
-                textView.setText("No Recipe Found");
-            }
-
-
-            if (recipeToBeDisplayed != null) {
-                for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
-                    TextView newTextViewIng = new TextView(this);
-                    TextView newTextViewAmount = new TextView(this);
-                    newTextViewIng.setText(s.getName());
-                    newTextViewAmount.setText(s.getAmount() + " Gram");
-
-                    layoutForName.addView(newTextViewIng);
-                    layoutForGram.addView(newTextViewAmount);
-                }
-            }
-
-            if (userRecipeToDisplay != null) {
-                for (Ingredient s : userRecipeToDisplay.getIngredients()) {
-                    TextView newTextViewIng = new TextView(this);
-                    TextView newTextViewAmount = new TextView(this);
-                    newTextViewIng.setText(s.getName());
-                    newTextViewAmount.setText(s.getAmount() + " Gram");
-
-                    layoutForName.addView(newTextViewIng);
-                    layoutForGram.addView(newTextViewAmount);
-                }
-
-            }
-
         }
 
     }
 
+    private void sendIngredientsAsSMS() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        StringBuilder builder = new StringBuilder();
 
-    public boolean shutItBeRecipe() {
-        System.out.println(randomInt);
-        if (randomInt < recipesWithEstimatedTime.size()) {
-            return true;
-        } else return false;
-
-    }
-
-
-    public Recipes getRecipe() {
-
-        if (shutItBeRecipe() && recipesWithEstimatedTime.size() > 0) {
-            return recipesWithEstimatedTime.get(randomInt);
+        if (recipeToBeDisplayed != null) {
+            builder.append(recipeToBeDisplayed.getName());
+            builder.append("\n");
+            for (Ingredient i : recipeToBeDisplayed.getIngredients()) {
+                builder.append(i.toString());
+                builder.append('\n');
+            }
         }
 
-        return null;
-    }
+        builder.append("Tak fordi du bruger Feast");
 
-    public UserRecipes getUserRecipe() {
-        for (UserRecipes recipe : userRecipesWithEstimatedTime) {
-            System.out.println(recipe.getName());
-        }
+        sendIntent.putExtra("sms_body", builder.toString());
+        sendIntent.setType("text/plain");
 
-        if (!shutItBeRecipe() && userRecipesWithEstimatedTime.size() > 0) {
-            return userRecipesWithEstimatedTime.get(randomInt - recipesWithEstimatedTime.size());
-        }
-
-        return null;
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 
 
@@ -230,33 +160,5 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         return true;
     }
 
-    private void goToSMS() {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        StringBuilder builder = new StringBuilder();
 
-        if (shutItBeRecipe()) {
-            builder.append(getRecipe().getName());
-            builder.append("\n");
-            for (Ingredient i : getRecipe().getIngredients()) {
-                builder.append(i.toString());
-                builder.append('\n');
-            }
-        } else {
-            builder.append(getUserRecipe().getName());
-            builder.append("\n");
-            for (Ingredient i : getUserRecipe().getIngredients()) {
-                builder.append(i.toString());
-                builder.append('\n');
-            }
-        }
-
-        builder.append("Tak fordi du bruger Feast");
-
-        sendIntent.putExtra("sms_body", builder.toString());
-        sendIntent.setType("text/plain");
-
-        Intent shareIntent = Intent.createChooser(sendIntent, null);
-        startActivity(shareIntent);
-    }
 }

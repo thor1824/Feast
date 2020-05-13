@@ -1,10 +1,9 @@
 package com.example.feast.core.entities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class UserRecipes implements Serializable {
+public class UserRecipe implements IRecipe {
 
 
     private ArrayList<Ingredient> ingredients;
@@ -14,7 +13,7 @@ public class UserRecipes implements Serializable {
     private String userId;
 
 
-    public UserRecipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String userId) {
+    public UserRecipe(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String userId) {
 
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
