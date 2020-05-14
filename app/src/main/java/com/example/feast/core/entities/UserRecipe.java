@@ -24,6 +24,14 @@ public class UserRecipe implements IRecipe {
         this.userId = userId;
     }
 
+    public UserRecipe(ArrayList<Ingredient> listOfIngredients, long time, String name, String userId) {
+
+        this.estimatedTime = time;
+        this.ingredients = listOfIngredients;
+        this.name = name;
+        this.userId = userId;
+    }
+
 
     public String getUserId() {
         return userId;

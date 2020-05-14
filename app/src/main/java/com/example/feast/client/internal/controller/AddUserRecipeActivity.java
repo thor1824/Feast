@@ -20,13 +20,17 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
+import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.Ingredient;
+import com.example.feast.core.entities.UserRecipe;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AddUserRecipeActivity extends AppCompatActivity {
+public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -39,9 +43,10 @@ public class AddUserRecipeActivity extends AppCompatActivity {
     EditText firstIngFiled;
     EditText firstAmountField;
     FloatingActionButton button;
-    int idName = 0;
-    int idAmount = 0;
-    int idContainer = 0;
+    int editFieldId = 0;
+    private ArrayList<HashMap<String, Integer>> ingNameList;
+    Model model;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +64,8 @@ public class AddUserRecipeActivity extends AppCompatActivity {
         firstIngFiled = findViewById(R.id.editIng);
         firstAmountField = findViewById(R.id.editIngAmount);
         button = findViewById(R.id.addIngButton);
+        ingNameList = new ArrayList<HashMap<String, Integer>>();
+        model = Model.getInstance();
 
         //---------------------------------------------------\\
         button.setOnClickListener(new View.OnClickListener() {
@@ -72,33 +79,35 @@ public class AddUserRecipeActivity extends AppCompatActivity {
     public void addIngIngredient() {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        idContainer++;
+
         final LinearLayout editContainer = new LinearLayout(this);
-        editContainer.setId(idContainer);
         editContainer.setLayoutParams(p);
         editContainer.setOrientation(LinearLayout.HORIZONTAL);
         addIngLayout.addView(editContainer);
 
 
-        idName++;
+        editFieldId++;
         final EditText ingName = new EditText(this);
         ingName.setHint("Ingredient");
         ingName.setLayoutParams(p);
-        ingName.setId(idName);
+        ingName.setId(editFieldId);
         ingName.setLayoutParams(new LinearLayout.LayoutParams(600, LinearLayout.LayoutParams.WRAP_CONTENT));
         editContainer.addView(ingName);
 
-        idAmount++;
+        int nameId = editFieldId;
+
+        editFieldId++;
         final EditText ingAmount = new EditText(this);
         ingAmount.setHint("Amount");
         ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
         ingAmount.setLayoutParams(p);
-        ingAmount.setId(idAmount);
+        ingAmount.setId(editFieldId);
         LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p2.leftMargin = 30;
         ingAmount.setLayoutParams(p2);
         editContainer.addView(ingAmount);
 
+        int amountId = editFieldId;
 
         FloatingActionButton deleteIngButton = new FloatingActionButton(this);
         deleteIngButton.setImageResource(R.drawable.delete_icon);
@@ -107,6 +116,12 @@ public class AddUserRecipeActivity extends AppCompatActivity {
         deleteIngButton.setLayoutParams(p3);
         deleteIngButton.setCompatElevation(0);
         editContainer.addView(deleteIngButton);
+
+
+        HashMap<String, Integer> bob = new HashMap<String, Integer>();
+        bob.put("name", nameId);
+        bob.put("amount", amountId);
+        ingNameList.add(bob);
 
         deleteIngButton.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -121,8 +136,31 @@ public class AddUserRecipeActivity extends AppCompatActivity {
 
 
     private void saveUserRecipe() {
-        ArrayList<Ingredient> listOfIng = new ArrayList<Ingredient>();
 
+        String recipeName = recipeNameField.getText().toString();
+        long estimatedTime = Long.getLong(estimatedTimeField.getText().toString());
+        String firstIngName = firstIngFiled.getText().toString();
+        Long firstAmount = Long.getLong(firstAmountField.getText().toString());
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
+
+        Ingredient firstIng = new Ingredient(firstIngName, firstAmount);
+
+        ingredients.add(firstIng);
+
+
+
+        for (HashMap<String, Integer> map : ingNameList) {
+            EditText name = findViewById(map.get("name"));
+            EditText amount = findViewById(map.get("amount"));
+
+            String nameFromField = name.getText().toString();
+            long amountFromField = Long.valueOf(amount.getText().toString());
+
+            ingredients.add(new Ingredient(nameFromField, amountFromField));
+        }
+
+        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName,)
+model.createUserRecipe()
 
     }
 
