@@ -4,12 +4,12 @@
         android:radius="100dp"
         />
     <gradient
-        android:angle="45"
-        android:centerX="100%"
-        android:centerColor="#603054"
-        android:startColor="#714666"
-        android:endColor="#4c163e"
+        android:centerX="1%"
+        android:centerY="1%"
+        android:startColor="@color/lightpur"
+        android:endColor="@color/darkpur"
         android:type="linear"
+        android:angle="135"
         />
 
 </shape>
