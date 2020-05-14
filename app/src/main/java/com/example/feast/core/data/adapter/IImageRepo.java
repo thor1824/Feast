@@ -1,4 +1,4 @@
-package com.example.feast.data.external.firebase.repository;
+package com.example.feast.core.data.adapter;
 
 import com.google.android.gms.tasks.Task;
 

@@ -1,8 +1,8 @@
-package com.example.feast.core.services.impl;
+package com.example.feast.core.client.adapter.impl;
 
+import com.example.feast.core.client.adapter.IUserRecipeService;
 import com.example.feast.core.data.adapter.IUserRecipeRepo;
 import com.example.feast.core.entities.UserRecipe;
-import com.example.feast.core.services.IUserRecipeService;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;

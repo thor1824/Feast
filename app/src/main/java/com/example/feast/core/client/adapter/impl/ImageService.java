@@ -1,7 +1,7 @@
-package com.example.feast.core.services.impl;
+package com.example.feast.core.client.adapter.impl;
 
-import com.example.feast.core.services.IImageService;
-import com.example.feast.data.external.firebase.repository.IImageRepo;
+import com.example.feast.core.client.adapter.IImageService;
+import com.example.feast.core.data.adapter.IImageRepo;
 import com.google.android.gms.tasks.Task;
 
 public class ImageService implements IImageService {
