@@ -52,6 +52,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
         Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).into(profileImage);
+        toolbar.setTitle("");
 
 
     }
@@ -81,10 +82,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             case R.id.nav_home:
                 Intent home_intent = new Intent(ProfileActivity.this, MainActivity.class);
                 startActivity(home_intent);
+                finish();
                 break;
             case R.id.nav_addRecipe:
                 Intent recipe_intent = new Intent(ProfileActivity.this, RecipesActivity.class);
                 startActivity(recipe_intent);
+                finish();
                 break;
             case R.id.nav_profile:
                 break;

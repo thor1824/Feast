@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     android:background="@drawable/main_background"
     android:elevation="6dp"
-    android:id="@+id/toolbar">
+    android:id="@+id/toolbar"
+
+    >
 
 </androidx.appcompat.widget.Toolbar>

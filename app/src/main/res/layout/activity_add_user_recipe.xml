@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20px"
                 android:layout_marginTop="80px"
-                android:hint="Estimated Time"
+                android:hint="Estimated Time In Minutes"
                 android:inputType="number" />
 
             <TextView
@@ -92,7 +92,7 @@
 
                     <EditText
                         android:id="@+id/editIng"
-                        android:layout_width="200sp"
+                        android:layout_width="200dp"
                         android:layout_height="wrap_content"
                         android:hint="Ingredient" />
 
@@ -100,20 +100,44 @@
                         android:id="@+id/editIngAmount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30sp"
+                        android:layout_marginLeft="30dp"
                         android:hint="Amount"
                         android:inputType="number" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="g"
+                        android:textColor="@color/black" />
+
                 </LinearLayout>
+
+
             </LinearLayout>
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/addIngButton"
-                android:layout_width="600px"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginTop="30px"
                 android:layout_marginRight="30px"
-                android:src="@drawable/plus_icon" />
+                android:src="@drawable/plus_icon"
+                app:rippleColor="@color/colorAccent" />
+
+            <Button
+                android:id="@+id/submitBt"
+                android:layout_width="171dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/submit_button"
+                android:stateListAnimator="@null"
+                android:text="Add Recipe" />
+
+
         </LinearLayout>
+
+
     </ScrollView>
 
 </androidx.drawerlayout.widget.DrawerLayout>
