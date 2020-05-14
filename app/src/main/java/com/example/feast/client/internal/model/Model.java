@@ -6,6 +6,7 @@ import com.example.feast.client.internal.utility.concurrent.Listener;
 import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.RecipeContainer;
 import com.example.feast.core.entities.UserRecipe;
+import com.example.feast.core.services.IImageService;
 import com.example.feast.core.services.IRecipeService;
 import com.example.feast.core.services.IUserRecipeService;
 import com.google.android.gms.tasks.Task;
@@ -23,10 +24,12 @@ public class Model implements AsyncUpdate<RecipeContainer> {
     private IUserRecipeService userRecipeService;
     private IRecipeService recipeService;
     private RecipeContainer recipeContainer;
+    private IImageService imageService;
 
-    protected Model(IUserRecipeService userRecipeService, IRecipeService recipeService) {
+    protected Model(IUserRecipeService userRecipeService, IRecipeService recipeService, IImageService imageService) {
         this.userRecipeService = userRecipeService;
         this.recipeService = recipeService;
+        this.imageService = imageService;
     }
 
     public static Model getInstance() {
@@ -93,6 +96,11 @@ public class Model implements AsyncUpdate<RecipeContainer> {
             }
         }
         return null;
+    }
+
+    public Task<byte[]> getImage(String imgUrl) {
+        return imageService.getImage(imgUrl);
+
     }
 
     public void CancelTasks() {

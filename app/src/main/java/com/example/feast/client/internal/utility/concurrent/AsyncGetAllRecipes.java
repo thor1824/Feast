@@ -112,7 +112,7 @@ public class AsyncGetAllRecipes extends AsyncUpdateTask<RecipeContainer> {
                 ArrayList<Ingredient> ing = convertToIngredients((ArrayList<HashMap<String, Object>>) document.getData().get("ingredients"));
                 long estimatedTime = (long) document.getData().get("estimatedTime");
                 String imageUrl = (String) document.getData().get("imageUrl");
-                list.add(new Recipes(ing, id, estimatedTime, name, imageUrl));
+                list.add(new Recipe(ing, id, estimatedTime, name, imageUrl));
                 Log.d(TAG, "convertToRecipes: Converted " + name);
             } catch (Exception e) {
                 e.printStackTrace();

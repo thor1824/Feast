@@ -15,7 +15,7 @@ public class Recipe implements IRecipe {
     private String imageUrl;
 
 
-    public Recipes(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String imageUrl) {
+    public Recipe(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String imageUrl) {
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
