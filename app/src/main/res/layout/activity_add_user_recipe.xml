@@ -11,7 +11,7 @@
     tools:context=".client.internal.controller.AddUserRecipeActivity"
     tools:openDrawer="start">
 
-  <com.google.android.material.navigation.NavigationView
+ <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view_addRecipe"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -22,14 +22,19 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView">
 
 
     <LinearLayout
         android:id="@+id/linLayAmount_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+
+        >
 
 
         <include layout="@layout/toolbar" />
@@ -45,18 +50,22 @@
 
 
             <EditText
-                android:layout_width="500px"
+
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20px"
                 android:layout_marginTop="80px"
-                android:text="Recipe Name" />
+                android:hint="Recipe Name"
+                android:layout_width="700px"
+                android:id="@+id/editName"/>
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20px"
                 android:layout_marginTop="80px"
-                android:text="Estimated Time" />
+                android:hint="Estimated Time"
+                android:inputType="number"
+                android:id="@+id/editTime"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,33 +73,54 @@
                 android:layout_marginLeft="20px"
                 android:layout_marginTop="80px"
                 android:text="Ingredients"
-                android:textSize="17sp" />
+                android:textSize="17sp"
+                android:id="@+id/textIng"/>
+
+        <LinearLayout
+            android:id="@+id/addIngLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/linIngContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal">
 
                 <EditText
-                    android:layout_width="700px"
+                    android:id="@+id/editIng"
+                    android:layout_width="200sp"
                     android:layout_height="wrap_content"
-                    android:text="Ingredient" />
+                    android:hint="Ingredient" />
 
                 <EditText
+                    android:id="@+id/editIngAmount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30px"
-                    android:inputType="number"
-                    android:text="Amount" />
+                    android:layout_marginLeft="30sp"
+                    android:hint="Amount"
+                    android:inputType="number" />
 
             </LinearLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:layout_width="600px"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginTop="30px"
-                android:layout_marginRight="30px"
-                android:src="@drawable/plus_icon" />
+
+        </LinearLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/addIngButton"
+            android:layout_width="600px"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="30px"
+            android:layout_marginRight="30px"
+
+            android:src="@drawable/plus_icon" />
+
+
 
 
     </LinearLayout>
