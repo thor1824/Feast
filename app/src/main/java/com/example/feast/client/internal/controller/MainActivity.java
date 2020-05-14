@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         test = findViewById(R.id.test);
         test.setText("not Signed in");
 
+
         mAuth = FirebaseAuth.getInstance();
 
 

@@ -1,38 +1,43 @@
 package com.example.feast.client.internal.controller;
-
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.InputType;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
 
 public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int REQUEST_CODE_CAMERA = 101;
+    public static final int USER_REQUEST_CODE = 102;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -49,6 +54,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private Button submitButton;
     private LinearLayout ingContainer;
     private ArrayList<LinearLayout> layouts;
+    private ImageView cameraBt;
 
 
     @Override
@@ -72,6 +78,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         submitButton = findViewById(R.id.submitBt);
         ingContainer = findViewById(R.id.linIngContainer);
         layouts = new ArrayList<>();
+        cameraBt = findViewById(R.id.bt_TakePic);
 
         //---------------------------------------------------\\
         button.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +94,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             }
         });
         toolbar.setTitle("");
+        cameraBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                askCameraPermissions();
+            }
+        });
 
     }
 
@@ -105,7 +118,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         ingName.setHint("Ingredient");
         ingName.setLayoutParams(p);
         ingName.setId(editFieldId);
-        ingName.setLayoutParams(new LinearLayout.LayoutParams(600, LinearLayout.LayoutParams.WRAP_CONTENT));
+        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
         editContainer.addView(ingName);
 
         int nameId = editFieldId;
@@ -117,7 +130,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         ingAmount.setLayoutParams(p);
         ingAmount.setId(editFieldId);
         LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        p2.leftMargin = 30;
+        p2.leftMargin = 90;
         ingAmount.setLayoutParams(p2);
         editContainer.addView(ingAmount);
 
@@ -126,7 +139,8 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         FloatingActionButton deleteIngButton = new FloatingActionButton(this);
         deleteIngButton.setImageResource(R.drawable.delete_icon);
         LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        p3.leftMargin = 30;
+        p3.leftMargin = 60;
+        p3.topMargin = 30;
         deleteIngButton.setLayoutParams(p3);
         deleteIngButton.setCompatElevation(0);
         editContainer.addView(deleteIngButton);
@@ -185,7 +199,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         firstAmountField.getText().clear();
         firstAmountField.setHint("Amount");
 
-        for (LinearLayout layout: layouts) {
+        for (LinearLayout layout : layouts) {
             addIngLayout.removeView(layout);
         }
 
@@ -248,4 +262,38 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         return true;
     }
 
+    private void askCameraPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+        } else {
+            openCamera();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void openCamera() {
+        Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntend, USER_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+        cameraBt.setImageBitmap(bitmap);
+    }
+
 }
+
+
