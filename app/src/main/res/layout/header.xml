@@ -9,7 +9,7 @@
 
 
     <ImageView
-        android:layout_width="221dp"
+        android:layout_width="240dp"
         android:layout_height="115dp"
         android:adjustViewBounds="true"
         android:background="@drawable/logo6"
@@ -21,9 +21,9 @@
         android:paddingLeft="30px"
         android:text="End Of Discussion"
         android:textAlignment="center"
-        android:textColor="@color/black"
+        android:textColor="#e1c25e"
         android:textSize="20dp"
-        android:textStyle="italic|normal"/>
+        android:textStyle="italic|normal" />
 
 
 </LinearLayout>

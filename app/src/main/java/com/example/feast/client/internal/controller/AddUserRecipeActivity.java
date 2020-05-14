@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class AddUserRecipeActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
 
     public static final int REQUEST_CODE_CAMERA = 101;
     public static final int USER_REQUEST_CODE = 102;
