@@ -28,20 +28,20 @@ import java.util.ArrayList;
 
 public class AddUserRecipeActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
-    TextView ingText;
-    LinearLayout addIngLayout;
-    ScrollView scrollView;
-    EditText recipeNameField;
-    EditText estimatedTimeField;
-    EditText firstIngFiled;
-    EditText firstAmountField;
-    FloatingActionButton button;
-    int idName = 0;
-    int idAmount = 0;
-    int idContainer = 0;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private TextView ingText;
+    private LinearLayout addIngLayout;
+    private ScrollView scrollView;
+    private EditText recipeNameField;
+    private EditText estimatedTimeField;
+    private EditText firstIngFiled;
+    private EditText firstAmountField;
+    private FloatingActionButton button;
+    private int idName = 0;
+    private int idAmount = 0;
+    private int idContainer = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

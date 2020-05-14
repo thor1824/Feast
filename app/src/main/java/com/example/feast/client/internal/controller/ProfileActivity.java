@@ -21,12 +21,12 @@ import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    ImageView profileImage;
-    TextView displayName;
-    TextView displayEmail;
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
+    private ImageView profileImage;
+    private TextView displayName;
+    private TextView displayEmail;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
 
     private FirebaseAuth mAuth;
 

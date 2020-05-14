@@ -11,7 +11,7 @@ import com.example.feast.R;
 
 public class RecipesActivity extends AppCompatActivity {
 
-    Button goToAddRecipe;
+    private Button goToAddRecipe;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
