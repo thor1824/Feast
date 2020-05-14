@@ -4,12 +4,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.feast.core.client.adapter.IRecipeService;
+import com.example.feast.core.client.adapter.IUserRecipeService;
 import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.Recipe;
 import com.example.feast.core.entities.RecipeContainer;
 import com.example.feast.core.entities.UserRecipe;
-import com.example.feast.core.services.IRecipeService;
-import com.example.feast.core.services.IUserRecipeService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;

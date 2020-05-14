@@ -3,13 +3,18 @@ package com.example.feast.client.internal.model;
 import com.example.feast.client.internal.utility.concurrent.AsyncGetAllRecipes;
 import com.example.feast.client.internal.utility.concurrent.AsyncUpdate;
 import com.example.feast.client.internal.utility.concurrent.Listener;
+import com.example.feast.core.client.adapter.IAuthService;
+import com.example.feast.core.client.adapter.IImageService;
+import com.example.feast.core.client.adapter.IRecipeService;
+import com.example.feast.core.client.adapter.IUserRecipeService;
 import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.RecipeContainer;
 import com.example.feast.core.entities.UserRecipe;
-import com.example.feast.core.services.IImageService;
-import com.example.feast.core.services.IRecipeService;
-import com.example.feast.core.services.IUserRecipeService;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 
 import java.util.ArrayList;
@@ -25,11 +30,13 @@ public class Model implements AsyncUpdate<RecipeContainer> {
     private IRecipeService recipeService;
     private RecipeContainer recipeContainer;
     private IImageService imageService;
+    private IAuthService authService;
 
-    protected Model(IUserRecipeService userRecipeService, IRecipeService recipeService, IImageService imageService) {
+    protected Model(IUserRecipeService userRecipeService, IRecipeService recipeService, IImageService imageService, IAuthService authService) {
         this.userRecipeService = userRecipeService;
         this.recipeService = recipeService;
         this.imageService = imageService;
+        this.authService = authService;
     }
 
     public static Model getInstance() {
@@ -105,5 +112,17 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     public void CancelTasks() {
         task.cancel(true);
+    }
+
+    public Task<AuthResult> singInWithGoogle(Task<GoogleSignInAccount> task) throws ApiException {
+        return authService.singInWithGoogle(task);
+    }
+
+    public void signOut() {
+        authService.signOut();
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return authService.getCurrentUser();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.feast.core.services;
+package com.example.feast.core.client.adapter;
 
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
