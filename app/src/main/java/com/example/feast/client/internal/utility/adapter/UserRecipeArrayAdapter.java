@@ -8,8 +8,13 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.example.feast.R;
 import com.example.feast.core.entities.UserRecipe;
+import com.example.feast.client.internal.model.Model;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -56,7 +61,15 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
         viewHolder.deleteRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                remove(getItem(position));
+                final UserRecipe ur = getItem(position);
+
+                Model.getInstance().deleteUserRecipe(ur.getId()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        //todo snackbar
+                        remove(ur);
+                    }
+                });
             }
         });
         return convertView;
