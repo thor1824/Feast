@@ -11,7 +11,7 @@
     tools:context=".client.internal.controller.AddUserRecipeActivity"
     tools:openDrawer="start">
 
-  <com.google.android.material.navigation.NavigationView
+    <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view_addRecipe"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20px"
                 android:layout_marginTop="80px"
-                android:hint="Estimated Time"
+                android:hint="Estimated Time In Minutes"
                 android:inputType="number" />
 
             <TextView
@@ -104,6 +104,12 @@
                         android:hint="Amount"
                         android:inputType="number" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="g"
+                        android:textColor="@color/black" />
+
                 </LinearLayout>
 
 
@@ -117,21 +123,19 @@
                 android:layout_marginTop="30px"
                 android:layout_marginRight="30px"
                 android:src="@drawable/plus_icon"
-                app:rippleColor="@color/colorAccent"/>
+                app:rippleColor="@color/colorAccent" />
 
             <Button
                 android:id="@+id/submitBt"
                 android:layout_width="171dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/submit_button"
-                android:text="Add Recipe"
                 android:layout_gravity="center"
-                android:stateListAnimator="@null"/>
+                android:background="@drawable/submit_button"
+                android:stateListAnimator="@null"
+                android:text="Add Recipe" />
 
 
         </LinearLayout>
-
-
 
 
     </ScrollView>
