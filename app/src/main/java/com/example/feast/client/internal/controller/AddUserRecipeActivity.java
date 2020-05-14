@@ -32,20 +32,20 @@ import java.util.Map;
 
 public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    DrawerLayout drawerLayout;
-    NavigationView navigationView;
-    Toolbar toolbar;
-    TextView ingText;
-    LinearLayout addIngLayout;
-    ScrollView scrollView;
-    EditText recipeNameField;
-    EditText estimatedTimeField;
-    EditText firstIngFiled;
-    EditText firstAmountField;
-    FloatingActionButton button;
-    int editFieldId = 0;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private TextView ingText;
+    private LinearLayout addIngLayout;
+    private ScrollView scrollView;
+    private EditText recipeNameField;
+    private EditText estimatedTimeField;
+    private EditText firstIngFiled;
+    private EditText firstAmountField;
+    private FloatingActionButton button;
+    private int editFieldId = 0;
     private ArrayList<HashMap<String, Integer>> ingNameList;
-    Model model;
+    private Model model;
 
 
     @Override
@@ -159,8 +159,8 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             ingredients.add(new Ingredient(nameFromField, amountFromField));
         }
 
-        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName,)
-model.createUserRecipe()
+        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid());
+        model.createUserRecipe(recipe);
 
     }
 
