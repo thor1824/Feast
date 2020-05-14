@@ -67,10 +67,21 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         return userRecipeService.create(ur);
     }
 
-    public void readAllRecipes(String userId, Listener<RecipeContainer> listener) {
+    public void getAllRecipes(String userId, Listener<RecipeContainer> listener) {
         this.list = listener;
         task = new AsyncGetAllRecipes(this, userId, userRecipeService, recipeService);
-        task.execute();
+        if (task.isCompleted()) {
+            update(recipeContainer);
+        } else {
+            task.execute();
+        }
+    }
+
+    public void forceUpdate() {
+        if(list != null) {
+            task = new AsyncGetAllRecipes(this, getCurrentUser().getUid(), userRecipeService, recipeService);
+            task.execute();
+        }
     }
 
     public IRecipe getRandomRecipe(int estimatedTime) {

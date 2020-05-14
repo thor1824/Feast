@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else {
             test.setText(mAuth.getCurrentUser().getDisplayName());
             m = Model.getInstance();
-            m.readAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
+            m.getAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
                 @Override
                 public void call(RecipeContainer entity) {
                     Log.d(TAG, "call: " + entity);

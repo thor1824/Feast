@@ -29,20 +29,29 @@
         <include layout="@layout/toolbar" />
 
 
-        <ImageView
-            android:layout_width="236dp"
-            android:layout_height="140dp"
-            android:layout_gravity="center"
-            android:src="@drawable/logo6">
+        <LinearLayout
+            android:layout_marginTop="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/lightpur">
+
+            <ImageView
+                android:layout_width="236dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logo6">
 
 
-        </ImageView>
+            </ImageView>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/lightpur">
 
 
             <ImageView
