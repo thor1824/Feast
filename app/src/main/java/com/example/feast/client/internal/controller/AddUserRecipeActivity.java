@@ -3,6 +3,7 @@ package com.example.feast.client.internal.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -35,7 +36,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    private TextView ingText;
     private LinearLayout addIngLayout;
     private ScrollView scrollView;
     private EditText recipeNameField;
@@ -46,6 +46,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private int editFieldId = 0;
     private ArrayList<HashMap<String, Integer>> ingNameList;
     private Model model;
+    private Button submitButton;
+    private LinearLayout ingContainer;
+    private ArrayList<LinearLayout> layouts;
 
 
     @Override
@@ -57,7 +60,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         drawerLayout = findViewById(R.id.drawLayout_addRecipe);
         navigationView = findViewById(R.id.navigation_view_addRecipe);
         toolbar = findViewById(R.id.toolbar);
-        ingText = findViewById(R.id.textIng);
+        scrollView = findViewById(R.id.scrollView);
         addIngLayout = findViewById(R.id.addIngLayout);
         recipeNameField = findViewById(R.id.editName);
         estimatedTimeField = findViewById(R.id.editTime);
@@ -66,6 +69,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         button = findViewById(R.id.addIngButton);
         ingNameList = new ArrayList<HashMap<String, Integer>>();
         model = Model.getInstance();
+        submitButton = findViewById(R.id.submitBt);
+        ingContainer = findViewById(R.id.linIngContainer);
+        layouts = new ArrayList<>();
 
         //---------------------------------------------------\\
         button.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +80,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 addIngIngredient();
             }
         });
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveUserRecipe();
+            }
+        });
+        toolbar.setTitle("");
+
     }
 
     public void addIngIngredient() {
@@ -122,7 +136,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         bob.put("name", nameId);
         bob.put("amount", amountId);
         ingNameList.add(bob);
-
+        layouts.add(editContainer);
         deleteIngButton.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,15 +152,15 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private void saveUserRecipe() {
 
         String recipeName = recipeNameField.getText().toString();
-        long estimatedTime = Long.getLong(estimatedTimeField.getText().toString());
+        System.out.println(estimatedTimeField.getText().toString());
+        long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
         String firstIngName = firstIngFiled.getText().toString();
-        Long firstAmount = Long.getLong(firstAmountField.getText().toString());
+        Long firstAmount = Long.parseLong(firstAmountField.getText().toString());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
 
         Ingredient firstIng = new Ingredient(firstIngName, firstAmount);
 
         ingredients.add(firstIng);
-
 
 
         for (HashMap<String, Integer> map : ingNameList) {
@@ -161,6 +175,20 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
         UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid());
         model.createUserRecipe(recipe);
+
+        recipeNameField.getText().clear();
+        recipeNameField.setHint("Recipe Name");
+        estimatedTimeField.getText().clear();
+        estimatedTimeField.setHint("Estimated Time");
+        firstIngFiled.getText().clear();
+        firstIngFiled.setHint("Ingredient");
+        firstAmountField.getText().clear();
+        firstAmountField.setHint("Amount");
+
+        for (LinearLayout layout: layouts) {
+            addIngLayout.removeView(layout);
+        }
+
 
     }
 
@@ -190,14 +218,17 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             case R.id.nav_home:
                 Intent home_intent = new Intent(this, MainActivity.class);
                 startActivity(home_intent);
+                finish();
                 break;
             case R.id.nav_addRecipe:
                 Intent recipe_intent = new Intent(this, RecipesActivity.class);
                 startActivity(recipe_intent);
+                finish();
                 break;
             case R.id.nav_profile:
                 Intent profile_intent = new Intent(this, ProfileActivity.class);
                 startActivity(profile_intent);
+                finish();
                 break;
 
             case R.id.nav_settings:

@@ -76,8 +76,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         estimatedTime = Integer.parseInt(message);
         model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
-
-
+        toolbar.setTitle("");
         setRecipe(layoutForName);
 
 
@@ -164,14 +163,17 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
             case R.id.nav_home:
                 Intent home_intent = new Intent(DisplayRecipeActivity.this, MainActivity.class);
                 startActivity(home_intent);
+                finish();
                 break;
             case R.id.nav_addRecipe:
                 Intent recipe_intent = new Intent(DisplayRecipeActivity.this, RecipesActivity.class);
                 startActivity(recipe_intent);
+                finish();
                 break;
             case R.id.nav_profile:
                 Intent profile_intent = new Intent(DisplayRecipeActivity.this, ProfileActivity.class);
                 startActivity(profile_intent);
+                finish();
                 break;
 
             case R.id.nav_settings:

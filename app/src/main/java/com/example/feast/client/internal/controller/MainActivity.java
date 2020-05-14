@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerLayout = findViewById(R.id.drawLayout);
         navigationView = findViewById(R.id.navigation_view);
         toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
 
         sparkButton.setOnClickListener(new View.OnClickListener() {
 
