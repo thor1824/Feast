@@ -52,6 +52,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_home);
         goToAddRecipe = findViewById(R.id.button_add_ur);
+
         goToAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

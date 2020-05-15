@@ -1,43 +1,59 @@
 package com.example.feast.client.internal.controller;
+
 import android.Manifest;
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.BlockingDeque;
 
 
-public class AddUserRecipeActivity extends AppCompatActivity implements  NavigationView.OnNavigationItemSelectedListener {
+public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final int REQUEST_CODE_CAMERA = 101;
     public static final int USER_REQUEST_CODE = 102;
+    public static final int REQUEST_CODE_GET_FROM_GALLERY = 103;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -51,10 +67,11 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
     private int editFieldId = 0;
     private ArrayList<HashMap<String, Integer>> ingNameList;
     private Model model;
-    private Button submitButton;
+    private Button submitButton, takePickButton, picFromGalleryButton;
     private LinearLayout ingContainer;
     private ArrayList<LinearLayout> layouts;
-    private ImageView cameraBt;
+    private ImageView imageView;
+    private String currentPhotoPath;
 
 
     @Override
@@ -73,12 +90,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
         firstIngFiled = findViewById(R.id.editIng);
         firstAmountField = findViewById(R.id.editIngAmount);
         button = findViewById(R.id.addIngButton);
+        takePickButton = findViewById(R.id.bt_TakePic);
+        picFromGalleryButton = findViewById(R.id.bt_picFromGalleri);
         ingNameList = new ArrayList<HashMap<String, Integer>>();
         model = Model.getInstance();
         submitButton = findViewById(R.id.submitBt);
         ingContainer = findViewById(R.id.linIngContainer);
         layouts = new ArrayList<>();
-        cameraBt = findViewById(R.id.bt_TakePic);
+        imageView = findViewById(R.id.img_picContainer);
 
         //---------------------------------------------------\\
         button.setOnClickListener(new View.OnClickListener() {
@@ -94,10 +113,16 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
             }
         });
         toolbar.setTitle("");
-        cameraBt.setOnClickListener(new View.OnClickListener() {
+        takePickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 askCameraPermissions();
+            }
+        });
+        picFromGalleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getPictureFromGallery();
             }
         });
 
@@ -132,9 +157,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
         LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p2.leftMargin = 90;
         ingAmount.setLayoutParams(p2);
+        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
         editContainer.addView(ingAmount);
 
         int amountId = editFieldId;
+
+        final TextView textView = new TextView(this);
+        textView.setText("g");
+        editContainer.addView(textView);
 
         FloatingActionButton deleteIngButton = new FloatingActionButton(this);
         deleteIngButton.setImageResource(R.drawable.delete_icon);
@@ -206,6 +236,11 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
 
     }
 
+    private void getPictureFromGallery(){
+        Intent gallery = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, REQUEST_CODE_GET_FROM_GALLERY);
+    }
+
 
     @Override
     protected void onStart() {
@@ -262,6 +297,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
         return true;
     }
 
+
     private void askCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
@@ -284,15 +320,75 @@ public class AddUserRecipeActivity extends AppCompatActivity implements  Navigat
 
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(cameraIntend, USER_REQUEST_CODE);
+        if (cameraIntend.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntend, USER_REQUEST_CODE);
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                Log.d("----------TAG----------", "openCamera: " + ex);
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.feast.android.fileProvider",
+                        photoFile);
+                cameraIntend.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntend, USER_REQUEST_CODE);
+            }
+
+        }
     }
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-        cameraBt.setImageBitmap(bitmap);
+        if (requestCode == USER_REQUEST_CODE && resultCode == RESULT_OK) {
+            File file = new File(currentPhotoPath);
+            imageView.setImageURI(Uri.fromFile(file));
+
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(file);
+            mediaScanIntent.setData(contentUri);
+            this.sendBroadcast(mediaScanIntent);
+        }
+
+        if (requestCode == REQUEST_CODE_GET_FROM_GALLERY) {
+            if (resultCode == Activity.RESULT_OK) {
+                Uri contentUri = data.getData();
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(contentUri);
+                Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
+                imageView.setImageURI(contentUri);
+
+            }
+        }
     }
+
+
+    private String getFileExt(Uri contentUri) {
+        ContentResolver c = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(c.getType(contentUri));
+    }
+
+
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        currentPhotoPath = image.getAbsolutePath();
+        Log.d("//////////////////", "createImageFile: " + image.getAbsolutePath());
+        return image;
+    }
+
 
 }
 
