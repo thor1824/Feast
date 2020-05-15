@@ -16,4 +16,12 @@ public class ImageRepo implements IImageRepo {
         return gsReference.getBytes(ONE_MEGABYTE);
     }
 
+    @Override
+    public Task<byte[]> saveImage(String imgUrl) {
+
+
+        return null;
+    }
+
+
 }

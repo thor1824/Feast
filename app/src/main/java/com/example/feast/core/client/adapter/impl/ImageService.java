@@ -17,4 +17,9 @@ public class ImageService implements IImageService {
         return imageRepo.getImage(imgUrl);
     }
 
+    @Override
+    public Task<byte[]> setImage(String imgUrl) {
+        return imageRepo.saveImage(imgUrl);
+    }
+
 }

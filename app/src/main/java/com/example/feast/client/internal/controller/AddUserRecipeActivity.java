@@ -2,6 +2,7 @@ package com.example.feast.client.internal.controller;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -36,9 +37,19 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.core.entities.Ingredient;
+import com.example.feast.core.entities.Recipe;
 import com.example.feast.core.entities.UserRecipe;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +83,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private ArrayList<LinearLayout> layouts;
     private ImageView imageView;
     private String currentPhotoPath;
+    private Uri imageUrl;
 
 
     @Override
@@ -98,6 +110,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         ingContainer = findViewById(R.id.linIngContainer);
         layouts = new ArrayList<>();
         imageView = findViewById(R.id.img_picContainer);
+
 
         //---------------------------------------------------\\
         button.setOnClickListener(new View.OnClickListener() {
@@ -218,21 +231,59 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
 
         UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid());
-        model.createUserRecipe(recipe);
 
-        recipeNameField.getText().clear();
-        recipeNameField.setHint("Recipe Name");
-        estimatedTimeField.getText().clear();
-        estimatedTimeField.setHint("Estimated Time");
-        firstIngFiled.getText().clear();
-        firstIngFiled.setHint("Ingredient");
-        firstAmountField.getText().clear();
-        firstAmountField.setHint("Amount");
-
-        for (LinearLayout layout : layouts) {
-            addIngLayout.removeView(layout);
+        if (imageView.getDrawable() != null) {
+            uploadImage(recipe);
+        } else {
+            model.createUserRecipe(recipe).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    clearFields();
+                }
+            });
         }
 
+    }
+
+    private void uploadImage(final UserRecipe recipe) {
+        if (imageUrl != null){
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Uploading");
+            pd.show();
+
+            final StorageReference fileRef = FirebaseStorage
+                    .getInstance()
+                    .getReference()
+                    .child("images")
+                    .child("recipe")
+                    .child(System.currentTimeMillis() + "." + getFileExt(imageUrl));
+
+            fileRef.putFile(imageUrl).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String url = uri.toString();
+                            recipe.setImageUrl(FirebaseStorage.getInstance().getReferenceFromUrl(url).toString());
+
+                            model.createUserRecipe(recipe);
+
+                            pd.dismiss();
+                            imageView.setImageDrawable(null);
+                            clearFields();
+                            Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            e.printStackTrace();
+                            pd.dismiss();
+                        }
+                    });
+                }
+            });
+        }
 
     }
 
@@ -353,21 +404,21 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         if (requestCode == USER_REQUEST_CODE && resultCode == RESULT_OK) {
             File file = new File(currentPhotoPath);
             imageView.setImageURI(Uri.fromFile(file));
-
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri contentUri = Uri.fromFile(file);
+            imageUrl = contentUri;
+
             mediaScanIntent.setData(contentUri);
             this.sendBroadcast(mediaScanIntent);
         }
 
         if (requestCode == REQUEST_CODE_GET_FROM_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri contentUri = data.getData();
+                imageUrl = data.getData();
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(contentUri);
+                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(imageUrl);
                 Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
-                imageView.setImageURI(contentUri);
-
+                imageView.setImageURI(imageUrl);
             }
         }
     }
@@ -394,6 +445,21 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         currentPhotoPath = image.getAbsolutePath();
         Log.d("//////////////////", "createImageFile: " + image.getAbsolutePath());
         return image;
+    }
+
+    private void clearFields() {
+        recipeNameField.getText().clear();
+        recipeNameField.setHint("Recipe Name");
+        estimatedTimeField.getText().clear();
+        estimatedTimeField.setHint("Estimated Time");
+        firstIngFiled.getText().clear();
+        firstIngFiled.setHint("Ingredient");
+        firstAmountField.getText().clear();
+        firstAmountField.setHint("Amount");
+
+        for (LinearLayout layout : layouts) {
+            addIngLayout.removeView(layout);
+        }
     }
 
 
