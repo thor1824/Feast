@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 
 
@@ -139,6 +142,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             }
         });
 
+        recipeNameField.addTextChangedListener(recipeTxtWatcher);
+        estimatedTimeField.addTextChangedListener(recipeTxtWatcher);
+        firstIngFiled.addTextChangedListener(recipeTxtWatcher);
+        firstAmountField.addTextChangedListener(recipeTxtWatcher);
+
+
     }
 
     public void addIngIngredient() {
@@ -171,6 +180,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         p2.leftMargin = 90;
         ingAmount.setLayoutParams(p2);
         ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+        ingAmount.addTextChangedListener(recipeTxtWatcher);
         editContainer.addView(ingAmount);
 
         int amountId = editFieldId;
@@ -205,25 +215,48 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    private TextWatcher recipeTxtWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            String recipeName = recipeNameField.getText().toString();
+            String estimatedTime = estimatedTimeField.getText().toString();
+            String firstIngName = firstIngFiled.getText().toString();
+            String firstAmount = (firstAmountField.getText().toString());
+            submitButton.setEnabled(!recipeName.isEmpty() && !estimatedTime.isEmpty() && !firstIngName.isEmpty() && !firstAmount.isEmpty());
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+
+
 
     private void saveUserRecipe() {
 
-        String recipeName = recipeNameField.getText().toString();
-        System.out.println(estimatedTimeField.getText().toString());
-        long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
-        String firstIngName = firstIngFiled.getText().toString();
-        Long firstAmount = Long.parseLong(firstAmountField.getText().toString());
+
+        final String recipeName = recipeNameField.getText().toString();
+        final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
+        final String firstIngName = firstIngFiled.getText().toString();
+        final long firstAmount = Long.parseLong(firstAmountField.getText().toString());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
+
 
         Ingredient firstIng = new Ingredient(firstIngName, firstAmount);
 
         ingredients.add(firstIng);
 
-
         for (HashMap<String, Integer> map : ingNameList) {
             EditText name = findViewById(map.get("name"));
             EditText amount = findViewById(map.get("amount"));
-
             String nameFromField = name.getText().toString();
             long amountFromField = Long.valueOf(amount.getText().toString());
 
@@ -246,7 +279,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
     private void uploadImage(final UserRecipe recipe) {
-        if (imageUrl != null){
+        if (imageUrl != null) {
             final ProgressDialog pd = new ProgressDialog(this);
             pd.setMessage("Uploading");
             pd.show();
@@ -287,8 +320,8 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
-    private void getPictureFromGallery(){
-        Intent gallery = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    private void getPictureFromGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(gallery, REQUEST_CODE_GET_FROM_GALLERY);
     }
 
@@ -464,5 +497,3 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
 
 }
-
-

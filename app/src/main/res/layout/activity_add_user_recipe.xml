@@ -159,7 +159,8 @@
                 android:layout_gravity="center"
                 android:background="@drawable/submit_button"
                 android:stateListAnimator="@null"
-                android:text="Add Recipe" />
+                android:text="Add Recipe"
+                android:enabled="false"/>
 
 
         </LinearLayout>
