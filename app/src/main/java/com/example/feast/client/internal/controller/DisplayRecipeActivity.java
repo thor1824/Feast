@@ -168,17 +168,17 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                Intent home_intent = new Intent(DisplayRecipeActivity.this, MainActivity.class);
+                Intent home_intent = new Intent(this, MainActivity.class);
                 startActivity(home_intent);
                 finish();
                 break;
             case R.id.nav_addRecipe:
-                Intent recipe_intent = new Intent(DisplayRecipeActivity.this, RecipesActivity.class);
+                Intent recipe_intent = new Intent(this, RecipesActivity.class);
                 startActivity(recipe_intent);
                 finish();
                 break;
             case R.id.nav_profile:
-                Intent profile_intent = new Intent(DisplayRecipeActivity.this, ProfileActivity.class);
+                Intent profile_intent = new Intent(this, ProfileActivity.class);
                 startActivity(profile_intent);
                 finish();
                 break;
@@ -194,6 +194,12 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
 
         }
         drawerLayout.closeDrawer(GravityCompat.START);

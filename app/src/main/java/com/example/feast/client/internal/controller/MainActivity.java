@@ -3,6 +3,7 @@ package com.example.feast.client.internal.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Printer;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Toolbar toolbar;
     private FirebaseAuth mAuth;
     private String TAG = "app";
+    private Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         navigationView = findViewById(R.id.navigation_view);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
+        model = Model.getInstance();
 
         sparkButton.setOnClickListener(new View.OnClickListener() {
 
@@ -154,6 +157,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
 
         }
         drawerLayout.closeDrawer(GravityCompat.START);
