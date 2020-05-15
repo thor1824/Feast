@@ -10,8 +10,8 @@
 
         <item
             android:id="@+id/nav_addRecipe"
-            android:icon="@drawable/add_recipe_icon"
-            android:title="Your Own Recipe" />
+            android:icon="@drawable/ic_description_black_24dp"
+            android:title="Your Recipes" />
 
         <item
             android:id="@+id/nav_profile"
