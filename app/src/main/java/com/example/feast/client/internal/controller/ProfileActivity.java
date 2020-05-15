@@ -15,6 +15,7 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
+import com.example.feast.client.internal.model.Model;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
@@ -27,7 +28,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-
+    private Model model;
     private FirebaseAuth mAuth;
 
     @Override
@@ -43,7 +44,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         navigationView = findViewById(R.id.navigation_view_profile);
         toolbar = findViewById(R.id.toolbar);
         mAuth = FirebaseAuth.getInstance();
-
+        model = Model.getInstance();
 
         //-------------------set data-----------------------------\\
         displayName.setText(mAuth.getCurrentUser().getDisplayName());
@@ -103,6 +104,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
 
         }
         drawerLayout.closeDrawer(GravityCompat.START);

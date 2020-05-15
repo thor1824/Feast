@@ -3,6 +3,7 @@ package com.example.feast.client.internal.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Printer;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,7 +24,6 @@ import com.example.feast.client.internal.model.Model;
 import com.example.feast.client.internal.utility.concurrent.Listener;
 import com.example.feast.core.entities.RecipeContainer;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.varunest.sparkbutton.SparkButton;
 
@@ -32,19 +32,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner mainSpinner;
     private SparkButton sparkButton;
     private String valueFromSpinner;
-    private Model m;
+    private Model model;
     private TextView test;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    private FirebaseAuth mAuth;
     private String TAG = "app";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        model = Model.getInstance();
 
         mainSpinner = findViewById(R.id.spinnerMain);
         sparkButton = findViewById(R.id.spark_button);
@@ -53,10 +53,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
 
+
         sparkButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
+                sparkButton.playAnimation();
                 goToNextActivity();
             }
         });
@@ -70,23 +72,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         test = findViewById(R.id.test);
         test.setText("not Signed in");
 
-
-        mAuth = FirebaseAuth.getInstance();
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = model.getCurrentUser();
         if (currentUser == null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, 10);
         } else {
-            test.setText(mAuth.getCurrentUser().getDisplayName());
-            m = Model.getInstance();
-            m.getAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
+            test.setText(currentUser.getDisplayName());
+
+            model.getAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
                 @Override
                 public void call(RecipeContainer entity) {
                     Log.d(TAG, "call: " + entity);
@@ -154,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
 
         }
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -163,6 +166,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        m.CancelTasks();
+        model.CancelTasks();
     }
 }

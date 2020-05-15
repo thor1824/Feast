@@ -1,11 +1,14 @@
 package com.example.feast.client.internal.controller;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -30,6 +35,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int REQUEST_CODE_SHARE = 106;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -38,6 +44,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     private IRecipe recipeToBeDisplayed;
     private TextView textView;
     private LinearLayout layoutForGram;
+    private LinearLayout layoutForName;
 
     private Model model;
 
@@ -45,22 +52,31 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_recipe);
+        model = Model.getInstance();
 
         //---------------------instantiate----------------------\\
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
         recipeImage = findViewById(R.id.imgRecipe);
-        LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
+        layoutForName = findViewById(R.id.LinLayIngredients);
         textView = findViewById(R.id.txtHeader);
         layoutForGram = findViewById(R.id.LinLayAmount);
         FloatingActionButton btnShare = findViewById(R.id.fab);
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendIngredientsAsSMS();
+                askSharePermissions();
             }
         });
+        final Button btnPick = findViewById(R.id.button_pickAnother);
+        btnPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNewRandomRecipe();
+            }
+        });
+
 
 
         //--------------------setData--------------------------\\
@@ -68,25 +84,20 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
+        toolbar.setTitle("");
 
         //------------------component generator-----------------\\
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        assert message != null;
-        estimatedTime = Integer.parseInt(message);
-        model = Model.getInstance();
-        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
-        toolbar.setTitle("");
-        setRecipe(layoutForName);
-
+        getNewRandomRecipe();
 
     }
 
-    private void setRecipe(LinearLayout layoutForName) {
-        if (recipeToBeDisplayed != null) {
-            textView.setText(recipeToBeDisplayed.getName());
+    private void setRecipe(IRecipe recipe) {
+        layoutForName.removeAllViews();
+        layoutForGram.removeAllViews();
+        if (recipe != null) {
+            textView.setText(recipe.getName());
 
-            for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
+            for (Ingredient s : recipe.getIngredients()) {
                 TextView newTextViewIng = new TextView(this);
                 TextView newTextViewAmount = new TextView(this);
                 newTextViewIng.setText(s.getName());
@@ -96,8 +107,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 layoutForGram.addView(newTextViewAmount);
             }
 
-            if (recipeToBeDisplayed.getImageUrl() != null && recipeToBeDisplayed.getImageUrl().length() > 0) {
-                model.getImage(recipeToBeDisplayed.getImageUrl()).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            if (recipe.getImageUrl() != null && recipe.getImageUrl().length() > 0) {
+                model.getImage(recipe.getImageUrl()).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -163,17 +174,17 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                Intent home_intent = new Intent(DisplayRecipeActivity.this, MainActivity.class);
+                Intent home_intent = new Intent(this, MainActivity.class);
                 startActivity(home_intent);
                 finish();
                 break;
             case R.id.nav_addRecipe:
-                Intent recipe_intent = new Intent(DisplayRecipeActivity.this, RecipesActivity.class);
+                Intent recipe_intent = new Intent(this, RecipesActivity.class);
                 startActivity(recipe_intent);
                 finish();
                 break;
             case R.id.nav_profile:
-                Intent profile_intent = new Intent(DisplayRecipeActivity.this, ProfileActivity.class);
+                Intent profile_intent = new Intent(this, ProfileActivity.class);
                 startActivity(profile_intent);
                 finish();
                 break;
@@ -190,9 +201,47 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
 
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
+
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    private void askSharePermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, REQUEST_CODE_SHARE);
+        } else {
+            sendIngredientsAsSMS();
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE_SHARE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                sendIngredientsAsSMS();
+            } else {
+                Toast.makeText(this, "Permission TO Share Is Required For Sending A Recipe", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void getNewRandomRecipe() {
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        assert message != null;
+        estimatedTime = Integer.parseInt(message);
+        model = Model.getInstance();
+        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
+
+        setRecipe(recipeToBeDisplayed);
     }
 
 

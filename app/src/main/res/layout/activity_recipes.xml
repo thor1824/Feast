@@ -2,7 +2,7 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawLayout_profile"
+    android:id="@+id/drawLayout_recipes"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center_horizontal"
@@ -13,7 +13,7 @@
 
 
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view_profile"
+        android:id="@+id/navigation_recipes"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -26,7 +26,7 @@
         android:id="@+id/addAc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ebe0e7"
+        android:background="@color/background"
         tools:context=".client.internal.controller.RecipesActivity">
 
         <include
@@ -39,7 +39,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/lightpur"
+            android:background="@drawable/main_background"
             android:orientation="vertical"
             android:padding="20dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -57,26 +57,21 @@
                 android:textSize="40dp" />
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/listView_userRecipe"
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:fillViewport="true"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline" />
+            app:layout_constraintTop_toTopOf="@+id/guideline">
 
-        <!-- <ScrollView
-             android:layout_width="match_parent"
-             android:layout_height="0dp"
-             android:layout_marginLeft="20dp"
-             android:layout_marginRight="20dp"
-             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-             app:layout_constraintStart_toStartOf="parent"
-             app:layout_constraintTop_toTopOf="@+id/guideline">
+            <ListView
+                android:id="@+id/listView_userRecipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-         </ScrollView>-->
+        </ScrollView>
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -101,7 +96,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.1" />
+            app:layout_constraintGuide_percent="0.076" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
