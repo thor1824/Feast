@@ -26,8 +26,8 @@
         android:id="@+id/addAc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".client.internal.controller.RecipesActivity"
-        android:background="@color/background">
+        android:background="@color/background"
+        tools:context=".client.internal.controller.RecipesActivity">
 
         <include
             layout="@layout/toolbar"
@@ -57,26 +57,21 @@
                 android:textSize="40dp" />
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/listView_userRecipe"
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:fillViewport="true"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline" />
+            app:layout_constraintTop_toTopOf="@+id/guideline">
 
-        <!-- <ScrollView
-             android:layout_width="match_parent"
-             android:layout_height="0dp"
-             android:layout_marginLeft="20dp"
-             android:layout_marginRight="20dp"
-             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-             app:layout_constraintStart_toStartOf="parent"
-             app:layout_constraintTop_toTopOf="@+id/guideline">
+            <ListView
+                android:id="@+id/listView_userRecipe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-         </ScrollView>-->
+        </ScrollView>
 
         <LinearLayout
             android:id="@+id/linearLayout"
