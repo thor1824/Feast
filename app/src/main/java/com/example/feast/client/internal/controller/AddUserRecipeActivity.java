@@ -383,7 +383,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 photoFile = createImageFile();
             } catch (IOException ex) {
                 Log.d("----------TAG----------", "openCamera: " + ex);
+                ex.printStackTrace();
             }
+
             if (photoFile != null) {
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.feast.android.fileProvider",
