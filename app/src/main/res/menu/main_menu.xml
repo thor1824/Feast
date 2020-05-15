@@ -34,6 +34,12 @@
             android:icon="@drawable/rating_icon"
             android:title="Rate Us" />
 
+        <item
+            android:id="@+id/nav_logOut"
+            android:icon="@drawable/signs"
+            android:title="Sign Out"
+            />
+
 
     </group>
 

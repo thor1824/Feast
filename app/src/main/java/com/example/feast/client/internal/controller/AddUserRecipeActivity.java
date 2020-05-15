@@ -291,6 +291,11 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
 
         }
         drawerLayout.closeDrawer(GravityCompat.START);
