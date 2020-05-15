@@ -31,13 +31,14 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     private Toolbar toolbar;
     private ListView lvUserRecipe;
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView ;
+    private NavigationView navigationView;
+    private Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
-        Model model = Model.getInstance();
+        model = Model.getInstance();
         model.getAllRecipes(model.getCurrentUser().getUid(), new Listener<RecipeContainer>() {
             @Override
             public void call(RecipeContainer entity) {
@@ -51,7 +52,6 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_addRecipe);
         FloatingActionButton goToAddRecipe = findViewById(R.id.button_add_ur);
-
         goToAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,6 +59,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
             }
         });
         toolbar.setTitle("");
+
     }
 
     @Override

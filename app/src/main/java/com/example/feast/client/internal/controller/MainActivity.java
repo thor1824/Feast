@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private NavigationView navigationView;
     private Toolbar toolbar;
     private String TAG = "app";
-    private Model model;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         navigationView = findViewById(R.id.navigation_view);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        model = Model.getInstance();
+
 
         sparkButton.setOnClickListener(new View.OnClickListener() {
 

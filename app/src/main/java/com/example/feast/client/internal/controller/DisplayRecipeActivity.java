@@ -60,12 +60,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         textView = findViewById(R.id.txtHeader);
         layoutForGram = findViewById(R.id.LinLayAmount);
         FloatingActionButton btnShare = findViewById(R.id.fab);
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                askSharePermissions();
-            }
-        });
+        model = Model.getInstance();
 
 
         //--------------------setData--------------------------\\
@@ -73,13 +68,18 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askSharePermissions();
+            }
+        });
 
         //------------------component generator-----------------\\
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         assert message != null;
         estimatedTime = Integer.parseInt(message);
-        model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
         toolbar.setTitle("");
         setRecipe(layoutForName);
