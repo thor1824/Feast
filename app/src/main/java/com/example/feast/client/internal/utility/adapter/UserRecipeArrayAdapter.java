@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
     private static class ViewHolder {
         TextView tvName;
         TextView tvTime;
-        FloatingActionButton deleteRecipe;
+        ImageButton deleteRecipe;
     }
 
     public UserRecipeArrayAdapter(Context context, int resource, List<UserRecipe> items, ListView listView) {

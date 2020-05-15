@@ -8,6 +8,7 @@
     <color name="lightpur">#774d6c</color>
     <color name="gold">#e1c25e</color>
     <color name="background">#ebe0e7</color>
+    <color name="transparant">#00000000</color>
 
 
 </resources>

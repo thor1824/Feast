@@ -1,8 +1,9 @@
 package com.example.feast.core.entities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Recipe implements IRecipe {
+public class Recipe implements IRecipe, Serializable {
 
     private ArrayList<Ingredient> ingredients;
 

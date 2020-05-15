@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.feast">
 
-
-
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.Write_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:allowBackup="true"
@@ -14,12 +15,12 @@
         android:roundIcon="@drawable/logo6"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.noBar">
+        <activity android:name=".client.internal.controller.RecipeActivity"></activity>
         <activity android:name=".client.internal.controller.RecipesActivity" />
         <activity android:name=".client.internal.controller.ProfileActivity" />
         <activity android:name=".client.internal.controller.DisplayRecipeActivity" />
-        <activity android:name=".client.internal.controller.AddUserRecipeActivity"/>
+        <activity android:name=".client.internal.controller.AddUserRecipeActivity" />
         <activity android:name=".client.internal.controller.MainActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,20 +36,8 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
-
-
     </application>
-
-
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.Write_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.SEND_SMS"/>
-
-
-
-
 
 </manifest>

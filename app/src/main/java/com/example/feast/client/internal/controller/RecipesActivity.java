@@ -81,14 +81,23 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 UserRecipe ur = (UserRecipe) lvUserRecipe.getItemAtPosition(position);
-                Log.d("CLICK", "onItemClick: " + ur.getName());
+                onNavigateToUserRecipe(ur);
+
+
             }
         });
 
     }
 
+    private void onNavigateToUserRecipe(UserRecipe ur) {
 
-    public void getGoToAddRecipe() {
+        Intent intent = new Intent(this, RecipeActivity.class);
+        intent.putExtra("ur", ur);
+        startActivity(intent);
+    }
+
+
+    private  void getGoToAddRecipe() {
         Intent GotoAddRecipe_intent = new Intent(this, AddUserRecipeActivity.class);
         startActivity(GotoAddRecipe_intent);
     }

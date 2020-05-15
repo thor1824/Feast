@@ -3,7 +3,7 @@ package com.example.feast.core.entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public interface IRecipe extends Serializable {
+public interface IRecipe {
     String getId();
 
     void setId(String id);
