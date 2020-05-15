@@ -104,8 +104,8 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
         int size = recipes.size();
 
-        if (size >= 0) {
-            if (size != 0) {
+        if (size > 0) {
+            if (size != 1) {
                 Random rn = new Random();
                 int randomInt = rn.nextInt(((recipes.size() - 1) + 1));
                 return recipes.get(randomInt);

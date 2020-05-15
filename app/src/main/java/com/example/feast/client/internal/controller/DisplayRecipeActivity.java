@@ -115,6 +115,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                     }
                 });
             }
+        } else {
+            textView.setText("No Recipe Found");
         }
     }
 
