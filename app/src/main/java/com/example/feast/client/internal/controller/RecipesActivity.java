@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -27,18 +28,16 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 public class RecipesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private ListView lvUserRecipe;
-    private FloatingActionButton goToAddRecipe;
-    private NavigationView navigationView;
-    private Model model;
-    private DrawerLayout drawerLayout;
     private Toolbar toolbar;
+    private ListView lvUserRecipe;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipes);
-        model = Model.getInstance();
+        Model model = Model.getInstance();
         model.getAllRecipes(model.getCurrentUser().getUid(), new Listener<RecipeContainer>() {
             @Override
             public void call(RecipeContainer entity) {
@@ -46,12 +45,12 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
             }
         });
         toolbar = findViewById(R.id.toolbar);
-        drawerLayout = findViewById(R.id.drawLayout_profile);
-        navigationView = findViewById(R.id.navigation_view_profile);
+        drawerLayout = findViewById(R.id.drawLayout_recipes);
+        navigationView = findViewById(R.id.navigation_recipes);
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home);
-        goToAddRecipe = findViewById(R.id.button_add_ur);
+        navigationView.setCheckedItem(R.id.nav_addRecipe);
+        FloatingActionButton goToAddRecipe = findViewById(R.id.button_add_ur);
 
         goToAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +59,17 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
             }
         });
         toolbar.setTitle("");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+
+        toggle.syncState();
     }
 
     private void setUpListView(ArrayList<UserRecipe> urs) {
@@ -73,6 +83,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
                 Log.d("CLICK", "onItemClick: " + ur.getName());
             }
         });
+
     }
 
 
@@ -98,11 +109,13 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
                 startActivity(home_intent);
                 finish();
                 break;
+
             case R.id.nav_addRecipe:
                 Intent recipe_intent = new Intent(this, RecipesActivity.class);
                 startActivity(recipe_intent);
                 finish();
                 break;
+
             case R.id.nav_profile:
                 Intent profile_intent = new Intent(this, ProfileActivity.class);
                 startActivity(profile_intent);
