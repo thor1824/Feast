@@ -50,16 +50,16 @@ public class DBInitializer {
 
     public void generateUserRecipes() {
 
-        UserRecipe recipe1 = new UserRecipe(ingredients, "someID1", 10, "Flue i suppe", "1");
-        UserRecipe recipe2 = new UserRecipe(ingredients, "someID2", 15, "Flue i suppe", "2");
-        UserRecipe recipe3 = new UserRecipe(ingredients, "someID3", 20, "Flue i suppe", "3");
-        UserRecipe recipe4 = new UserRecipe(ingredients, "someID4", 25, "Flue i suppe", "4");
-        UserRecipe recipe5 = new UserRecipe(ingredients, "someID5", 30, "Flue i suppe", "5");
-        UserRecipe recipe6 = new UserRecipe(ingredients, "someID6", 45, "Flue i suppe", "6");
-        UserRecipe recipe7 = new UserRecipe(ingredients, "someID7", 50, "Flue i suppe", "7");
-        UserRecipe recipe8 = new UserRecipe(ingredients, "someID8", 20, "Flue i suppe", "8");
-        UserRecipe recipe9 = new UserRecipe(ingredients, "someID9", 20, "Flue i suppe", "9");
-        UserRecipe recipe10 = new UserRecipe(ingredients, "someID10", 20, "Flue i suppe", "10");
+        UserRecipe recipe1 = new UserRecipe(ingredients, "someID1", 10, "Flue i suppe", "1", "");
+        UserRecipe recipe2 = new UserRecipe(ingredients, "someID2", 15, "Flue i suppe", "2", "");
+        UserRecipe recipe3 = new UserRecipe(ingredients, "someID3", 20, "Flue i suppe", "3", "");
+        UserRecipe recipe4 = new UserRecipe(ingredients, "someID4", 25, "Flue i suppe", "4", "");
+        UserRecipe recipe5 = new UserRecipe(ingredients, "someID5", 30, "Flue i suppe", "5", "");
+        UserRecipe recipe6 = new UserRecipe(ingredients, "someID6", 45, "Flue i suppe", "6", "");
+        UserRecipe recipe7 = new UserRecipe(ingredients, "someID7", 50, "Flue i suppe", "7", "");
+        UserRecipe recipe8 = new UserRecipe(ingredients, "someID8", 20, "Flue i suppe", "8", "");
+        UserRecipe recipe9 = new UserRecipe(ingredients, "someID9", 20, "Flue i suppe", "9", "");
+        UserRecipe recipe10 = new UserRecipe(ingredients, "someID10", 20, "Flue i suppe", "10", "");
 
         userRecipes.add(recipe1);
         userRecipes.add(recipe2);

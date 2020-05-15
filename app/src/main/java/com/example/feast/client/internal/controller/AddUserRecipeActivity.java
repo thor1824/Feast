@@ -263,8 +263,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             ingredients.add(new Ingredient(nameFromField, amountFromField));
         }
 
-
-        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid());
+        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid(), "");
 
         if (imageView.getDrawable() != null) {
             uploadImage(recipe);
@@ -498,7 +497,3 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
 
 }
-
-
-
-
