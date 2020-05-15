@@ -121,6 +121,11 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     }
 
+    public Task<byte[]> setImage(String imgUrl) {
+        return imageService.setImage(imgUrl);
+
+    }
+
     public void CancelTasks() {
         task.cancel(true);
     }

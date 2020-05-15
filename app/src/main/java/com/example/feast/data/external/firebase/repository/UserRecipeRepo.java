@@ -1,5 +1,7 @@
 package com.example.feast.data.external.firebase.repository;
 
+import android.util.Log;
+
 import com.example.feast.core.data.adapter.IUserRecipeRepo;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.tasks.Task;
@@ -22,6 +24,9 @@ public class UserRecipeRepo implements IUserRecipeRepo {
 
     @Override
     public Task<DocumentReference> create(UserRecipe re) {
+
+        Log.d("CreateUserRecipe", re.getImageUrl());
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         return db.collection("UserRecipe").add(re);
 
