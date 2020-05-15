@@ -15,22 +15,24 @@ public class UserRecipe implements IRecipe, Serializable {
     private String imageUrl;
 
 
-    public UserRecipe(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String userId) {
+    public UserRecipe(ArrayList<Ingredient> listOfIngredients, String id, long time, String name, String userId, String imageUrl) {
 
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.id = id;
         this.name = name;
+        this.imageUrl = imageUrl;
 
         this.userId = userId;
     }
 
-    public UserRecipe(ArrayList<Ingredient> listOfIngredients, long time, String name, String userId) {
+    public UserRecipe(ArrayList<Ingredient> listOfIngredients, long time, String name, String userId, String imageUrl) {
 
         this.estimatedTime = time;
         this.ingredients = listOfIngredients;
         this.name = name;
         this.userId = userId;
+        this.imageUrl = imageUrl;
     }
 
 

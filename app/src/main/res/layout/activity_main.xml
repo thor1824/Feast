@@ -12,7 +12,7 @@
     tools:openDrawer="start">
 
 
-    <com.google.android.material.navigation.NavigationView
+<com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -85,13 +85,15 @@
 
             <com.varunest.sparkbutton.SparkButton
                 android:id="@+id/spark_button"
-                android:layout_width="250dp"
-                android:layout_height="200dp"
-                android:text="Lets Feast"
-                app:sparkbutton_activeImage="@drawable/button"
-                app:sparkbutton_iconSize="800px"
-                app:sparkbutton_primaryColor="@color/darkpur"
-                app:sparkbutton_secondaryColor="@color/lightpur" />
+                android:layout_width="224dp"
+                android:layout_height="95dp"
+                android:background="@drawable/buutin_on_main"
+                app:sparkbutton_activeImage="@drawable/lets_feast"
+                app:sparkbutton_iconSize="150dp"
+                app:sparkbutton_primaryColor="@color/colorPrimary"
+                app:sparkbutton_secondaryColor="@color/lightpur"
+
+                />
 
             <TextView
                 android:id="@+id/test"

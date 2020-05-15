@@ -55,6 +55,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
         goToAddRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 getGoToAddRecipe();
             }
         });

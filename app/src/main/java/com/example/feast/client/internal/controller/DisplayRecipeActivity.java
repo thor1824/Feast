@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -78,7 +79,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         });
 
 
-
         //--------------------setData--------------------------\\
 
         navigationView.bringToFront();
@@ -108,6 +108,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
             }
 
             if (recipe.getImageUrl() != null && recipe.getImageUrl().length() > 0) {
+
+                Log.d("Imagefile", recipe.getImageUrl());
+
                 model.getImage(recipe.getImageUrl()).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
@@ -146,7 +149,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         sendIntent.putExtra("sms_body", builder.toString());
         sendIntent.setType("text/plain");
 
-        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        Intent shareIntent = Intent.createChooser(sendIntent, "Choose your character");
         startActivity(shareIntent);
     }
 
@@ -169,7 +172,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
             super.onBackPressed();
         }
     }
-
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -206,7 +208,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 Intent signOutIntent = new Intent(this, LoginActivity.class);
                 startActivity(signOutIntent);
                 finishAffinity();
-
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
@@ -219,7 +220,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         } else {
             sendIngredientsAsSMS();
         }
-
     }
 
     @Override
@@ -240,9 +240,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         estimatedTime = Integer.parseInt(message);
         model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
-
         setRecipe(recipeToBeDisplayed);
     }
-
-
 }
