@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     private IRecipe recipeToBeDisplayed;
     private TextView textView;
     private LinearLayout layoutForGram;
+    private LinearLayout layoutForName;
 
     private Model model;
 
@@ -50,17 +52,31 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_recipe);
+        model = Model.getInstance();
 
         //---------------------instantiate----------------------\\
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
         recipeImage = findViewById(R.id.imgRecipe);
-        LinearLayout layoutForName = findViewById(R.id.LinLayIngredients);
+        layoutForName = findViewById(R.id.LinLayIngredients);
         textView = findViewById(R.id.txtHeader);
         layoutForGram = findViewById(R.id.LinLayAmount);
         FloatingActionButton btnShare = findViewById(R.id.fab);
-        model = Model.getInstance();
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                askSharePermissions();
+            }
+        });
+        final Button btnPick = findViewById(R.id.button_pickAnother);
+        btnPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNewRandomRecipe();
+            }
+        });
+
 
 
         //--------------------setData--------------------------\\
@@ -68,30 +84,20 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                askSharePermissions();
-            }
-        });
+        toolbar.setTitle("");
 
         //------------------component generator-----------------\\
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        assert message != null;
-        estimatedTime = Integer.parseInt(message);
-        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
-        toolbar.setTitle("");
-        setRecipe(layoutForName);
-
+        getNewRandomRecipe();
 
     }
 
-    private void setRecipe(LinearLayout layoutForName) {
-        if (recipeToBeDisplayed != null) {
-            textView.setText(recipeToBeDisplayed.getName());
+    private void setRecipe(IRecipe recipe) {
+        layoutForName.removeAllViews();
+        layoutForGram.removeAllViews();
+        if (recipe != null) {
+            textView.setText(recipe.getName());
 
-            for (Ingredient s : recipeToBeDisplayed.getIngredients()) {
+            for (Ingredient s : recipe.getIngredients()) {
                 TextView newTextViewIng = new TextView(this);
                 TextView newTextViewAmount = new TextView(this);
                 newTextViewIng.setText(s.getName());
@@ -101,8 +107,8 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 layoutForGram.addView(newTextViewAmount);
             }
 
-            if (recipeToBeDisplayed.getImageUrl() != null && recipeToBeDisplayed.getImageUrl().length() > 0) {
-                model.getImage(recipeToBeDisplayed.getImageUrl()).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            if (recipe.getImageUrl() != null && recipe.getImageUrl().length() > 0) {
+                model.getImage(recipe.getImageUrl()).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -225,6 +231,17 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 Toast.makeText(this, "Permission TO Share Is Required For Sending A Recipe", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void getNewRandomRecipe() {
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        assert message != null;
+        estimatedTime = Integer.parseInt(message);
+        model = Model.getInstance();
+        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
+
+        setRecipe(recipeToBeDisplayed);
     }
 
 
