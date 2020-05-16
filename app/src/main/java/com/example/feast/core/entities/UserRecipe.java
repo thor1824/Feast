@@ -1,5 +1,7 @@
 package com.example.feast.core.entities;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -84,6 +86,12 @@ public class UserRecipe implements IRecipe, Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "id: " + id + " name: " + name;
     }
 }
 

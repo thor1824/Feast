@@ -38,6 +38,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
+import com.example.feast.client.internal.utility.globals.RequestCodes;
 import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.Recipe;
 import com.example.feast.core.entities.UserRecipe;
@@ -65,9 +66,6 @@ import java.util.concurrent.BlockingDeque;
 
 public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final int REQUEST_CODE_CAMERA = 101;
-    public static final int USER_REQUEST_CODE = 102;
-    public static final int REQUEST_CODE_GET_FROM_GALLERY = 103;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
@@ -278,52 +276,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
-    private void uploadImage(final UserRecipe recipe) {
-        if (imageUrl != null) {
-            final ProgressDialog pd = new ProgressDialog(this);
-            pd.setMessage("Uploading");
-            pd.show();
 
-            final StorageReference fileRef = FirebaseStorage
-                    .getInstance()
-                    .getReference()
-                    .child("images")
-                    .child("recipe")
-                    .child(System.currentTimeMillis() + "." + getFileExt(imageUrl));
 
-            fileRef.putFile(imageUrl).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String url = uri.toString();
-                            recipe.setImageUrl(FirebaseStorage.getInstance().getReferenceFromUrl(url).toString());
 
-                            model.createUserRecipe(recipe);
-
-                            pd.dismiss();
-                            imageView.setImageDrawable(null);
-                            clearFields();
-                            Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            e.printStackTrace();
-                            pd.dismiss();
-                        }
-                    });
-                }
-            });
-        }
-
-    }
-
-    private void getPictureFromGallery() {
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, REQUEST_CODE_GET_FROM_GALLERY);
-    }
 
 
     @Override
@@ -387,9 +342,11 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+
+
     private void askCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.REQUEST_CODE_CAMERA);
         } else {
             openCamera();
         }
@@ -398,7 +355,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CODE_CAMERA) {
+        if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
@@ -407,10 +364,15 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    private void getPictureFromGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, RequestCodes.REQUEST_CODE_GET_FROM_GALLERY);
+    }
+
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntend.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntend, USER_REQUEST_CODE);
+            startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
             File photoFile = null;
             try {
                 photoFile = createImageFile();
@@ -424,45 +386,59 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                         "com.example.feast.android.fileProvider",
                         photoFile);
                 cameraIntend.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(cameraIntend, USER_REQUEST_CODE);
+                startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
             }
 
         }
     }
 
+    private void uploadImage(final UserRecipe recipe) {
+        if (imageUrl != null) {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Uploading");
+            pd.show();
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == USER_REQUEST_CODE && resultCode == RESULT_OK) {
-            File file = new File(currentPhotoPath);
-            imageView.setImageURI(Uri.fromFile(file));
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            Uri contentUri = Uri.fromFile(file);
-            imageUrl = contentUri;
+            final StorageReference fileRef = FirebaseStorage
+                    .getInstance()
+                    .getReference()
+                    .child("images")
+                    .child("recipe")
+                    .child(System.currentTimeMillis() + "." + getFileExt(imageUrl));
 
-            mediaScanIntent.setData(contentUri);
-            this.sendBroadcast(mediaScanIntent);
+            fileRef.putFile(imageUrl).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String url = uri.toString();
+                            recipe.setImageUrl(FirebaseStorage.getInstance().getReferenceFromUrl(url).toString());
+
+                            model.createUserRecipe(recipe);
+
+                            pd.dismiss();
+                            imageView.setImageDrawable(null);
+                            clearFields();
+                            Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            e.printStackTrace();
+                            pd.dismiss();
+                        }
+                    });
+                }
+            });
         }
 
-        if (requestCode == REQUEST_CODE_GET_FROM_GALLERY) {
-            if (resultCode == Activity.RESULT_OK) {
-                imageUrl = data.getData();
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(imageUrl);
-                Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
-                imageView.setImageURI(imageUrl);
-            }
-        }
     }
-
 
     private String getFileExt(Uri contentUri) {
         ContentResolver c = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(c.getType(contentUri));
     }
-
 
     private File createImageFile() throws IOException {
 
@@ -478,6 +454,32 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         currentPhotoPath = image.getAbsolutePath();
         Log.d("//////////////////", "createImageFile: " + image.getAbsolutePath());
         return image;
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RequestCodes.USER_REQUEST_CODE && resultCode == RESULT_OK) {
+            File file = new File(currentPhotoPath);
+            imageView.setImageURI(Uri.fromFile(file));
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(file);
+            imageUrl = contentUri;
+
+            mediaScanIntent.setData(contentUri);
+            this.sendBroadcast(mediaScanIntent);
+        }
+
+        if (requestCode == RequestCodes.REQUEST_CODE_GET_FROM_GALLERY) {
+            if (resultCode == Activity.RESULT_OK) {
+                imageUrl = data.getData();
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(imageUrl);
+                Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
+                imageView.setImageURI(imageUrl);
+            }
+        }
     }
 
     private void clearFields() {

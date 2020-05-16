@@ -46,6 +46,7 @@ public class UserRecipeRepo implements IUserRecipeRepo {
         data.put("ingredients", re.getIngredients());
         data.put("estimatedTime", re.getEstimatedTime());
         data.put("userId", re.getUserId());
+        data.put("imageUrl", re.getImageUrl());
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         return db.collection("UserRecipe").document(re.getId()).update(data);
     }

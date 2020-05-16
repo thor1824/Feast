@@ -29,7 +29,7 @@ public class AsyncGetAllRecipes extends AsyncUpdateTask<RecipeContainer> {
     private final IRecipeService reServ;
     private boolean isComplete;
 
-    public AsyncGetAllRecipes(AsyncUpdate<RecipeContainer> listener, String userId, IUserRecipeService urServ, IRecipeService reServ) {
+    public AsyncGetAllRecipes(String userId, IUserRecipeService urServ, IRecipeService reServ, AsyncUpdate<RecipeContainer> listener) {
         super(listener);
         this.USER_ID = userId;
         this.urServ = urServ;

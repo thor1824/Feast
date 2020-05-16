@@ -11,7 +11,18 @@
     tools:context=".client.internal.controller.ProfileActivity"
     tools:openDrawer="start">
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_recipe"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/background"
+        app:headerLayout="@layout/header"
+        app:menu="@menu/main_menu" />
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/background"
@@ -21,6 +32,27 @@
             android:id="@+id/include2"
             layout="@layout/toolbar"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imgRecipe"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:src="@drawable/foodnotfound"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideline12" />
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:background="#30000000"
+            android:src="@drawable/camara_icon"
+            app:layout_constraintBottom_toBottomOf="@+id/imgRecipe"
+            app:layout_constraintEnd_toEndOf="@+id/imgRecipe"
+            app:layout_constraintStart_toStartOf="@+id/imgRecipe"
+            app:layout_constraintTop_toTopOf="@+id/imgRecipe" />
 
         <EditText
             android:id="@+id/et_ur_name"
@@ -51,7 +83,7 @@
             android:layout_marginBottom="10dp"
             android:text="Ingredients"
             app:layout_constraintBottom_toTopOf="@+id/guideline9"
-            app:layout_constraintStart_toStartOf="@+id/table_ing"/>
+            app:layout_constraintStart_toStartOf="@+id/table_ing" />
 
         <TableLayout
             android:id="@+id/table_ing"
@@ -118,21 +150,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.15" />
+            app:layout_constraintGuide_percent="0.07" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.34" />
+            app:layout_constraintGuide_percent="0.59" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.24" />
+            app:layout_constraintGuide_percent="0.16" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline7"
@@ -154,6 +186,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.22" />
+
+        <Button
+            android:id="@+id/button_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick fromgallery"
+            app:layout_constraintBottom_toTopOf="@+id/table_ing"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgRecipe" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

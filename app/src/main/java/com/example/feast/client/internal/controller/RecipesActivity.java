@@ -2,7 +2,6 @@ package com.example.feast.client.internal.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,6 +9,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,6 +20,7 @@ import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.client.internal.utility.adapter.UserRecipeArrayAdapter;
 import com.example.feast.client.internal.utility.concurrent.Listener;
+import com.example.feast.client.internal.utility.globals.RequestCodes;
 import com.example.feast.core.entities.RecipeContainer;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,6 +34,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Model model;
+    private final String TAG = "RecipesActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +96,21 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
         Intent intent = new Intent(this, RecipeActivity.class);
         intent.putExtra("ur", ur);
-        startActivity(intent);
+        startActivityForResult(intent, RequestCodes.REQUEST_CODE_UPDATE);
     }
 
 
     private  void getGoToAddRecipe() {
         Intent GotoAddRecipe_intent = new Intent(this, AddUserRecipeActivity.class);
         startActivity(GotoAddRecipe_intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(RequestCodes.REQUEST_CODE_UPDATE == requestCode && RESULT_OK == resultCode) {
+            model.forceUpdate();
+        }
     }
 
     @Override
