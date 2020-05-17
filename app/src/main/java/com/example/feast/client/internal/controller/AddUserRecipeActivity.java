@@ -236,8 +236,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     };
 
 
-
-
     private void saveUserRecipe() {
 
 
@@ -275,10 +273,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
 
     }
-
-
-
-
 
 
     @Override
@@ -340,8 +334,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 
 
     private void askCameraPermissions() {
@@ -417,7 +409,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                             model.createUserRecipe(recipe);
 
                             pd.dismiss();
-                            imageView.setImageDrawable(null);
+                            imageView.setImageResource(R.drawable.camara_icon);
                             clearFields();
                             Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
                         }
