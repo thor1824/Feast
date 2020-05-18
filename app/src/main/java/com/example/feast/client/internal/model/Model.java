@@ -47,6 +47,13 @@ public class Model implements AsyncUpdate<RecipeContainer> {
     private IImageService imageService;
     private IAuthService authService;
 
+    /**
+     * constructor
+     * @param userRecipeService
+     * @param recipeService
+     * @param imageService
+     * @param authService
+     */
     protected Model(IUserRecipeService userRecipeService, IRecipeService recipeService, IImageService imageService, IAuthService authService) {
         this.userRecipeService = userRecipeService;
         this.recipeService = recipeService;
@@ -54,12 +61,17 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         this.authService = authService;
     }
 
+    /**
+     * Singleton modelInstance
+     * @return
+     */
     public static Model getInstance() {
         if (model == null) {
             model = BuildFactory.BuildModel();
         }
         return model;
     }
+
 
     @Override
     public void update(RecipeContainer entity) {
@@ -70,19 +82,39 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         }
     }
 
+    /**
+     * redirects to the userRecipeService with an update
+     * @param ur
+     * @return
+     */
     public Task<Void> updateUserRecipe(UserRecipe ur) {
         Log.d(TAG, "updateUserRecipe: ");
         return userRecipeService.update(ur);
     }
 
+    /**
+     * redirects to the userRecipeService with a delete
+     * @param id
+     * @return
+     */
     public Task<Void> deleteUserRecipe(String id) {
         return userRecipeService.delete(id);
     }
 
+    /**
+     * redirects to the userRecipeService with an create
+     * @param ur
+     * @return
+     */
     public Task<DocumentReference> createUserRecipe(UserRecipe ur) {
         return userRecipeService.create(ur);
     }
 
+    /**
+     * gets all the recipes from firebase from both collections
+     * @param userId
+     * @param listener
+     */
     public void getAllRecipes(String userId, Listener<RecipeContainer> listener) {
         this.list = listener;
         task = new AsyncGetAllRecipes(userId, userRecipeService, recipeService, this);
@@ -93,6 +125,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         }
     }
 
+
     public void forceUpdate() {
         if (list != null) {
             task = new AsyncGetAllRecipes(getCurrentUser().getUid(), userRecipeService, recipeService, this);
@@ -100,6 +133,11 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         }
     }
 
+    /**
+     * gets a random recipe from either userrecipes or recipes
+     * @param estimatedTime
+     * @return
+     */
     public IRecipe getRandomRecipe(int estimatedTime) {
 
         List<IRecipe> recipes = new ArrayList<>();
@@ -132,32 +170,65 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         return null;
     }
 
+    /**
+     * gets the image
+     * @param imgUrl
+     * @return
+     */
     public Task<byte[]> getImage(String imgUrl) {
         return imageService.getImage(imgUrl);
 
     }
 
+    /**
+     * sets the image
+     * @param imgUrl
+     * @return
+     */
     public Task<byte[]> setImage(String imgUrl) {
         return imageService.setImage(imgUrl);
 
     }
 
+    /**
+     * cancels all tasks
+     */
     public void CancelTasks() {
         task.cancel(true);
     }
 
+    /**
+     * signs in with google
+     * @param task
+     * @return
+     * @throws ApiException
+     */
     public Task<AuthResult> singInWithGoogle(Task<GoogleSignInAccount> task) throws ApiException {
         return authService.singInWithGoogle(task);
     }
 
+    /**
+     * signs out
+     */
     public void signOut() {
         authService.signOut();
     }
 
+    /**
+     * gets the current user
+     * @return
+     */
     public FirebaseUser getCurrentUser() {
         return authService.getCurrentUser();
     }
 
+    /**
+     * uploads an image to the firebase storage
+     * @param imageUrl
+     * @param ctx
+     * @return
+     * @throws InterruptedException
+     */
     public Task<Uri> uploadImage(Uri imageUrl, Context ctx) throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(1);
         final StorageReference fileRef = FirebaseStorage
@@ -177,6 +248,12 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         return fileRef.getDownloadUrl();
     }
 
+    /**
+     * gets the file extension
+     * @param contentUri
+     * @param ctx
+     * @return
+     */
     public String getFileExt(Uri contentUri, Context ctx) {
         ContentResolver c = ctx.getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();

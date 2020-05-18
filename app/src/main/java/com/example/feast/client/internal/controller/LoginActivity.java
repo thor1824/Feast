@@ -32,6 +32,10 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton signInButton;
     private Model model;
 
+    /**
+     * sets up the activity, with google signing
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * check if the user isn't null.
+     * if the user isn't null it makes a new intent, and starts the main activity.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -65,11 +73,21 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * signs in the user
+     */
     private void signIn() {
         Intent intent = mSignInClient.getSignInIntent();
         startActivityForResult(intent, RC_SIGN_IN);
     }
 
+    /**
+     * checks the result code, if the resultcode is "sign-in"
+     * it logs in the user via firebase
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -80,6 +98,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * signs in the user via firebase auth.
+     * @param data
+     */
     private void firebaseAuthWithGoogle(Intent data) {
         try {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -106,6 +128,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * returns the user to the main activity
+     */
     private void backToMain() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivityForResult(intent, 10);

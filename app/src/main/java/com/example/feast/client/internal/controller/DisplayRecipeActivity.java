@@ -49,6 +49,10 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     private Model model;
 
+    /**
+     * creates the activity and setup up the views.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +95,10 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * sets the recipe in the views, and checks if the recipe has a picture.
+     * @param recipe
+     */
     private void setRecipe(IRecipe recipe) {
         layoutForName.removeAllViews();
         layoutForGram.removeAllViews();
@@ -129,7 +137,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
-
+    /**
+     * sends the recipe to the SMS app on the phone
+     */
     private void sendIngredientsAsSMS() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
@@ -154,6 +164,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * sets up the toolbar
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -164,6 +177,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         toggle.syncState();
     }
 
+    /**
+     * checkes if the toolbar is opened
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -173,6 +189,11 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * sets up the toolbar with navigation or messages
+     * @param item
+     * @return
+     */
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
@@ -213,7 +234,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         return true;
     }
 
-
+    /**
+     * checks if the permissions to use the sms app is granted or not.
+     */
     private void askSharePermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, REQUEST_CODE_SHARE);
@@ -222,6 +245,12 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * checks the result of the permissions.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_CODE_SHARE) {
@@ -233,6 +262,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * gets a random recipe from firebase
+     */
     public void getNewRandomRecipe() {
         Intent intent = getIntent();
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);

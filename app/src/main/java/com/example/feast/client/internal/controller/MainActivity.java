@@ -39,6 +39,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private String TAG = "app";
 
 
+    /**
+     * creates the activity, and sets up the views.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    /**
+     * checks if there is  a user logged in or not.
+     * if logged in, it gets all the recipes from firebase.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -94,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         toggle.syncState();
     }
 
+    /**
+     * checks if the toolbar is opened
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -103,6 +114,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    /**
+     * checks what is selected in the estimatedTime Spinner
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if (parent.getId() == R.id.spinnerMain) {
@@ -115,6 +133,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    /**
+     * takes the selected item in the spinner and parses it to the next activity
+     */
     public void goToNextActivity() {
         Intent intent = new Intent(this, DisplayRecipeActivity.class);
         mainSpinner = findViewById(R.id.spinnerMain);
@@ -123,6 +144,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(intent);
     }
 
+    /**
+     * sets up the toolbar
+     * @param item
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -159,6 +185,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return true;
     }
 
+    /**
+     * when its destroyed it cancels all tasks.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();

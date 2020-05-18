@@ -85,10 +85,15 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private ImageView imageView;
     private String currentPhotoPath;
     private Uri imageUrl;
+    private ArrayList<EditText> editTexts;
 
     private final String TAG = "AddUserRecipeActivity";
 
 
+    /**
+     * Creates the activity and sets up the views, with buttons etc.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,7 +119,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         ingContainer = findViewById(R.id.linIngContainer);
 
         imageView = findViewById(R.id.img_picContainer);
-
+        editTexts = new ArrayList<>();
 
         //---------------------------------------------------\\
 
@@ -153,13 +158,17 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             }
         });
 
-        recipeNameField.addTextChangedListener(recipeTxtWatcher);
-        estimatedTimeField.addTextChangedListener(recipeTxtWatcher);
-        firstIngFiled.addTextChangedListener(recipeTxtWatcher);
-        firstAmountField.addTextChangedListener(recipeTxtWatcher);
+        editTexts.add(recipeNameField);
+        editTexts.add(estimatedTimeField);
+        editTexts.add(firstIngFiled);
+        editTexts.add(firstAmountField);
 
     }
 
+    /**
+     * Creates a new LinearLayout, and sets 2 editText views, which contains the information
+     * for user recipes.
+     */
     public void addIngIngredient() {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -168,76 +177,68 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         editContainer.setOrientation(LinearLayout.HORIZONTAL);
         addIngLayout.addView(editContainer);
 
-
-        editFieldId++;
-        final EditText ingName = new EditText(this);
-        ingName.setHint("Ingredient");
-        ingName.setLayoutParams(p);
-        ingName.setId(editFieldId);
-        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
-        editContainer.addView(ingName);
-
-        int nameId = editFieldId;
-
-        editFieldId++;
-        final EditText ingAmount = new EditText(this);
-        ingAmount.setHint("Amount");
-        ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-        ingAmount.setLayoutParams(p);
-        ingAmount.setId(editFieldId);
-        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        p2.leftMargin = 90;
-        ingAmount.setLayoutParams(p2);
-        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-        ingAmount.addTextChangedListener(recipeTxtWatcher);
-        editContainer.addView(ingAmount);
-
-        int amountId = editFieldId;
-
-        final TextView textView = new TextView(this);
+        editContainer.addView(ingredientName());
+        editContainer.addView(ingredientAmount());
+        TextView textView = new TextView(this);
         textView.setText("g");
         editContainer.addView(textView);
 
-        FloatingActionButton deleteIngButton = new FloatingActionButton(this);
-        deleteIngButton.setImageResource(R.drawable.delete_icon);
-        LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        p3.leftMargin = 60;
-        p3.topMargin = 30;
-        deleteIngButton.setLayoutParams(p3);
-        deleteIngButton.setCompatElevation(0);
-        editContainer.addView(deleteIngButton);
+        FloatingActionButton deleteButton = deleteButton();
+        editContainer.addView(deleteButton);
 
+        int nameId = editFieldId;
+        int amountId = editFieldId;
 
-        HashMap<String, Integer> bob = new HashMap<String, Integer>();
-        bob.put("name", nameId);
-        bob.put("amount", amountId);
-        ingNameList.add(bob);
+        HashMap<String, Integer> ingredientsMap = new HashMap<String, Integer>();
+        ingredientsMap.put("name", nameId);
+        ingredientsMap.put("amount", amountId);
+        ingNameList.add(ingredientsMap);
         layouts.add(editContainer);
-        deleteIngButton.setOnClickListener((new View.OnClickListener() {
+        final int index = ingNameList.size() - 1;
+        deleteButton.setOnClickListener((new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                ingNameList.remove(index);
                 addIngLayout.removeView(editContainer);
 
             }
         }));
 
-
     }
 
+    /**
+     * textWatcher class is used to see if the views are empty or not
+     */
     private TextWatcher recipeTxtWatcher = new TextWatcher() {
+
+        private boolean isValid() {
+
+            for (EditText editText : editTexts) {
+
+                if (editText.getText().toString().isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
 
+        /**
+         * We only check on if the text is changed.
+         * @param s
+         * @param start
+         * @param before
+         * @param count
+         */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String recipeName = recipeNameField.getText().toString();
-            String estimatedTime = estimatedTimeField.getText().toString();
-            String firstIngName = firstIngFiled.getText().toString();
-            String firstAmount = (firstAmountField.getText().toString());
-            submitButton.setEnabled(!recipeName.isEmpty() && !estimatedTime.isEmpty() && !firstIngName.isEmpty() && !firstAmount.isEmpty());
 
+            submitButton.setEnabled(isValid());
         }
 
         @Override
@@ -247,6 +248,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     };
 
 
+    /**
+     * takes all the views content, and creates a new userRecipe,
+     * if the userRecipe has an image, the image is uploaded.
+     * when the createUserRecipe is succeeded the method clears all the views
+     * for a new recipe to be made.
+     */
     private void saveUserRecipe() {
         final String recipeName = recipeNameField.getText().toString();
         final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
@@ -284,6 +291,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * onStart checks whether the toolbar is opened or not
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -294,6 +304,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         toggle.syncState();
     }
 
+    /**
+     * when the back button is pressed, it checks if the toolbar is open of closed
+     * if it is open it closes and sets the result to "OK"
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -305,6 +319,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * Navigation is setup through a switch statement, either displays a message or
+     * navigate to another activity
+     * @param item
+     * @return
+     */
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
@@ -334,6 +354,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+
             case R.id.nav_logOut:
                 model.signOut();
                 Intent signOutIntent = new Intent(this, LoginActivity.class);
@@ -346,6 +367,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * Checks if the camera permission is set, if false open the permission survey.
+     * if true, opens the camera
+     */
     private void askCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.REQUEST_CODE_CAMERA);
@@ -355,6 +380,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * Gets the result of camera permissions. if false, it tells the user it needs permission.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
@@ -366,11 +397,18 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * builds an Intent and parses it to a new activity
+     */
     private void getPictureFromGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(gallery, RequestCodes.REQUEST_CODE_GET_FROM_GALLERY);
     }
 
+    /**
+     * creates a new Intent if the user decides to make a new picture it will be created
+     * the new picture will then be saved to the phone.
+     */
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //checks if camera exist
@@ -395,6 +433,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * check whether the imageUrl on a recipe is null, if false,
+     * it opens a progressDialog, gets a firebase Reference, and upload the file to firebase firestore.
+     * when it is done it closes the ProgressDialog.
+     *
+     * if it fails it prints the Stacktrace to the Console.
+     * @param recipe
+     */
     private void uploadImage(final UserRecipe recipe) {
         if (imageUrl != null) {
             final ProgressDialog pd = new ProgressDialog(this);
@@ -437,12 +483,24 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * gets the files extension (Jpg, Png, etc)
+     * @param contentUri
+     * @return
+     */
     private String getFileExt(Uri contentUri) {
         ContentResolver c = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(c.getType(contentUri));
     }
 
+    /**
+     * creates the image and returns it.
+     *
+     * throws IOException if it fails
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -460,6 +518,13 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * Checks the resultcodes for if it is chosen by the gallery or a new image
+     * thereafter saves it to the internal storage.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -469,7 +534,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri contentUri = Uri.fromFile(file);
             imageUrl = contentUri;
-
             mediaScanIntent.setData(contentUri);
             this.sendBroadcast(mediaScanIntent);
         }
@@ -486,6 +550,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * Clears all the views
+     */
     private void clearFields() {
         recipeNameField.getText().clear();
         recipeNameField.setHint("Recipe Name");
@@ -499,6 +566,47 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         for (LinearLayout layout : layouts) {
             addIngLayout.removeView(layout);
         }
+    }
+
+
+    private EditText ingredientName() {
+        editFieldId++;
+        EditText ingName = new EditText(this);
+        ingName.setHint("Ingredient");
+        ingName.setId(editFieldId);
+        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        editTexts.add(ingName);
+        return ingName;
+    }
+
+    private EditText ingredientAmount() {
+        editFieldId++;
+        EditText ingAmount = new EditText(this);
+        ingAmount.setHint("Amount");
+        ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        ingAmount.setId(editFieldId);
+        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        p2.leftMargin = 90;
+        ingAmount.setLayoutParams(p2);
+        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+        ingAmount.addTextChangedListener(recipeTxtWatcher);
+        editTexts.add(ingAmount);
+        return ingAmount;
+    }
+
+    private FloatingActionButton deleteButton() {
+
+        FloatingActionButton deleteIngButton = new FloatingActionButton(this);
+        deleteIngButton.setImageResource(R.drawable.delete_icon);
+        LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        p3.leftMargin = 60;
+        p3.topMargin = 30;
+        deleteIngButton.setLayoutParams(p3);
+        deleteIngButton.setCompatElevation(0);
+        return deleteIngButton;
+
+
     }
 
 
