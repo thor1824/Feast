@@ -290,7 +290,8 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            setResult(RESULT_OK);
+            finish();
         }
     }
 
