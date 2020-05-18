@@ -86,11 +86,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private String currentPhotoPath;
     private Uri imageUrl;
 
+    private final String TAG = "AddUserRecipeActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user_recipe);
+        layouts = new ArrayList<>();
 
         //-------------------instantiate-------------------\\
         drawerLayout = findViewById(R.id.drawLayout_addRecipe);
@@ -109,11 +112,22 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         model = Model.getInstance();
         submitButton = findViewById(R.id.submitBt);
         ingContainer = findViewById(R.id.linIngContainer);
-        layouts = new ArrayList<>();
+
         imageView = findViewById(R.id.img_picContainer);
 
 
         //---------------------------------------------------\\
+
+        toolbar.setTitle("");
+
+        setUpViews();
+        setUpListener();
+    }
+
+    private void setUpViews() {
+    }
+
+    public void setUpListener() {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -126,7 +140,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 saveUserRecipe();
             }
         });
-        toolbar.setTitle("");
         takePickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,12 +158,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         firstIngFiled.addTextChangedListener(recipeTxtWatcher);
         firstAmountField.addTextChangedListener(recipeTxtWatcher);
 
-
     }
 
     public void addIngIngredient() {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
 
         final LinearLayout editContainer = new LinearLayout(this);
         editContainer.setLayoutParams(p);
@@ -237,8 +248,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
 
     private void saveUserRecipe() {
-
-
         final String recipeName = recipeNameField.getText().toString();
         final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
         final String firstIngName = firstIngFiled.getText().toString();
@@ -364,8 +373,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //checks if camera exist
         if (cameraIntend.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
+
             File photoFile = null;
             try {
                 photoFile = createImageFile();
@@ -373,15 +384,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 Log.d("----------TAG----------", "openCamera: " + ex);
                 ex.printStackTrace();
             }
-
             if (photoFile != null) {
+
                 Uri photoURI = FileProvider.getUriForFile(this,
                         "com.example.feast.android.fileProvider",
                         photoFile);
                 cameraIntend.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
             }
-
         }
     }
 
@@ -445,7 +455,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         );
 
         currentPhotoPath = image.getAbsolutePath();
-        Log.d("//////////////////", "createImageFile: " + image.getAbsolutePath());
+        Log.d(TAG, "createImageFile: " + image.getAbsolutePath());
         return image;
     }
 
@@ -467,6 +477,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         if (requestCode == RequestCodes.REQUEST_CODE_GET_FROM_GALLERY) {
             if (resultCode == Activity.RESULT_OK) {
                 imageUrl = data.getData();
+                Log.d(TAG, "onActivityResult: " + imageUrl);
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(imageUrl);
                 Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
