@@ -12,11 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.example.feast.R;
-import com.example.feast.core.entities.UserRecipe;
 import com.example.feast.client.internal.model.Model;
+import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
@@ -24,17 +23,10 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
 
     private ListView listView;
 
-    private static class ViewHolder {
-        TextView tvName;
-        TextView tvTime;
-        ImageButton deleteRecipe;
-    }
-
     public UserRecipeArrayAdapter(Context context, int resource, List<UserRecipe> items, ListView listView) {
         super(context, resource, items);
         this.listView = listView;
     }
-
 
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
@@ -74,5 +66,11 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
             }
         });
         return convertView;
+    }
+
+    private static class ViewHolder {
+        TextView tvName;
+        TextView tvTime;
+        ImageButton deleteRecipe;
     }
 }

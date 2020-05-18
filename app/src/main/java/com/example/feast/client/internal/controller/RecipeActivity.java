@@ -82,8 +82,10 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
 
     //<editor-fold desc="Override Methods">
+
     /**
      * Creates the Activity and sets up the views.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -105,6 +107,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * Checks the resultcode, and sets a property on a recipe.
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -153,6 +156,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * checks if there is permission to use the camera or not.
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -183,6 +187,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
 
     //<editor-fold desc="Setup">
+
     /**
      * sets up the views.
      */
@@ -255,6 +260,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * sets the recipe properties in the views.
+     *
      * @param ur
      */
     @SuppressLint("SetTextI18n")
@@ -290,6 +296,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * sets the views to be editable, and sets the save button and cancel in the layout
+     *
      * @param edit
      */
     @SuppressLint("SetTextI18n")
@@ -351,6 +358,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * creates a new set of editTextViews, and sets the ingriedient to the recipes arraylist
+     *
      * @param ing
      */
     private void addIngredient(Ingredient ing) {
@@ -435,6 +443,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * saves the recipe without a image
+     *
      * @param ur
      */
     private void updateUserRecipeNoImage(UserRecipe ur) {
@@ -462,6 +471,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * saves the recipe with an image.
+     *
      * @param recipe
      */
     private void updateUserRecipeWithImage(final UserRecipe recipe) {
@@ -550,6 +560,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * creates the image which has been taken
+     *
      * @return
      * @throws IOException
      */
@@ -574,6 +585,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     /**
      * sets up the navigation in the toolbar
+     *
      * @param item
      * @return
      */

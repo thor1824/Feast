@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /**
      * creates the activity, and sets up the views.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /**
      * checks what is selected in the estimatedTime Spinner
+     *
      * @param parent
      * @param view
      * @param position
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /**
      * sets up the toolbar
+     *
      * @param item
      * @return
      */
@@ -191,6 +194,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       model.CancelTasks();
+        model.CancelTasks();
     }
 }

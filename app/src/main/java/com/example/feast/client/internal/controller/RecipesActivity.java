@@ -29,15 +29,16 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 
 public class RecipesActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private final String TAG = "RecipesActivity";
     private Toolbar toolbar;
     private ListView lvUserRecipe;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Model model;
-    private final String TAG = "RecipesActivity";
 
     /**
      * sets up the activity, and sets the views.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -85,6 +86,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
     /**
      * sets up the list views for userRecipes
+     *
      * @param urs
      */
     private void setUpListView(ArrayList<UserRecipe> urs) {
@@ -105,6 +107,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
     /**
      * starts a activity to update userRecipe
+     *
      * @param ur
      */
     private void onNavigateToUserRecipe(UserRecipe ur) {
@@ -118,13 +121,14 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     /**
      * opens the addRecipeActivity
      */
-    private  void getGoToAddRecipe() {
+    private void getGoToAddRecipe() {
         Intent GotoAddRecipe_intent = new Intent(this, AddUserRecipeActivity.class);
         startActivityForResult(GotoAddRecipe_intent, RequestCodes.REQUEST_CODE_UPDATE);
     }
 
     /**
      * checks the resultcodes from an activity
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -132,7 +136,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(RequestCodes.REQUEST_CODE_UPDATE == requestCode && RESULT_OK == resultCode) {
+        if (RequestCodes.REQUEST_CODE_UPDATE == requestCode && RESULT_OK == resultCode) {
             model.forceUpdate();
         }
     }
@@ -151,6 +155,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
     /**
      * sets up the toolbar with navigation or messages
+     *
      * @param item
      * @return
      */
