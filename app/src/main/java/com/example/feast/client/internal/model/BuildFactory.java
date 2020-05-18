@@ -19,6 +19,10 @@ import com.example.feast.data.external.firebase.repository.UserRecipeRepo;
 
 public class BuildFactory {
 
+    /**
+     * Builds the model with interfaces
+     * @return
+     */
     protected static Model BuildModel() {
 
         //Auth

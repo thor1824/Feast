@@ -31,6 +31,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private Model model;
     private FirebaseAuth mAuth;
 
+    /**
+     * creates the activity and sets the views.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,9 +59,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).into(profileImage);
         toolbar.setTitle("");
 
-
     }
 
+    /**
+     * sets up the toolbar.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -68,6 +74,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         toggle.syncState();
     }
 
+    /**
+     * checks if the toolbar is opened, and listens for a back button press.
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -78,6 +87,13 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     }
 
 
+    /**
+     * sets up the content in the toolbar.
+     *
+     * either navigate to another layout, or shows message.
+     * @param item
+     * @return
+     */
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:

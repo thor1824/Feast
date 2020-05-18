@@ -36,6 +36,10 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     private Model model;
     private final String TAG = "RecipesActivity";
 
+    /**
+     * sets up the activity, and sets the views.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +69,9 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
     }
 
+    /**
+     * Starts the toolbar.
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -76,6 +83,10 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
         toggle.syncState();
     }
 
+    /**
+     * sets up the list views for userRecipes
+     * @param urs
+     */
     private void setUpListView(ArrayList<UserRecipe> urs) {
         lvUserRecipe = findViewById(R.id.listView_userRecipe);
         UserRecipeArrayAdapter adapter = new UserRecipeArrayAdapter(this, R.layout.list_item_user_recipe, urs, lvUserRecipe);
@@ -92,6 +103,10 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
     }
 
+    /**
+     * starts a activity to update userRecipe
+     * @param ur
+     */
     private void onNavigateToUserRecipe(UserRecipe ur) {
 
         Intent intent = new Intent(this, RecipeActivity.class);
@@ -100,11 +115,20 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     }
 
 
+    /**
+     * opens the addRecipeActivity
+     */
     private  void getGoToAddRecipe() {
         Intent GotoAddRecipe_intent = new Intent(this, AddUserRecipeActivity.class);
         startActivityForResult(GotoAddRecipe_intent, RequestCodes.REQUEST_CODE_UPDATE);
     }
 
+    /**
+     * checks the resultcodes from an activity
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -113,6 +137,9 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
         }
     }
 
+    /**
+     * checkes if the toolbar is opened
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -122,7 +149,11 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
         }
     }
 
-
+    /**
+     * sets up the toolbar with navigation or messages
+     * @param item
+     * @return
+     */
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:

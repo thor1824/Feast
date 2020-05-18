@@ -82,6 +82,10 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
 
     //<editor-fold desc="Override Methods">
+    /**
+     * Creates the Activity and sets up the views.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +103,12 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         switchActivation(edit);
     }
 
+    /**
+     * Checks the resultcode, and sets a property on a recipe.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -128,6 +138,9 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
+    /**
+     * sets up the toolbar
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -138,6 +151,12 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         toggle.syncState();
     }
 
+    /**
+     * checks if there is permission to use the camera or not.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
@@ -149,6 +168,9 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
+    /**
+     * checkes if the toolbar is opened
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -159,7 +181,11 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     }
     //</editor-fold>
 
+
     //<editor-fold desc="Setup">
+    /**
+     * sets up the views.
+     */
     private void setUpViews() {
         drawerLayout = findViewById(R.id.drawLayout_recipe);
         navigationView = findViewById(R.id.navigation_recipe);
@@ -187,9 +213,11 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         views.add(btnAddIng);
         views.add(etName);
         views.add(etTime);
-
     }
 
+    /**
+     * sets up the Listeners on buttons.
+     */
     private void setUpListeners() {
         btnEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -225,6 +253,10 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     }
 
+    /**
+     * sets the recipe properties in the views.
+     * @param ur
+     */
     @SuppressLint("SetTextI18n")
     private void setRecipe(UserRecipe ur) {
         etName.setText(ur.getName());
@@ -255,6 +287,11 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     //</editor-fold>
 
     //<editor-fold desc="ButtonActions">
+
+    /**
+     * sets the views to be editable, and sets the save button and cancel in the layout
+     * @param edit
+     */
     @SuppressLint("SetTextI18n")
     private void switchActivation(boolean edit) {
         for (View v : views) {
@@ -303,10 +340,17 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     }
 
+    /**
+     * sets the recipe when clicked.
+     */
     private void onCancel() {
         setRecipe(mainRecipe);
     }
 
+    /**
+     * creates a new set of editTextViews, and sets the ingriedient to the recipes arraylist
+     * @param ing
+     */
     private void addIngredient(Ingredient ing) {
         EditText etName = new EditText(this);
         etName.setText(ing != null ? ing.getName() : "");
@@ -341,12 +385,17 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         Ingredients.add(temp);
     }
 
+    /**
+     * sets the editState
+     */
     private void onEdit() {
         edit = true;
         switchActivation(edit);
-
     }
 
+    /**
+     * saves the changes to the recipe and updates the firebase
+     */
     @SuppressWarnings("ConstantConditions")
     private void onSave() {
         String id = mainRecipe.getId();
@@ -372,6 +421,10 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     }
 
+    /**
+     * saves the recipe without a image
+     * @param ur
+     */
     private void updateUserRecipeNoImage(UserRecipe ur) {
         final ProgressDialog pd = new ProgressDialog(this);
         pd.setMessage("Updating");
@@ -395,6 +448,10 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         });
     }
 
+    /**
+     * saves the recipe with an image.
+     * @param recipe
+     */
     private void updateUserRecipeWithImage(final UserRecipe recipe) {
         if (imageUrl != null) {
             final ProgressDialog pd = new ProgressDialog(this);
@@ -416,6 +473,9 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     }
 
+    /**
+     * checks if the recipe wasUpdated and finishes the edit.
+     */
     private void onBack() {
         Log.d(TAG, "onBack: GO BACK");
         if (wasUpdated) {
@@ -427,8 +487,12 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     }
     //</editor-fold>
 
+
     //<editor-fold desc="Camera and Gallery">
 
+    /**
+     * checks if the permission to the camera is granted
+     */
     private void askCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.REQUEST_CODE_CAMERA);
@@ -438,12 +502,17 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     }
 
-    //todo Gallery Button
+    /**
+     * gets an image from the gallery.
+     */
     private void getPictureFromGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(gallery, RequestCodes.REQUEST_CODE_GET_FROM_GALLERY);
     }
 
+    /**
+     * opens the camera and creates a new image.
+     */
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntend.resolveActivity(getPackageManager()) != null) {
@@ -467,6 +536,11 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         }
     }
 
+    /**
+     * creates the image which has been taken
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
@@ -485,6 +559,12 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     //</editor-fold>
 
     //<editor-fold desc="Navigation">
+
+    /**
+     * sets up the navigation in the toolbar
+     * @param item
+     * @return
+     */
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:

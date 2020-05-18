@@ -87,6 +87,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private Uri imageUrl;
 
 
+    /**
+     * Creates the activity and sets up the views, with buttons etc.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,6 +152,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * Creates a new LinearLayout, and sets 2 editText views, which contains the information
+     * for user recipes.
+     */
     public void addIngIngredient() {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -213,12 +221,22 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * textWatcher class is used to see if the views are empty or not
+     */
     private TextWatcher recipeTxtWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
 
+        /**
+         * We only check on if the text is changed.
+         * @param s
+         * @param start
+         * @param before
+         * @param count
+         */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             String recipeName = recipeNameField.getText().toString();
@@ -236,6 +254,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     };
 
 
+    /**
+     * takes all the views content, and creates a new userRecipe,
+     * if the userRecipe has an image, the image is uploaded.
+     * when the createUserRecipe is succeeded the method clears all the views
+     * for a new recipe to be made.
+     */
     private void saveUserRecipe() {
 
 
@@ -275,6 +299,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * onStart checks whether the toolbar is opened or not
+     */
     @Override
     protected void onStart() {
         super.onStart();
@@ -285,6 +312,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         toggle.syncState();
     }
 
+    /**
+     * when the back button is pressed, it checks if the toolbar is open of closed
+     * if it is open it closes and sets the result to "OK"
+     */
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -296,6 +327,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * Navigation is setup through a switch statement, either displays a message or
+     * navigate to another activity
+     * @param item
+     * @return
+     */
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
@@ -337,6 +374,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * Checks if the camera permission is set, if false open the permission survey.
+     * if true, opens the camera
+     */
     private void askCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.REQUEST_CODE_CAMERA);
@@ -346,6 +387,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * Gets the result of camera permissions. if false, it tells the user it needs permission.
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
@@ -357,11 +404,18 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * builds an Intent and parses it to a new activity
+     */
     private void getPictureFromGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(gallery, RequestCodes.REQUEST_CODE_GET_FROM_GALLERY);
     }
 
+    /**
+     * creates a new Intent if the user decides to make a new picture it will be created
+     * the new picture will then be saved to the phone.
+     */
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntend.resolveActivity(getPackageManager()) != null) {
@@ -385,6 +439,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * check whether the imageUrl on a recipe is null, if false,
+     * it opens a progressDialog, gets a firebase Reference, and upload the file to firebase firestore.
+     * when it is done it closes the ProgressDialog.
+     *
+     * if it fails it prints the Stacktrace to the Console.
+     * @param recipe
+     */
     private void uploadImage(final UserRecipe recipe) {
         if (imageUrl != null) {
             final ProgressDialog pd = new ProgressDialog(this);
@@ -427,12 +489,24 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
+    /**
+     * gets the files extension (Jpg, Png, etc)
+     * @param contentUri
+     * @return
+     */
     private String getFileExt(Uri contentUri) {
         ContentResolver c = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(c.getType(contentUri));
     }
 
+    /**
+     * creates the image and returns it.
+     *
+     * throws IOException if it fails
+     * @return
+     * @throws IOException
+     */
     private File createImageFile() throws IOException {
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -450,6 +524,13 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     }
 
 
+    /**
+     * Checks the resultcodes for if it is chosen by the gallery or a new image
+     * thereafter saves it to the internal storage.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -475,6 +556,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         }
     }
 
+    /**
+     * Clears all the views
+     */
     private void clearFields() {
         recipeNameField.getText().clear();
         recipeNameField.setHint("Recipe Name");
