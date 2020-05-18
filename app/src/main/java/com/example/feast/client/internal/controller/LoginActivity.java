@@ -10,8 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
-import com.example.feast.client.internal.utility.concurrent.Listener;
-import com.example.feast.core.entities.RecipeContainer;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -34,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * sets up the activity, with google signing
+     *
      * @param savedInstanceState
      */
     @Override
@@ -84,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * checks the result code, if the resultcode is "sign-in"
      * it logs in the user via firebase
+     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -100,6 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * signs in the user via firebase auth.
+     *
      * @param data
      */
     private void firebaseAuthWithGoogle(Intent data) {

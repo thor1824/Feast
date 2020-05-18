@@ -8,8 +8,10 @@ import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 
+import com.example.feast.client.internal.utility.concurrent.AsyncCreateUserRecipe;
 import com.example.feast.client.internal.utility.concurrent.AsyncGetAllRecipes;
 import com.example.feast.client.internal.utility.concurrent.AsyncUpdate;
+import com.example.feast.client.internal.utility.concurrent.AsyncUpdateTask;
 import com.example.feast.client.internal.utility.concurrent.Listener;
 import com.example.feast.core.client.adapter.IAuthService;
 import com.example.feast.core.client.adapter.IImageService;
@@ -36,9 +38,8 @@ import java.util.concurrent.CountDownLatch;
 
 public class Model implements AsyncUpdate<RecipeContainer> {
 
-    String TAG = "Model";
-
     private static Model model;
+    String TAG = "Model";
     private Listener<RecipeContainer> list;
     private AsyncGetAllRecipes task;
     private IUserRecipeService userRecipeService;
@@ -49,6 +50,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * constructor
+     *
      * @param userRecipeService
      * @param recipeService
      * @param imageService
@@ -63,6 +65,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * Singleton modelInstance
+     *
      * @return
      */
     public static Model getInstance() {
@@ -84,6 +87,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * redirects to the userRecipeService with an update
+     *
      * @param ur
      * @return
      */
@@ -94,6 +98,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * redirects to the userRecipeService with a delete
+     *
      * @param id
      * @return
      */
@@ -103,6 +108,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * redirects to the userRecipeService with an create
+     *
      * @param ur
      * @return
      */
@@ -110,8 +116,14 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         return userRecipeService.create(ur);
     }
 
+    public void createUserRecipeWithImage(Uri ImageUri, UserRecipe ur, Context ctx, AsyncUpdate<Void> listener) {
+        AsyncUpdateTask<Void> task = new AsyncCreateUserRecipe(ImageUri, ur, ctx, listener);
+        task.execute();
+    }
+
     /**
      * gets all the recipes from firebase from both collections
+     *
      * @param userId
      * @param listener
      */
@@ -135,6 +147,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * gets a random recipe from either userrecipes or recipes
+     *
      * @param estimatedTime
      * @return
      */
@@ -172,6 +185,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * gets the image
+     *
      * @param imgUrl
      * @return
      */
@@ -181,12 +195,14 @@ public class Model implements AsyncUpdate<RecipeContainer> {
     }
 
     /**
-     * sets the image
-     * @param imgUrl
+     * Saves picture
+     *
+     * @param uri
+     * @param fileName
      * @return
      */
-    public Task<byte[]> setImage(String imgUrl) {
-        return imageService.setImage(imgUrl);
+    public Task<Uri> saveImage(Uri uri, String fileName) {
+        return imageService.saveImage(uri, fileName);
 
     }
 
@@ -199,6 +215,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * signs in with google
+     *
      * @param task
      * @return
      * @throws ApiException
@@ -216,6 +233,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * gets the current user
+     *
      * @return
      */
     public FirebaseUser getCurrentUser() {
@@ -224,6 +242,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * uploads an image to the firebase storage
+     *
      * @param imageUrl
      * @param ctx
      * @return
@@ -250,6 +269,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     /**
      * gets the file extension
+     *
      * @param contentUri
      * @param ctx
      * @return

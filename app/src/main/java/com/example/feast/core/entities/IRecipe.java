@@ -1,6 +1,5 @@
 package com.example.feast.core.entities;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 public interface IRecipe {

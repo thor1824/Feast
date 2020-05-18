@@ -54,7 +54,7 @@ public class AsyncUpdateUserRecipe extends AsyncUpdateTask<Void> {
                                 public void onSuccess(Uri uri) {
                                     latch.countDown();
                                     String url = uri.toString();
-                                    Log.d(TAG, "onSuccess: url:" +  url);
+                                    Log.d(TAG, "onSuccess: url:" + url);
                                     ur.setImageUrl(FirebaseStorage.getInstance().getReferenceFromUrl(url).toString());
 
                                     model.updateUserRecipe(ur).addOnSuccessListener(new OnSuccessListener<Void>() {

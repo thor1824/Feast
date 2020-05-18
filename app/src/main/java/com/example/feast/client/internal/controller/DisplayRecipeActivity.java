@@ -51,6 +51,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     /**
      * creates the activity and setup up the views.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -97,6 +98,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     /**
      * sets the recipe in the views, and checks if the recipe has a picture.
+     *
      * @param recipe
      */
     private void setRecipe(IRecipe recipe) {
@@ -191,6 +193,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     /**
      * sets up the toolbar with navigation or messages
+     *
      * @param item
      * @return
      */
@@ -247,6 +250,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     /**
      * checks the result of the permissions.
+     *
      * @param requestCode
      * @param permissions
      * @param grantResults

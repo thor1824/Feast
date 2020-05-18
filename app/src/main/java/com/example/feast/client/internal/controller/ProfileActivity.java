@@ -33,6 +33,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     /**
      * creates the activity and sets the views.
+     *
      * @param savedInstanceState
      */
     @Override
@@ -89,8 +90,9 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
     /**
      * sets up the content in the toolbar.
-     *
+     * <p>
      * either navigate to another layout, or shows message.
+     *
      * @param item
      * @return
      */

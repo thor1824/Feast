@@ -1,14 +1,5 @@
 package com.example.feast.client.internal.utility.handler;
 
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import com.example.feast.client.internal.utility.globals.RequestCodes;
-
 public class PermissionHandler {
 
    /* private void askCameraPermissions(Context ctx) {

@@ -1,5 +1,7 @@
 package com.example.feast.core.client.adapter.impl;
 
+import android.net.Uri;
+
 import com.example.feast.core.client.adapter.IImageService;
 import com.example.feast.core.data.adapter.IImageRepo;
 import com.google.android.gms.tasks.Task;
@@ -18,8 +20,8 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public Task<byte[]> setImage(String imgUrl) {
-        return imageRepo.saveImage(imgUrl);
+    public Task<Uri> saveImage(Uri uri, String fileName) {
+        return imageRepo.saveImage(uri, fileName);
     }
 
 }
