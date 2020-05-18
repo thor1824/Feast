@@ -261,7 +261,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
         UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid(), "");
 
-        if (imageView.getDrawable() != null) {
+        if (imageUrl != null) {
             uploadImage(recipe);
         } else {
             model.createUserRecipe(recipe).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
