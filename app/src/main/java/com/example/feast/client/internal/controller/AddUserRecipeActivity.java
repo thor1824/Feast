@@ -85,6 +85,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private ImageView imageView;
     private String currentPhotoPath;
     private Uri imageUrl;
+    private ArrayList<EditText> editTexts;
 
 
     /**
@@ -115,7 +116,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         ingContainer = findViewById(R.id.linIngContainer);
         layouts = new ArrayList<>();
         imageView = findViewById(R.id.img_picContainer);
-
+        editTexts = new ArrayList<>();
 
         //---------------------------------------------------\\
         button.setOnClickListener(new View.OnClickListener() {
@@ -144,10 +145,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             }
         });
 
-        recipeNameField.addTextChangedListener(recipeTxtWatcher);
-        estimatedTimeField.addTextChangedListener(recipeTxtWatcher);
-        firstIngFiled.addTextChangedListener(recipeTxtWatcher);
-        firstAmountField.addTextChangedListener(recipeTxtWatcher);
+        editTexts.add(recipeNameField);
+        editTexts.add(estimatedTimeField);
+        editTexts.add(firstIngFiled);
+        editTexts.add(firstAmountField);
 
 
     }
@@ -158,66 +159,38 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
      */
     public void addIngIngredient() {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-
-
         final LinearLayout editContainer = new LinearLayout(this);
         editContainer.setLayoutParams(p);
         editContainer.setOrientation(LinearLayout.HORIZONTAL);
         addIngLayout.addView(editContainer);
 
-
-        editFieldId++;
-        final EditText ingName = new EditText(this);
-        ingName.setHint("Ingredient");
-        ingName.setLayoutParams(p);
-        ingName.setId(editFieldId);
-        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
-        editContainer.addView(ingName);
-
-        int nameId = editFieldId;
-
-        editFieldId++;
-        final EditText ingAmount = new EditText(this);
-        ingAmount.setHint("Amount");
-        ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-        ingAmount.setLayoutParams(p);
-        ingAmount.setId(editFieldId);
-        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        p2.leftMargin = 90;
-        ingAmount.setLayoutParams(p2);
-        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-        ingAmount.addTextChangedListener(recipeTxtWatcher);
-        editContainer.addView(ingAmount);
-
-        int amountId = editFieldId;
-
-        final TextView textView = new TextView(this);
+        editContainer.addView(ingredientName());
+        editContainer.addView(ingredientAmount());
+        TextView textView = new TextView(this);
         textView.setText("g");
         editContainer.addView(textView);
 
-        FloatingActionButton deleteIngButton = new FloatingActionButton(this);
-        deleteIngButton.setImageResource(R.drawable.delete_icon);
-        LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        p3.leftMargin = 60;
-        p3.topMargin = 30;
-        deleteIngButton.setLayoutParams(p3);
-        deleteIngButton.setCompatElevation(0);
-        editContainer.addView(deleteIngButton);
+        FloatingActionButton deleteButton = deleteButton();
+        editContainer.addView(deleteButton);
 
+        int nameId = editFieldId;
+        int amountId = editFieldId;
 
-        HashMap<String, Integer> bob = new HashMap<String, Integer>();
-        bob.put("name", nameId);
-        bob.put("amount", amountId);
-        ingNameList.add(bob);
+        HashMap<String, Integer> ingredientsMap = new HashMap<String, Integer>();
+        ingredientsMap.put("name", nameId);
+        ingredientsMap.put("amount", amountId);
+        ingNameList.add(ingredientsMap);
         layouts.add(editContainer);
-        deleteIngButton.setOnClickListener((new View.OnClickListener() {
+        final int index = ingNameList.size() - 1;
+        deleteButton.setOnClickListener((new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
+                ingNameList.remove(index);
                 addIngLayout.removeView(editContainer);
 
             }
         }));
-
 
     }
 
@@ -225,6 +198,18 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
      * textWatcher class is used to see if the views are empty or not
      */
     private TextWatcher recipeTxtWatcher = new TextWatcher() {
+
+        private boolean isValid() {
+
+            for (EditText editText : editTexts) {
+
+                if (editText.getText().toString().isEmpty()) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -239,12 +224,8 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
          */
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String recipeName = recipeNameField.getText().toString();
-            String estimatedTime = estimatedTimeField.getText().toString();
-            String firstIngName = firstIngFiled.getText().toString();
-            String firstAmount = (firstAmountField.getText().toString());
-            submitButton.setEnabled(!recipeName.isEmpty() && !estimatedTime.isEmpty() && !firstIngName.isEmpty() && !firstAmount.isEmpty());
 
+            submitButton.setEnabled(isValid());
         }
 
         @Override
@@ -261,7 +242,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
      * for a new recipe to be made.
      */
     private void saveUserRecipe() {
-
 
         final String recipeName = recipeNameField.getText().toString();
         final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
@@ -285,7 +265,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
         UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid(), "");
 
-        if (imageView.getDrawable() != null) {
+        if (imageUrl != null) {
             uploadImage(recipe);
         } else {
             model.createUserRecipe(recipe).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -362,6 +342,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             case R.id.nav_rating:
                 Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
                 break;
+
             case R.id.nav_logOut:
                 model.signOut();
                 Intent signOutIntent = new Intent(this, LoginActivity.class);
@@ -540,7 +521,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri contentUri = Uri.fromFile(file);
             imageUrl = contentUri;
-
             mediaScanIntent.setData(contentUri);
             this.sendBroadcast(mediaScanIntent);
         }
@@ -572,6 +552,47 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         for (LinearLayout layout : layouts) {
             addIngLayout.removeView(layout);
         }
+    }
+
+
+    private EditText ingredientName() {
+        editFieldId++;
+        EditText ingName = new EditText(this);
+        ingName.setHint("Ingredient");
+        ingName.setId(editFieldId);
+        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+        editTexts.add(ingName);
+        return ingName;
+    }
+
+    private EditText ingredientAmount() {
+        editFieldId++;
+        EditText ingAmount = new EditText(this);
+        ingAmount.setHint("Amount");
+        ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        ingAmount.setId(editFieldId);
+        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        p2.leftMargin = 90;
+        ingAmount.setLayoutParams(p2);
+        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+        ingAmount.addTextChangedListener(recipeTxtWatcher);
+        editTexts.add(ingAmount);
+        return ingAmount;
+    }
+
+    private FloatingActionButton deleteButton() {
+
+        FloatingActionButton deleteIngButton = new FloatingActionButton(this);
+        deleteIngButton.setImageResource(R.drawable.delete_icon);
+        LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        p3.leftMargin = 60;
+        p3.topMargin = 30;
+        deleteIngButton.setLayoutParams(p3);
+        deleteIngButton.setCompatElevation(0);
+        return deleteIngButton;
+
+
     }
 
 
