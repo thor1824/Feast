@@ -164,14 +164,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
         FloatingActionButton deleteButton = deleteButton();
         editContainer.addView(deleteButton);
-        deleteButton.setOnClickListener((new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                addIngLayout.removeView(editContainer);
-
-            }
-        }));
 
         int nameId = editFieldId;
         int amountId = editFieldId;
@@ -181,13 +173,19 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         ingredientsMap.put("amount", amountId);
         ingNameList.add(ingredientsMap);
         layouts.add(editContainer);
+        final int index = ingNameList.size() - 1;
+        deleteButton.setOnClickListener((new View.OnClickListener() {
 
+            @Override
+            public void onClick(View view) {
+                ingNameList.remove(index);
+                addIngLayout.removeView(editContainer);
+
+            }
+        }));
 
     }
 
-    private void deleteIng(){
-
-    }
 
     private TextWatcher recipeTxtWatcher = new TextWatcher() {
 
@@ -221,7 +219,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
 
     private void saveUserRecipe() {
-
 
         final String recipeName = recipeNameField.getText().toString();
         final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
