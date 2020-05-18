@@ -1,7 +1,6 @@
 package com.example.feast.client.internal.controller;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -39,8 +38,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.client.internal.utility.globals.RequestCodes;
+import com.example.feast.client.internal.utility.handler.PermissionsManager;
 import com.example.feast.core.entities.Ingredient;
-import com.example.feast.core.entities.Recipe;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -50,7 +49,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -60,50 +58,198 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.concurrent.BlockingDeque;
 
 
 public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private final String TAG = "AddUserRecipeActivity";
+
+    private int editFieldId = 0;
+    private ArrayList<HashMap<String, Integer>> ingNameList;
+    private ArrayList<LinearLayout> layouts;
+    private Uri imageUrl;
+    private ArrayList<EditText> editTexts;
+    private Model model;
+
+    //Views
+    private EditText firstIngFiled, firstAmountField, estimatedTimeField, recipeNameField;
+    private Button submitButton, takePickButton, picFromGalleryButton;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    private LinearLayout addIngLayout;
+    private LinearLayout addIngLayout, ingContainer;
     private ScrollView scrollView;
-    private EditText recipeNameField;
-    private EditText estimatedTimeField;
-    private EditText firstIngFiled;
-    private EditText firstAmountField;
     private FloatingActionButton button;
-    private int editFieldId = 0;
-    private ArrayList<HashMap<String, Integer>> ingNameList;
-    private Model model;
-    private Button submitButton, takePickButton, picFromGalleryButton;
-    private LinearLayout ingContainer;
-    private ArrayList<LinearLayout> layouts;
     private ImageView imageView;
-    private String currentPhotoPath;
-    private Uri imageUrl;
-    private ArrayList<EditText> editTexts;
 
-    private final String TAG = "AddUserRecipeActivity";
-
+    //<editor-fold desc="Overrides">
 
     /**
      * Creates the activity and sets up the views, with buttons etc.
+     *
      * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user_recipe);
+        model = Model.getInstance();
         layouts = new ArrayList<>();
+        ingNameList = new ArrayList<>();
+        editTexts = new ArrayList<>();
 
-        //-------------------instantiate-------------------\\
+        setupViews();
+        setupListener();
+    }
+
+    /**
+     * onStart checks whether the toolbar is opened or not
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        setupToolBar();
+    }
+
+    /**
+     * when the back button is pressed, it checks if the toolbar is open of closed
+     * if it is open it closes and sets the result to "OK"
+     */
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
+
+    /**
+     * Checks the resultcodes for if it is chosen by the gallery or a new image
+     * thereafter saves it to the internal storage.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RequestCodes.REQUEST_IMAGE_CAPTURE: {
+                if (resultCode == RESULT_OK) {
+                    Bundle extras = data.getExtras();
+
+                    Bitmap imageBitmap = extras.getParcelable("data");
+                    String title = "" + System.currentTimeMillis();
+
+                    String savedImageURL = MediaStore.Images.Media.insertImage(
+                            getContentResolver(),
+                            imageBitmap,
+                            title,
+                            ""
+                    );
+
+                    // Parse the gallery image url to uri
+                    Uri savedImageURI = Uri.parse(savedImageURL);
+
+                    // Display the saved image to ImageView
+                    imageView.setImageURI(savedImageURI);
+                    imageUrl = savedImageURI;
+                }
+                break;
+            }
+            case RequestCodes.REQUEST_READ_FROM_GALLERY: {
+                if (resultCode == RESULT_OK) {
+                    imageUrl = data.getData();
+                    imageView.setImageURI(imageUrl);
+                }
+                break;
+            }
+            default: {
+                Log.d(TAG, "onActivityResult: not setup for Request code " + requestCode);
+            }
+        }
+
+        /*if (requestCode == RequestCodes.USER_REQUEST_CODE && resultCode == RESULT_OK) {
+            File file = new File(currentPhotoPath);
+            imageView.setImageURI(Uri.fromFile(file));
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            Uri contentUri = Uri.fromFile(file);
+            imageUrl = contentUri;
+            mediaScanIntent.setData(contentUri);
+            this.sendBroadcast(mediaScanIntent);
+        }
+
+        if (requestCode == RequestCodes.REQUEST_CODE_GET_FROM_GALLERY) {
+            if (resultCode == Activity.RESULT_OK) {
+                imageUrl = data.getData();
+                Log.d(TAG, "onActivityResult: " + imageUrl);
+                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(imageUrl);
+                Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
+                imageView.setImageURI(imageUrl);
+            }
+        }*/
+    }
+
+    /**
+     * Gets the result of camera permissions. if false, it tells the user it needs permission.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        /*if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
+            }
+        }*/
+        switch (requestCode) {
+            case RequestCodes.REQUEST_CAMERA_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onClickCamera();
+                } else {
+                    Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+            case RequestCodes.REQUEST_EXTERNAL_READ_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onFromGallery();
+                } else {
+                    Toast.makeText(this, "External Read Permission is Required to access Gallery.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+            default: {
+                Log.d(TAG, "onPermissionRequestResult not setup for" + permissions[0]);
+            }
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Setup">
+    public void setupToolBar() {
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void setupViews() {
         drawerLayout = findViewById(R.id.drawLayout_addRecipe);
         navigationView = findViewById(R.id.navigation_view_addRecipe);
-        toolbar = findViewById(R.id.toolbar);
+
         scrollView = findViewById(R.id.scrollView);
         addIngLayout = findViewById(R.id.addIngLayout);
         recipeNameField = findViewById(R.id.editName);
@@ -113,26 +259,13 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         button = findViewById(R.id.addIngButton);
         takePickButton = findViewById(R.id.bt_TakePic);
         picFromGalleryButton = findViewById(R.id.bt_picFromGalleri);
-        ingNameList = new ArrayList<HashMap<String, Integer>>();
-        model = Model.getInstance();
         submitButton = findViewById(R.id.submitBt);
         ingContainer = findViewById(R.id.linIngContainer);
-
         imageView = findViewById(R.id.img_picContainer);
-        editTexts = new ArrayList<>();
 
-        //---------------------------------------------------\\
-
-        toolbar.setTitle("");
-
-        setUpViews();
-        setUpListener();
     }
 
-    private void setUpViews() {
-    }
-
-    public void setUpListener() {
+    public void setupListener() {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -142,19 +275,19 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUserRecipe();
+                onAddRecipe();
             }
         });
         takePickButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                askCameraPermissions();
+                onClickCamera();
             }
         });
         picFromGalleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPictureFromGallery();
+                onFromGallery();
             }
         });
 
@@ -163,6 +296,202 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         editTexts.add(firstIngFiled);
         editTexts.add(firstAmountField);
 
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Button Actions">
+
+    /**
+     * Checks if the camera and external write permission is granted, if false open the permission survey.
+     * if true, opens the camera
+     */
+    public void onClickCamera() {
+        if (!PermissionsManager.isGrantedPermission(Manifest.permission.CAMERA, this)
+                && !PermissionsManager.isGrantedPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this)) {
+
+            PermissionsManager.askPermission(
+                    new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA
+                    },
+                    RequestCodes.REQUEST_CAMERA_PERMISSION,
+                    this
+            );
+        } else {
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(takePictureIntent, RequestCodes.REQUEST_IMAGE_CAPTURE);
+            }
+        }
+
+    }
+
+    public void onFromGallery() {
+        if (!PermissionsManager.isGrantedPermission(Manifest.permission.READ_EXTERNAL_STORAGE, this)) {
+
+            PermissionsManager.askPermission(
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    },
+                    RequestCodes.REQUEST_EXTERNAL_READ_PERMISSION,
+                    this
+            );
+        } else {
+            Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(gallery, RequestCodes.REQUEST_READ_FROM_GALLERY);
+        }
+    }
+
+    /**
+     * takes all the views content, and creates a new userRecipe,
+     * if the userRecipe has an image, the image is uploaded.
+     * when the createUserRecipe is succeeded the method clears all the views
+     * for a new recipe to be made.
+     */
+    public void onAddRecipe() {
+        final String recipeName = recipeNameField.getText().toString();
+        final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
+        final String firstIngName = firstIngFiled.getText().toString();
+        final long firstAmount = Long.parseLong(firstAmountField.getText().toString());
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
+
+
+        Ingredient firstIng = new Ingredient(firstIngName, firstAmount);
+
+        ingredients.add(firstIng);
+
+        for (HashMap<String, Integer> map : ingNameList) {
+            EditText name = findViewById(map.get("name"));
+            EditText amount = findViewById(map.get("amount"));
+            String nameFromField = name.getText().toString();
+            long amountFromField = Long.valueOf(amount.getText().toString());
+
+            ingredients.add(new Ingredient(nameFromField, amountFromField));
+        }
+
+        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid(), "");
+
+        if (imageUrl != null) {
+            uploadImage(recipe);
+        } else {
+            model.createUserRecipe(recipe).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                @Override
+                public void onSuccess(DocumentReference documentReference) {
+                    clearFields();
+                }
+            });
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Camera And Gallery">
+
+    /**
+     * check whether the imageUrl on a recipe is null, if false,
+     * it opens a progressDialog, gets a firebase Reference, and upload the file to firebase firestore.
+     * when it is done it closes the ProgressDialog.
+     * <p>
+     * if it fails it prints the Stacktrace to the Console.
+     *
+     * @param recipe
+     */
+    private void uploadImage(final UserRecipe recipe) {
+        if (imageUrl != null) {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Uploading");
+            pd.show();
+
+            final StorageReference fileRef = FirebaseStorage
+                    .getInstance()
+                    .getReference()
+                    .child("images")
+                    .child("recipe")
+                    .child(model.getCurrentUser().getUid())
+                    .child("" + System.currentTimeMillis() + "." + getFileExt(imageUrl));
+
+            fileRef.putFile(imageUrl).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            String url = uri.toString();
+                            recipe.setImageUrl(FirebaseStorage.getInstance().getReferenceFromUrl(url).toString());
+
+                            model.createUserRecipe(recipe);
+
+                            pd.dismiss();
+                            imageView.setImageResource(R.drawable.camara_icon);
+                            clearFields();
+                            Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            e.printStackTrace();
+                            pd.dismiss();
+                        }
+                    });
+                }
+            });
+        }
+
+    }
+
+    /**
+     * gets the files extension (Jpg, Png, etc)
+     *
+     * @param contentUri
+     * @return
+     */
+    private String getFileExt(Uri contentUri) {
+        ContentResolver c = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(c.getType(contentUri));
+    }
+
+    /**
+     * creates the image and returns it.
+     * <p>
+     * throws IOException if it fails
+     *
+     * @return
+     * @throws IOException
+     */
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        /*currentPhotoPath = image.getAbsolutePath();*/
+        Log.d(TAG, "createImageFile: " + image.getAbsolutePath());
+        return image;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Helper functions">
+    /**
+     * Clears all the views
+     */
+    private void clearFields() {
+        recipeNameField.getText().clear();
+        recipeNameField.setHint("Recipe Name");
+        estimatedTimeField.getText().clear();
+        estimatedTimeField.setHint("Estimated Time");
+        firstIngFiled.getText().clear();
+        firstIngFiled.setHint("Ingredient");
+        firstAmountField.getText().clear();
+        firstAmountField.setHint("Amount");
+
+        for (LinearLayout layout : layouts) {
+            addIngLayout.removeView(layout);
+        }
     }
 
     /**
@@ -207,121 +536,53 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     }
 
-    /**
-     * textWatcher class is used to see if the views are empty or not
-     */
-    private TextWatcher recipeTxtWatcher = new TextWatcher() {
+    private EditText ingredientName() {
+        editFieldId++;
+        EditText ingName = new EditText(this);
+        ingName.setHint("Ingredient");
+        ingName.setId(editFieldId);
+        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        private boolean isValid() {
-
-            for (EditText editText : editTexts) {
-
-                if (editText.getText().toString().isEmpty()) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        /**
-         * We only check on if the text is changed.
-         * @param s
-         * @param start
-         * @param before
-         * @param count
-         */
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            submitButton.setEnabled(isValid());
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
-
-
-    /**
-     * takes all the views content, and creates a new userRecipe,
-     * if the userRecipe has an image, the image is uploaded.
-     * when the createUserRecipe is succeeded the method clears all the views
-     * for a new recipe to be made.
-     */
-    private void saveUserRecipe() {
-        final String recipeName = recipeNameField.getText().toString();
-        final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
-        final String firstIngName = firstIngFiled.getText().toString();
-        final long firstAmount = Long.parseLong(firstAmountField.getText().toString());
-        ArrayList<Ingredient> ingredients = new ArrayList<>();
-
-
-        Ingredient firstIng = new Ingredient(firstIngName, firstAmount);
-
-        ingredients.add(firstIng);
-
-        for (HashMap<String, Integer> map : ingNameList) {
-            EditText name = findViewById(map.get("name"));
-            EditText amount = findViewById(map.get("amount"));
-            String nameFromField = name.getText().toString();
-            long amountFromField = Long.valueOf(amount.getText().toString());
-
-            ingredients.add(new Ingredient(nameFromField, amountFromField));
-        }
-
-        UserRecipe recipe = new UserRecipe(ingredients, estimatedTime, recipeName, model.getCurrentUser().getUid(), "");
-
-        if (imageUrl != null) {
-            uploadImage(recipe);
-        } else {
-            model.createUserRecipe(recipe).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                @Override
-                public void onSuccess(DocumentReference documentReference) {
-                    clearFields();
-                }
-            });
-        }
-
+        editTexts.add(ingName);
+        return ingName;
     }
 
-
-    /**
-     * onStart checks whether the toolbar is opened or not
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+    private EditText ingredientAmount() {
+        editFieldId++;
+        EditText ingAmount = new EditText(this);
+        ingAmount.setHint("Amount");
+        ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        ingAmount.setId(editFieldId);
+        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        p2.leftMargin = 90;
+        ingAmount.setLayoutParams(p2);
+        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+        ingAmount.addTextChangedListener(recipeTxtWatcher);
+        editTexts.add(ingAmount);
+        return ingAmount;
     }
 
-    /**
-     * when the back button is pressed, it checks if the toolbar is open of closed
-     * if it is open it closes and sets the result to "OK"
-     */
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            setResult(RESULT_OK);
-            finish();
-        }
-    }
+    private FloatingActionButton deleteButton() {
 
+        FloatingActionButton deleteIngButton = new FloatingActionButton(this);
+        deleteIngButton.setImageResource(R.drawable.delete_icon);
+        LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        p3.leftMargin = 60;
+        p3.topMargin = 30;
+        deleteIngButton.setLayoutParams(p3);
+        deleteIngButton.setCompatElevation(0);
+        return deleteIngButton;
+
+
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Navigation">
 
     /**
      * Navigation is setup through a switch statement, either displays a message or
      * navigate to another activity
+     *
      * @param item
      * @return
      */
@@ -365,249 +626,47 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+    //</editor-fold>
 
-
+    //<editor-fold desc="Text Watcher">
     /**
-     * Checks if the camera permission is set, if false open the permission survey.
-     * if true, opens the camera
+     * textWatcher class is used to see if the views are empty or not
      */
-    private void askCameraPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.REQUEST_CODE_CAMERA);
-        } else {
-            openCamera();
-        }
+    private TextWatcher recipeTxtWatcher = new TextWatcher() {
 
-    }
+        private boolean isValid() {
 
-    /**
-     * Gets the result of camera permissions. if false, it tells the user it needs permission.
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
+            for (EditText editText : editTexts) {
 
-    /**
-     * builds an Intent and parses it to a new activity
-     */
-    private void getPictureFromGallery() {
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, RequestCodes.REQUEST_CODE_GET_FROM_GALLERY);
-    }
-
-    /**
-     * creates a new Intent if the user decides to make a new picture it will be created
-     * the new picture will then be saved to the phone.
-     */
-    private void openCamera() {
-        Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //checks if camera exist
-        if (cameraIntend.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
-
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Log.d("----------TAG----------", "openCamera: " + ex);
-                ex.printStackTrace();
-            }
-            if (photoFile != null) {
-
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.feast.android.fileProvider",
-                        photoFile);
-                cameraIntend.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
-            }
-        }
-    }
-
-    /**
-     * check whether the imageUrl on a recipe is null, if false,
-     * it opens a progressDialog, gets a firebase Reference, and upload the file to firebase firestore.
-     * when it is done it closes the ProgressDialog.
-     *
-     * if it fails it prints the Stacktrace to the Console.
-     * @param recipe
-     */
-    private void uploadImage(final UserRecipe recipe) {
-        if (imageUrl != null) {
-            final ProgressDialog pd = new ProgressDialog(this);
-            pd.setMessage("Uploading");
-            pd.show();
-
-            final StorageReference fileRef = FirebaseStorage
-                    .getInstance()
-                    .getReference()
-                    .child("images")
-                    .child("recipe")
-                    .child(System.currentTimeMillis() + "." + getFileExt(imageUrl));
-
-            fileRef.putFile(imageUrl).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String url = uri.toString();
-                            recipe.setImageUrl(FirebaseStorage.getInstance().getReferenceFromUrl(url).toString());
-
-                            model.createUserRecipe(recipe);
-
-                            pd.dismiss();
-                            imageView.setImageResource(R.drawable.camara_icon);
-                            clearFields();
-                            Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            e.printStackTrace();
-                            pd.dismiss();
-                        }
-                    });
+                if (editText.getText().toString().isEmpty()) {
+                    return false;
                 }
-            });
-        }
-
-    }
-
-    /**
-     * gets the files extension (Jpg, Png, etc)
-     * @param contentUri
-     * @return
-     */
-    private String getFileExt(Uri contentUri) {
-        ContentResolver c = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(c.getType(contentUri));
-    }
-
-    /**
-     * creates the image and returns it.
-     *
-     * throws IOException if it fails
-     * @return
-     * @throws IOException
-     */
-    private File createImageFile() throws IOException {
-
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        currentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG, "createImageFile: " + image.getAbsolutePath());
-        return image;
-    }
-
-
-    /**
-     * Checks the resultcodes for if it is chosen by the gallery or a new image
-     * thereafter saves it to the internal storage.
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestCodes.USER_REQUEST_CODE && resultCode == RESULT_OK) {
-            File file = new File(currentPhotoPath);
-            imageView.setImageURI(Uri.fromFile(file));
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            Uri contentUri = Uri.fromFile(file);
-            imageUrl = contentUri;
-            mediaScanIntent.setData(contentUri);
-            this.sendBroadcast(mediaScanIntent);
-        }
-
-        if (requestCode == RequestCodes.REQUEST_CODE_GET_FROM_GALLERY) {
-            if (resultCode == Activity.RESULT_OK) {
-                imageUrl = data.getData();
-                Log.d(TAG, "onActivityResult: " + imageUrl);
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "." + getFileExt(imageUrl);
-                Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
-                imageView.setImageURI(imageUrl);
             }
+            return true;
         }
-    }
 
-    /**
-     * Clears all the views
-     */
-    private void clearFields() {
-        recipeNameField.getText().clear();
-        recipeNameField.setHint("Recipe Name");
-        estimatedTimeField.getText().clear();
-        estimatedTimeField.setHint("Estimated Time");
-        firstIngFiled.getText().clear();
-        firstIngFiled.setHint("Ingredient");
-        firstAmountField.getText().clear();
-        firstAmountField.setHint("Amount");
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        for (LinearLayout layout : layouts) {
-            addIngLayout.removeView(layout);
         }
-    }
 
+        /**
+         * We only check on if the text is changed.
+         * @param s
+         * @param start
+         * @param before
+         * @param count
+         */
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-    private EditText ingredientName() {
-        editFieldId++;
-        EditText ingName = new EditText(this);
-        ingName.setHint("Ingredient");
-        ingName.setId(editFieldId);
-        ingName.setLayoutParams(new LinearLayout.LayoutParams(710, LinearLayout.LayoutParams.WRAP_CONTENT));
+            submitButton.setEnabled(isValid());
+        }
 
-        editTexts.add(ingName);
-        return ingName;
-    }
+        @Override
+        public void afterTextChanged(Editable s) {
 
-    private EditText ingredientAmount() {
-        editFieldId++;
-        EditText ingAmount = new EditText(this);
-        ingAmount.setHint("Amount");
-        ingAmount.setInputType(InputType.TYPE_CLASS_NUMBER);
-        ingAmount.setId(editFieldId);
-        LinearLayout.LayoutParams p2 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        p2.leftMargin = 90;
-        ingAmount.setLayoutParams(p2);
-        ingAmount.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-        ingAmount.addTextChangedListener(recipeTxtWatcher);
-        editTexts.add(ingAmount);
-        return ingAmount;
-    }
-
-    private FloatingActionButton deleteButton() {
-
-        FloatingActionButton deleteIngButton = new FloatingActionButton(this);
-        deleteIngButton.setImageResource(R.drawable.delete_icon);
-        LinearLayout.LayoutParams p3 = (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        p3.leftMargin = 60;
-        p3.topMargin = 30;
-        deleteIngButton.setLayoutParams(p3);
-        deleteIngButton.setCompatElevation(0);
-        return deleteIngButton;
-
-
-    }
-
-
+        }
+    };
+    //</editor-fold>
 }

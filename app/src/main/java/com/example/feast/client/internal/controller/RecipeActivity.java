@@ -125,7 +125,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
             isImageUpdated = true;
         }
 
-        if (requestCode == RequestCodes.REQUEST_CODE_GET_FROM_GALLERY) {
+        if (requestCode == RequestCodes.REQUEST_READ_FROM_GALLERY) {
 
             if (resultCode == Activity.RESULT_OK) {
                 imageUrl = data.getData();
@@ -519,7 +519,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      */
     private void getPictureFromGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, RequestCodes.REQUEST_CODE_GET_FROM_GALLERY);
+        startActivityForResult(gallery, RequestCodes.REQUEST_READ_FROM_GALLERY);
     }
 
     /**
