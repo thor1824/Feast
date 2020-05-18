@@ -20,14 +20,14 @@
         <activity android:name=".client.internal.controller.ProfileActivity" />
         <activity android:name=".client.internal.controller.DisplayRecipeActivity" />
         <activity android:name=".client.internal.controller.AddUserRecipeActivity" />
-        <activity android:name=".client.internal.controller.MainActivity">
+        <activity android:name=".client.internal.controller.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".client.internal.controller.LoginActivity" />
+        <activity android:name=".client.internal.controller.MainActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

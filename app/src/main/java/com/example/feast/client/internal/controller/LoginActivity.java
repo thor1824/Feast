@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
+import com.example.feast.client.internal.utility.concurrent.Listener;
+import com.example.feast.core.entities.RecipeContainer;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -35,12 +37,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         model = Model.getInstance();
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        mSignInClient = GoogleSignIn.getClient(this, gso);
 
+        mSignInClient = GoogleSignIn.getClient(this, gso);
         signInButton = findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,8 +53,19 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = model.getCurrentUser();
+        Log.d(TAG, "onStart: " + currentUser);
+        if (currentUser != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivityForResult(intent, 10);
+            finish();
+        }
+    }
+
     private void signIn() {
-        // Launches the sign in flow, the result is returned in onActivityResult
         Intent intent = mSignInClient.getSignInIntent();
         startActivityForResult(intent, RC_SIGN_IN);
     }

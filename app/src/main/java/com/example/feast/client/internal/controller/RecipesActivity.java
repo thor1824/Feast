@@ -102,7 +102,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
     private  void getGoToAddRecipe() {
         Intent GotoAddRecipe_intent = new Intent(this, AddUserRecipeActivity.class);
-        startActivity(GotoAddRecipe_intent);
+        startActivityForResult(GotoAddRecipe_intent, RequestCodes.REQUEST_CODE_UPDATE);
     }
 
     @Override

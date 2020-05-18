@@ -3,7 +3,6 @@ package com.example.feast.client.internal.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Printer;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -78,19 +77,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onStart() {
         super.onStart();
         FirebaseUser currentUser = model.getCurrentUser();
-        if (currentUser == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, 10);
-        } else {
-            test.setText(currentUser.getDisplayName());
-
+        if (currentUser != null) {
             model.getAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
                 @Override
                 public void call(RecipeContainer entity) {
                     Log.d(TAG, "call: " + entity);
                 }
             });
+            test.setText(currentUser.getDisplayName());
         }
+
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);

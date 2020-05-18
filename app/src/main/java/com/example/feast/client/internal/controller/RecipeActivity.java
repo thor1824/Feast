@@ -354,7 +354,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         long cookTime = Long.parseLong(etTime.getText().toString());
         String userId = mainRecipe.getUserId();
 
-        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
         for (HashMap<String, EditText> map : Ingredients) {
             String ingName = map.get(KEY_NAME).getText().toString();
             long amount = Long.parseLong(map.get(KEY_AMOUNT).getText().toString());
@@ -363,7 +363,6 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         }
 
         UserRecipe ur = new UserRecipe(ingredients, id, cookTime, name, userId, "");
-        //todo check if old is same as new
         if (isImageUpdated) {
             updateUserRecipeWithImage(ur);
         } else {
