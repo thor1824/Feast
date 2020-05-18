@@ -269,7 +269,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                     onSave();
                 }
             });
-            btnback.setText("Back");
+            btnback.setText("Cancel");
             btnback.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -305,6 +305,8 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
 
     private void onCancel() {
         setRecipe(mainRecipe);
+        edit = false;
+        switchActivation(edit);
     }
 
     private void addIngredient(Ingredient ing) {
@@ -322,18 +324,28 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         ImageButton btnDeleteIng = new ImageButton(this);
         views.add(btnDeleteIng);
 
+
         btnDeleteIng.setImageResource(R.drawable.delete_icon);
         btnDeleteIng.setBackgroundResource(R.color.transparant);
         btnDeleteIng.setEnabled(edit);
         views.add(btnDeleteIng);
 
-        TableRow tr = new TableRow(this);
+        final TableRow tr = new TableRow(this);
         tr.addView(etName);
         tr.addView(etAmount);
         tr.addView(btnDeleteIng);
 
         Log.d(TAG, "addIngredient: " + tableIng.getChildCount());
-        tableIng.addView(tr, tableIng.getChildCount() >= 2 ? tableIng.getChildCount() - 1 : 0);
+        final int index = tableIng.getChildCount() >= 2 ? tableIng.getChildCount() - 1 : 0;
+        tableIng.addView(tr, index);
+
+        btnDeleteIng.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "onClick: index " + index);
+                tableIng.removeView(tr);
+            }
+        });
 
         HashMap<String, EditText> temp = new HashMap<>();
         temp.put(KEY_NAME, etName);
