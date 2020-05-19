@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -22,14 +21,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.client.internal.utility.CustomTextWatcher.ValidationTextWatcher;
@@ -40,14 +33,12 @@ import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentReference;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class AddUserRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class AddUserRecipeActivity extends AppCompatActivity {
 
     private final String TAG = "AddUserRecipeActivity";
     private final String KEY_NAME = "name";
@@ -55,7 +46,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
 
     private EditText firstIngFiled, firstAmountField, estimatedTimeField, recipeNameField;
     private Button submitButton, takePickButton, picFromGalleryButton;
-    private DrawerLayout drawerLayout;
     private LinearLayout addIngLayout;
     private FloatingActionButton button;
     private ImageView imageView;
@@ -88,29 +78,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         setupListener();
     }
 
-    /**
-     * onStart checks whether the toolbar is opened or not
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
 
-        setupToolBar();
-    }
-
-    /**
-     * when the back button is pressed, it checks if the toolbar is open of closed
-     * if it is open it closes and sets the result to "OK"
-     */
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            setResult(RESULT_OK);
-            finish();
-        }
-    }
 
     /**
      * Checks the resultcodes for if it is chosen by the gallery or a new image
@@ -184,18 +152,9 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     //</editor-fold>
 
     //<editor-fold desc="Setup">
-    public void setupToolBar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("");
 
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-    }
 
     private void setupViews() {
-        drawerLayout = findViewById(R.id.drawLayout_addRecipe);
         addIngLayout = findViewById(R.id.addIngLayout);
         recipeNameField = findViewById(R.id.editName);
         estimatedTimeField = findViewById(R.id.editTime);
@@ -465,46 +424,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
      * @param item
      * @return
      */
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_home:
-                Intent home_intent = new Intent(this, MainActivity.class);
-                startActivity(home_intent);
-                finish();
-                break;
-            case R.id.nav_addRecipe:
-                Intent recipe_intent = new Intent(this, RecipesActivity.class);
-                startActivity(recipe_intent);
-                finish();
-                break;
-            case R.id.nav_profile:
-                Intent profile_intent = new Intent(this, ProfileActivity.class);
-                startActivity(profile_intent);
-                finish();
-                break;
 
-            case R.id.nav_settings:
-                Toast.makeText(this, "We Have No Settings", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.nav_contact:
-                Toast.makeText(this, "We Can't Be Contacted", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.nav_rating:
-                Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.nav_logOut:
-                model.signOut();
-                Intent signOutIntent = new Intent(this, LoginActivity.class);
-                startActivity(signOutIntent);
-                finishAffinity();
-
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
     //</editor-fold>
 
     //<editor-fold desc="to be removed">
