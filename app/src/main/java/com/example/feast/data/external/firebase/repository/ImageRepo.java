@@ -22,7 +22,6 @@ public class ImageRepo implements IImageRepo {
     @Override
     public Task<byte[]> getImage(String imgUrl) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageRef = storage.getReference();
         StorageReference gsReference = storage.getReferenceFromUrl(imgUrl);
         final long ONE_MEGABYTE = 1024 * 1024;
         return gsReference.getBytes(ONE_MEGABYTE);
@@ -35,12 +34,13 @@ public class ImageRepo implements IImageRepo {
      * @param fileName
      * @return
      */
-    public Task<Uri> saveImage(Uri imgUrl, String fileName) {
+    public Task<Uri> saveImage(Uri imgUrl, String fileName, String userId) {
         final StorageReference fileRef = FirebaseStorage
                 .getInstance()
                 .getReference()
                 .child("images")
                 .child("recipe")
+                .child(userId)
                 .child(fileName);
 
         return fileRef.putFile(imgUrl).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {

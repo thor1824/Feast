@@ -34,7 +34,7 @@ public class AsyncCreateUserRecipe extends AsyncUpdateTask<Void> {
         try {
             final CountDownLatch latch = new CountDownLatch(2);
             final Model model = Model.getInstance();
-            model.saveImage(imageUri, System.currentTimeMillis() + "." + model.getFileExt(imageUri, ctx)).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            model.saveImage(imageUri, System.currentTimeMillis() + "." + model.getFileExt(imageUri, ctx), ur.getUserId()).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
                 public void onComplete(@NonNull Task<Uri> task) {
                     latch.countDown();

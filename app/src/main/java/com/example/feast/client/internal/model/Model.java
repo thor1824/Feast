@@ -6,12 +6,11 @@ import android.net.Uri;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import androidx.annotation.NonNull;
-
 import com.example.feast.client.internal.utility.concurrent.AsyncCreateUserRecipe;
 import com.example.feast.client.internal.utility.concurrent.AsyncGetAllRecipes;
 import com.example.feast.client.internal.utility.concurrent.AsyncUpdate;
 import com.example.feast.client.internal.utility.concurrent.AsyncUpdateTask;
+import com.example.feast.client.internal.utility.concurrent.AsyncUpdateUserRecipe;
 import com.example.feast.client.internal.utility.concurrent.Listener;
 import com.example.feast.core.client.adapter.IAuthService;
 import com.example.feast.core.client.adapter.IImageService;
@@ -22,31 +21,31 @@ import com.example.feast.core.entities.RecipeContainer;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
 
 public class Model implements AsyncUpdate<RecipeContainer> {
 
     private static Model model;
-    String TAG = "Model";
-    private Listener<RecipeContainer> list;
-    private AsyncGetAllRecipes task;
+    private final String TAG = "Model";
     private IUserRecipeService userRecipeService;
     private IRecipeService recipeService;
-    private RecipeContainer recipeContainer;
     private IImageService imageService;
     private IAuthService authService;
+
+
+    private Listener<RecipeContainer> list;
+    private AsyncGetAllRecipes task;
+    private List<AsyncUpdateTask<Void>> tasks;
+
+    private RecipeContainer recipeContainer;
+
 
     /**
      * constructor
@@ -61,6 +60,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         this.recipeService = recipeService;
         this.imageService = imageService;
         this.authService = authService;
+        tasks = new ArrayList<>();
     }
 
     /**
@@ -76,6 +76,7 @@ public class Model implements AsyncUpdate<RecipeContainer> {
     }
 
 
+    //<editor-fold desc="Tasks">
     @Override
     public void update(RecipeContainer entity) {
         recipeContainer = entity;
@@ -84,6 +85,30 @@ public class Model implements AsyncUpdate<RecipeContainer> {
             list.call(entity);
         }
     }
+
+    public void forceUpdate() {
+        if (list != null) {
+            task = new AsyncGetAllRecipes(getCurrentUser().getUid(), userRecipeService, recipeService, this);
+            task.execute();
+        }
+    }
+
+    /**
+     * cancels all tasks
+     */
+    public void CancelTasks() {
+        if (task != null) {
+            task.cancel(true);
+        }
+        if (tasks.size() > 0) {
+            for (AsyncUpdateTask<Void> task : tasks) {
+                task.cancel(true);
+            }
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="User Recipe">
 
     /**
      * redirects to the userRecipeService with an update
@@ -118,6 +143,13 @@ public class Model implements AsyncUpdate<RecipeContainer> {
 
     public void createUserRecipeWithImage(Uri ImageUri, UserRecipe ur, Context ctx, AsyncUpdate<Void> listener) {
         AsyncUpdateTask<Void> task = new AsyncCreateUserRecipe(ImageUri, ur, ctx, listener);
+        tasks.add(task);
+        task.execute();
+    }
+
+    public void updateUserRecipeWithImage(Uri ImageUri, UserRecipe ur, Context ctx, AsyncUpdate<Void> listener) {
+        AsyncUpdateTask<Void> task = new AsyncUpdateUserRecipe(ImageUri, ur, ctx, listener);
+        tasks.add(task);
         task.execute();
     }
 
@@ -136,13 +168,77 @@ public class Model implements AsyncUpdate<RecipeContainer> {
             task.execute();
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Image">
 
-    public void forceUpdate() {
-        if (list != null) {
-            task = new AsyncGetAllRecipes(getCurrentUser().getUid(), userRecipeService, recipeService, this);
-            task.execute();
-        }
+    /**
+     * gets the image
+     *
+     * @param imgUrl
+     * @return
+     */
+    public Task<byte[]> getImage(String imgUrl) {
+        return imageService.getImage(imgUrl);
+
+    }
+
+    /**
+     * Saves picture
+     *
+     * @param uri
+     * @param fileName
+     * @return
+     */
+    public Task<Uri> saveImage(Uri uri, String fileName, String userId) {
+        return imageService.saveImage(uri, fileName, userId);
+
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Authentication">
+
+    /**
+     * signs in with google
+     *
+     * @param task
+     * @return
+     * @throws ApiException
+     */
+    public Task<AuthResult> singInWithGoogle(Task<GoogleSignInAccount> task) throws ApiException {
+        return authService.singInWithGoogle(task);
+    }
+
+    /**
+     * signs out
+     */
+    public void signOut() {
+        authService.signOut();
+    }
+
+    /**
+     * gets the current user
+     *
+     * @return
+     */
+    public FirebaseUser getCurrentUser() {
+        return authService.getCurrentUser();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Helper Functions">
+
+    /**
+     * gets the file extension
+     *
+     * @param contentUri
+     * @param ctx
+     * @return
+     */
+    public String getFileExt(Uri contentUri, Context ctx) {
+        ContentResolver c = ctx.getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(c.getType(contentUri));
     }
 
     /**
@@ -182,101 +278,5 @@ public class Model implements AsyncUpdate<RecipeContainer> {
         }
         return null;
     }
-
-    /**
-     * gets the image
-     *
-     * @param imgUrl
-     * @return
-     */
-    public Task<byte[]> getImage(String imgUrl) {
-        return imageService.getImage(imgUrl);
-
-    }
-
-    /**
-     * Saves picture
-     *
-     * @param uri
-     * @param fileName
-     * @return
-     */
-    public Task<Uri> saveImage(Uri uri, String fileName) {
-        return imageService.saveImage(uri, fileName);
-
-    }
-
-    /**
-     * cancels all tasks
-     */
-    public void CancelTasks() {
-        task.cancel(true);
-    }
-
-    /**
-     * signs in with google
-     *
-     * @param task
-     * @return
-     * @throws ApiException
-     */
-    public Task<AuthResult> singInWithGoogle(Task<GoogleSignInAccount> task) throws ApiException {
-        return authService.singInWithGoogle(task);
-    }
-
-    /**
-     * signs out
-     */
-    public void signOut() {
-        authService.signOut();
-    }
-
-    /**
-     * gets the current user
-     *
-     * @return
-     */
-    public FirebaseUser getCurrentUser() {
-        return authService.getCurrentUser();
-    }
-
-    /**
-     * uploads an image to the firebase storage
-     *
-     * @param imageUrl
-     * @param ctx
-     * @return
-     * @throws InterruptedException
-     */
-    public Task<Uri> uploadImage(Uri imageUrl, Context ctx) throws InterruptedException {
-        final CountDownLatch latch = new CountDownLatch(1);
-        final StorageReference fileRef = FirebaseStorage
-                .getInstance()
-                .getReference()
-                .child("images")
-                .child("recipe")
-                .child(System.currentTimeMillis() + "." + getFileExt(imageUrl, ctx));
-
-        fileRef.putFile(imageUrl).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                latch.countDown();
-            }
-        });
-        latch.await();
-        return fileRef.getDownloadUrl();
-    }
-
-    /**
-     * gets the file extension
-     *
-     * @param contentUri
-     * @param ctx
-     * @return
-     */
-    public String getFileExt(Uri contentUri, Context ctx) {
-        ContentResolver c = ctx.getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(c.getType(contentUri));
-    }
+    //</editor-fold>
 }

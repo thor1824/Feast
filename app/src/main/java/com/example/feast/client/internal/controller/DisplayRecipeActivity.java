@@ -37,7 +37,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private  final String TAG = "DisplayRecipeActivity";
+    private final String TAG = "DisplayRecipeActivity";
 
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
@@ -236,6 +236,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     //</editor-fold>
 
     //<editor-fold desc="Helper Functions">
+
     /**
      * sets the recipe in the views, and checks if the recipe has a picture.
      *

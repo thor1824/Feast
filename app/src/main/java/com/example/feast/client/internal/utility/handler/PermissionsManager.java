@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 public class PermissionsManager {
     /**
      * checks if the phone api is 23 or above. then check if the permission is already given
+     *
      * @param permission
      * @param act
      * @return
@@ -23,6 +24,7 @@ public class PermissionsManager {
 
     /**
      * Asks for permission based on what comes as a parameters
+     *
      * @param Permissions
      * @param RequestCode
      * @param act
