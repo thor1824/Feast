@@ -64,9 +64,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         setContentView(R.layout.activity_display_recipe);
         model = Model.getInstance();
 
-        onNewRandomRecipe();
         setupViews();
         setupListener();
+        onNewRandomRecipe();
     }
 
     @Override
@@ -237,8 +237,10 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
      * @param recipe
      */
     private void setRecipe(IRecipe recipe) {
+
         layoutForName.removeAllViews();
         layoutForGram.removeAllViews();
+
         if (recipe != null) {
             textView.setText(recipe.getName());
 
