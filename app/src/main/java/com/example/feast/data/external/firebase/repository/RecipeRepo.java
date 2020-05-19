@@ -7,6 +7,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 public class RecipeRepo implements IRecipeRepo {
+
+    /**
+     * reads all the recipes from the recipes collection
+     *
+     * @return
+     */
     @Override
     public Task<QuerySnapshot> ReadAll() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -14,6 +20,12 @@ public class RecipeRepo implements IRecipeRepo {
                 .get();
     }
 
+    /**
+     * reads one recipe by a id
+     *
+     * @param id
+     * @return
+     */
     @Override
     public Task<DocumentSnapshot> Read(String id) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();

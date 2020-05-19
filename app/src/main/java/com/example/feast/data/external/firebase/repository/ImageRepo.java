@@ -13,6 +13,12 @@ import com.google.firebase.storage.UploadTask;
 
 public class ImageRepo implements IImageRepo {
 
+    /**
+     * Gets the image from firebase storage
+     *
+     * @param imgUrl
+     * @return
+     */
     @Override
     public Task<byte[]> getImage(String imgUrl) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -22,6 +28,13 @@ public class ImageRepo implements IImageRepo {
         return gsReference.getBytes(ONE_MEGABYTE);
     }
 
+    /**
+     * Saves the image to firebase storage
+     *
+     * @param imgUrl
+     * @param fileName
+     * @return
+     */
     public Task<Uri> saveImage(Uri imgUrl, String fileName) {
         final StorageReference fileRef = FirebaseStorage
                 .getInstance()

@@ -12,6 +12,9 @@ public class DBInitializer {
     private ArrayList<Recipe> recipes = new ArrayList<Recipe>();
     private ArrayList<UserRecipe> userRecipes = new ArrayList<UserRecipe>();
 
+    /**
+     * generates mock data
+     */
     public DBInitializer() {
         generateIngredients();
         generateRecipes();

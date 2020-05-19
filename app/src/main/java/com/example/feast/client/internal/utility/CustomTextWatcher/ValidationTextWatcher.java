@@ -16,10 +16,20 @@ public class ValidationTextWatcher implements TextWatcher {
         this.submitButton = submitButton;
     }
 
+    /**
+     * getter for EditTextViews
+     *
+     * @return
+     */
     public ArrayList<EditText> getEditTexts() {
         return editTexts;
     }
 
+    /**
+     * checks whether the editText view is empty or not
+     *
+     * @return
+     */
     private boolean isValid() {
 
         for (EditText editText : editTexts) {
