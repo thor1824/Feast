@@ -229,7 +229,11 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         assert message != null;
         int estimatedTime = Integer.parseInt(message);
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
+        if(recipeToBeDisplayed.getImageUrl() == "" || recipeToBeDisplayed.getImageUrl() == null){
+            recipeImage.setImageResource(R.drawable.foodnotfound);
+        }
         setRecipe(recipeToBeDisplayed);
+
     }
     //</editor-fold>
 
