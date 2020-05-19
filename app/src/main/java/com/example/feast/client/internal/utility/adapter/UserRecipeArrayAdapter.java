@@ -59,7 +59,7 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
                 Model.getInstance().deleteUserRecipe(ur.getId()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        //todo snackbar
+                        //todo sandbar
                         remove(ur);
                     }
                 });

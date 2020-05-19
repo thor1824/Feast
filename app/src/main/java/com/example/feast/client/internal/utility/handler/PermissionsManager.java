@@ -6,7 +6,12 @@ import android.content.pm.PackageManager;
 import androidx.core.app.ActivityCompat;
 
 public class PermissionsManager {
-
+    /**
+     * checks if the phone api is 23 or above. then check if the permission is already given
+     * @param permission
+     * @param act
+     * @return
+     */
     public static boolean isGrantedPermission(String permission, Activity act) {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
             int permissionResult = act.checkSelfPermission(permission);
@@ -16,6 +21,12 @@ public class PermissionsManager {
         }
     }
 
+    /**
+     * Asks for permission baste on what comes as a parameters
+     * @param Permissions
+     * @param RequestCode
+     * @param act
+     */
     public static void askPermission(String[] Permissions, int RequestCode, Activity act) {
         ActivityCompat.requestPermissions(act,
                 Permissions,
