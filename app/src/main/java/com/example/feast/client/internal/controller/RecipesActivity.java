@@ -114,7 +114,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
 
         Intent intent = new Intent(this, RecipeActivity.class);
         intent.putExtra("ur", ur);
-        startActivityForResult(intent, RequestCodes.REQUEST_CODE_UPDATE);
+        startActivityForResult(intent, RequestCodes.RC_UPDATE);
     }
 
 
@@ -123,7 +123,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
      */
     private void getGoToAddRecipe() {
         Intent GotoAddRecipe_intent = new Intent(this, AddUserRecipeActivity.class);
-        startActivityForResult(GotoAddRecipe_intent, RequestCodes.REQUEST_CODE_UPDATE);
+        startActivityForResult(GotoAddRecipe_intent, RequestCodes.RC_UPDATE);
     }
 
     /**
@@ -136,7 +136,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (RequestCodes.REQUEST_CODE_UPDATE == requestCode && RESULT_OK == resultCode) {
+        if (RequestCodes.RC_UPDATE == requestCode && RESULT_OK == resultCode) {
             model.forceUpdate();
         }
     }
