@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -21,23 +20,23 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.client.internal.utility.concurrent.Listener;
+import com.example.feast.client.internal.utility.globals.ExtraKeys;
 import com.example.feast.core.entities.RecipeContainer;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.varunest.sparkbutton.SparkButton;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener {
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    private Spinner mainSpinner;
-    private SparkButton sparkButton;
-    private String valueFromSpinner;
-    private Model model;
-    private TextView test;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
-    private String TAG = "app";
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private final String TAG = "MainActivity";
 
+    private DrawerLayout drawerLayout;
+    private Spinner spinnerEstimatedTime;
+    private SparkButton btnRandomReButton;
+    private TextView tvNamePlate;
+
+    private Model model;
+
+    //<editor-fold desc="Overrides">
 
     /**
      * creates the activity, and sets up the views.
@@ -49,32 +48,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         model = Model.getInstance();
+        setupView();
+        setupSpinner();
+        setupListener();
 
-        mainSpinner = findViewById(R.id.spinnerMain);
-        sparkButton = findViewById(R.id.spark_button);
-        drawerLayout = findViewById(R.id.drawLayout);
-        navigationView = findViewById(R.id.navigation_view);
-        toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("");
-
-
-        sparkButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                sparkButton.playAnimation();
-                goToNextActivity();
-            }
-        });
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_home);
-        String[] spinnerValues = getResources().getStringArray(R.array.minutesForSpinner);
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerValues);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        mainSpinner.setAdapter(adapter);
-        test = findViewById(R.id.test);
-        test.setText("not Signed in");
 
     }
 
@@ -85,22 +62,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser = model.getCurrentUser();
-        if (currentUser != null) {
-            model.getAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
-                @Override
-                public void call(RecipeContainer entity) {
-                    Log.d(TAG, "call: " + entity);
-                }
-            });
-            test.setText(currentUser.getDisplayName());
-        }
-
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-
-        toggle.syncState();
+        loadRecipes();
+        setupToolBar();
     }
 
     /**
@@ -116,35 +79,87 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /**
-     * checks what is selected in the estimatedTime Spinner
-     *
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
+     * when its destroyed it cancels all tasks.
      */
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        if (parent.getId() == R.id.spinnerMain) {
-            this.valueFromSpinner = parent.getItemAtPosition(position).toString();
+    protected void onDestroy() {
+        super.onDestroy();
+        model.CancelTasks();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Setup">
+    private void setupSpinner() {
+        spinnerEstimatedTime = findViewById(R.id.spinnerMain);
+        String[] spinnerValues = getResources().getStringArray(R.array.minutesForSpinner);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerValues);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerEstimatedTime.setAdapter(adapter);
+
+    }
+
+    private void setupToolBar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+
+        toggle.syncState();
+    }
+
+    private void setupView() {
+        tvNamePlate = findViewById(R.id.test);
+        tvNamePlate.setText("not Signed in");
+        btnRandomReButton = findViewById(R.id.spark_button);
+        drawerLayout = findViewById(R.id.drawLayout);
+        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_home);
+    }
+
+    private void setupListener() {
+        btnRandomReButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                btnRandomReButton.playAnimation();
+                onDisplayRandomRecipe();
+            }
+        });
+    }
+
+    private void loadRecipes() {
+        FirebaseUser currentUser = model.getCurrentUser();
+        if (currentUser != null) {
+            model.getAllRecipes(currentUser.getUid(), new Listener<RecipeContainer>() {
+                @Override
+                public void call(RecipeContainer entity) {
+                    Log.d(TAG, "call: " + entity);
+                }
+            });
+            tvNamePlate.setText(currentUser.getDisplayName());
         }
     }
+    //</editor-fold>
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
+    //<editor-fold desc="Button Actions">
 
     /**
      * takes the selected item in the spinner and parses it to the next activity
      */
-    public void goToNextActivity() {
+    public void onDisplayRandomRecipe() {
         Intent intent = new Intent(this, DisplayRecipeActivity.class);
-        mainSpinner = findViewById(R.id.spinnerMain);
-        String message = mainSpinner.getSelectedItem().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        spinnerEstimatedTime = findViewById(R.id.spinnerMain);
+        String message = spinnerEstimatedTime.getSelectedItem().toString();
+        intent.putExtra(ExtraKeys.EXTRA_KEY_TIME, message);
         startActivity(intent);
     }
+    //</editor-fold>
+
+    //<editor-fold desc="Navigation">
 
     /**
      * sets up the toolbar
@@ -187,13 +202,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+    //</editor-fold>
 
-    /**
-     * when its destroyed it cancels all tasks.
-     */
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        model.CancelTasks();
-    }
+
 }

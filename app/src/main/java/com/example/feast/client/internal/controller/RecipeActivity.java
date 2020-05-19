@@ -115,7 +115,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestCodes.USER_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == RequestCodes.RC_USERS && resultCode == RESULT_OK) {
 
             File file = new File(currentPhotoPath);
             imgRecipe.setImageURI(Uri.fromFile(file));
@@ -128,7 +128,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
             isImageUpdated = true;
         }
 
-        if (requestCode == RequestCodes.REQUEST_READ_FROM_GALLERY) {
+        if (requestCode == RequestCodes.RC_READ_FROM_GALLERY) {
 
             if (resultCode == Activity.RESULT_OK) {
                 imageUrl = data.getData();
@@ -163,7 +163,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == RequestCodes.REQUEST_CODE_CAMERA) {
+        if (requestCode == RequestCodes.RC_CODE_CAMERA) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera();
             } else {
@@ -517,7 +517,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      */
     private void askCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.REQUEST_CODE_CAMERA);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.RC_CODE_CAMERA);
         } else {
             openCamera();
         }
@@ -529,7 +529,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      */
     private void getPictureFromGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, RequestCodes.REQUEST_READ_FROM_GALLERY);
+        startActivityForResult(gallery, RequestCodes.RC_READ_FROM_GALLERY);
     }
 
     /**
@@ -538,7 +538,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private void openCamera() {
         Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntend.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
+            startActivityForResult(cameraIntend, RequestCodes.RC_USERS);
             File photoFile = null;
             try {
                 photoFile = createImageFile();
@@ -552,7 +552,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                         "com.example.feast.android.fileProvider",
                         photoFile);
                 cameraIntend.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(cameraIntend, RequestCodes.USER_REQUEST_CODE);
+                startActivityForResult(cameraIntend, RequestCodes.RC_USERS);
             }
 
         }

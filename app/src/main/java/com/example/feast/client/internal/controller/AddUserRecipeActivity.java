@@ -123,7 +123,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case RequestCodes.REQUEST_IMAGE_CAPTURE: {
+            case RequestCodes.RC_IMAGE_CAPTURE: {
                 if (resultCode == RESULT_OK) {
                     try {
                         Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
@@ -136,7 +136,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 }
                 break;
             }
-            case RequestCodes.REQUEST_READ_FROM_GALLERY: {
+            case RequestCodes.RC_READ_FROM_GALLERY: {
                 if (resultCode == RESULT_OK) {
                     imageUri = data.getData();
                     imageView.setImageURI(imageUri);
@@ -159,7 +159,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
-            case RequestCodes.REQUEST_CAMERA_PERMISSION: {
+            case RequestCodes.RC_CAMERA_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     onClickCamera();
                 } else {
@@ -167,7 +167,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 }
                 return;
             }
-            case RequestCodes.REQUEST_EXTERNAL_READ_PERMISSION: {
+            case RequestCodes.RC_EXTERNAL_READ_PERMISSION: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     onFromGallery();
                 } else {
@@ -257,7 +257,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                             Manifest.permission.WRITE_EXTERNAL_STORAGE,
                             Manifest.permission.CAMERA
                     },
-                    RequestCodes.REQUEST_CAMERA_PERMISSION,
+                    RequestCodes.RC_CAMERA_PERMISSION,
                     this
             );
         } else {
@@ -269,7 +269,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivityForResult(intent, RequestCodes.REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(intent, RequestCodes.RC_IMAGE_CAPTURE);
             }
         }
 
@@ -281,12 +281,12 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                     new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE
                     },
-                    RequestCodes.REQUEST_EXTERNAL_READ_PERMISSION,
+                    RequestCodes.RC_EXTERNAL_READ_PERMISSION,
                     this
             );
         } else {
             Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(gallery, RequestCodes.REQUEST_READ_FROM_GALLERY);
+            startActivityForResult(gallery, RequestCodes.RC_READ_FROM_GALLERY);
         }
     }
 

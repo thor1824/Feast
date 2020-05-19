@@ -62,11 +62,13 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_recipe);
+
         model = Model.getInstance();
 
-        onNewRandomRecipe();
         setupViews();
         setupListener();
+
+        onNewRandomRecipe();
     }
 
     @Override
@@ -97,11 +99,15 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == RequestCodes.REQUEST_CODE_SHARE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendIngredientsAsSMS();
-            } else {
-                Toast.makeText(this, "Permission TO Share Is Required For Sending A Recipe", Toast.LENGTH_SHORT).show();
+        switch (requestCode) {
+            case RequestCodes.RC_SHARE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onShare();
+                } else {
+                    Toast.makeText(this, "Permission TO Share Is Required For Sending A Recipe", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
             }
         }
     }
@@ -202,12 +208,11 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     //<editor-fold desc="Button Actions">
     public void onShare() {
         if (!PermissionsManager.isGrantedPermission(Manifest.permission.SEND_SMS, this)) {
-
             PermissionsManager.askPermission(
                     new String[]{
                             Manifest.permission.SEND_SMS
                     },
-                    RequestCodes.REQUEST_CODE_SHARE,
+                    RequestCodes.RC_SHARE,
                     this
             );
         } else {
@@ -220,10 +225,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
      */
     public void onNewRandomRecipe() {
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        String message = intent.getStringExtra(MainActivity.EXTRA_KEY_TIME);
         assert message != null;
         estimatedTime = Integer.parseInt(message);
-        model = Model.getInstance();
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
         setRecipe(recipeToBeDisplayed);
     }
