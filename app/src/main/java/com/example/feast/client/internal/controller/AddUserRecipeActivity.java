@@ -81,9 +81,10 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         model = Model.getInstance();
         ingNameList = new ArrayList<>();
         layouts = new ArrayList<>();
+        txtWatcher = new ValidationTextWatcher(submitButton);
+
         setupViews();
         setupListener();
-        txtWatcher = new ValidationTextWatcher(submitButton);
     }
 
     /**
