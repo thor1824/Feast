@@ -24,6 +24,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
+import com.example.feast.client.internal.utility.globals.ExtraKeys;
 import com.example.feast.client.internal.utility.globals.RequestCodes;
 import com.example.feast.client.internal.utility.handler.PermissionsManager;
 import com.example.feast.core.entities.IRecipe;
@@ -224,7 +225,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
      */
     public void onNewRandomRecipe() {
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_KEY_TIME);
+        String message = intent.getStringExtra(ExtraKeys.EXTRA_KEY_TIME);
         assert message != null;
         estimatedTime = Integer.parseInt(message);
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
