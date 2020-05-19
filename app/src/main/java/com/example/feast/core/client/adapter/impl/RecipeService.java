@@ -10,15 +10,31 @@ public class RecipeService implements IRecipeService {
 
     private IRecipeRepo _repo;
 
+    /**
+     * Constructor
+     *
+     * @param repo
+     */
     public RecipeService(IRecipeRepo repo) {
         _repo = repo;
     }
 
+    /**
+     * Gets all the recipes from the repository
+     *
+     * @return
+     */
     @Override
     public Task<QuerySnapshot> ReadAll() {
         return _repo.ReadAll();
     }
 
+    /**
+     * gets on recipe by the id from the repository
+     *
+     * @param id
+     * @return
+     */
     @Override
     public Task<DocumentSnapshot> Read(String id) {
         return _repo.Read(id);

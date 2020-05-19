@@ -23,11 +23,27 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
 
     private ListView listView;
 
+    /**
+     * Constructor
+     *
+     * @param context
+     * @param resource
+     * @param items
+     * @param listView
+     */
     public UserRecipeArrayAdapter(Context context, int resource, List<UserRecipe> items, ListView listView) {
         super(context, resource, items);
         this.listView = listView;
     }
 
+    /**
+     * gets the view setup for userRecipes
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @Override
     public View getView(final int position, View convertView, final ViewGroup parent) {
 
@@ -68,6 +84,9 @@ public class UserRecipeArrayAdapter extends ArrayAdapter<UserRecipe> {
         return convertView;
     }
 
+    /**
+     * inner viewHolder class
+     */
     private static class ViewHolder {
         TextView tvName;
         TextView tvTime;

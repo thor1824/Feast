@@ -12,6 +12,13 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class AuthRepo implements IAuthRepo {
 
+    /**
+     * Sign in the user via google
+     *
+     * @param task
+     * @return
+     * @throws ApiException
+     */
     @Override
     public Task<AuthResult> singInWithGoogle(Task<GoogleSignInAccount> task) throws ApiException {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -21,12 +28,20 @@ public class AuthRepo implements IAuthRepo {
         return mAuth.signInWithCredential(credential);
     }
 
+    /**
+     * signs out the currentUser
+     */
     @Override
     public void signOut() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signOut();
     }
 
+    /**
+     * Gets the currentUser
+     *
+     * @return
+     */
     @Override
     public FirebaseUser getCurrentUser() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();

@@ -14,6 +14,12 @@ import java.util.Map;
 
 public class UserRecipeRepo implements IUserRecipeRepo {
 
+    /**
+     * Gets the userRecipes for the current user
+     *
+     * @param userId
+     * @return
+     */
     @Override
     public Task<QuerySnapshot> readByUserId(String userId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -22,6 +28,12 @@ public class UserRecipeRepo implements IUserRecipeRepo {
                 .get();
     }
 
+    /**
+     * creates a userRecipe on firebase
+     *
+     * @param re
+     * @return
+     */
     @Override
     public Task<DocumentReference> create(UserRecipe re) {
 
@@ -32,6 +44,12 @@ public class UserRecipeRepo implements IUserRecipeRepo {
 
     }
 
+    /**
+     * deletes a recipe by the id given in the params
+     *
+     * @param id
+     * @return
+     */
     @Override
     public Task<Void> delete(String id) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -39,6 +57,12 @@ public class UserRecipeRepo implements IUserRecipeRepo {
 
     }
 
+    /**
+     * updates a userRecipe in the firebase
+     *
+     * @param re
+     * @return
+     */
     @Override
     public Task<Void> update(UserRecipe re) {
         Map<String, Object> data = new HashMap<>();
