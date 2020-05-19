@@ -17,20 +17,19 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    private ImageView profileImage;
-    private TextView displayName;
-    private TextView displayEmail;
+    
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
-    private Model model;
-    private FirebaseAuth mAuth;
+    private ImageView ivProfile;
+    private TextView tvUserName;
+    private TextView tvEmail;
 
+    private Model model;
+
+    //<editor-fold desc="Overrides">
     /**
      * creates the activity and sets the views.
      *
@@ -40,25 +39,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        //---------------------instantiate----------------------\\
-        profileImage = findViewById(R.id.profileImage);
-        displayName = findViewById(R.id.displayName);
-        displayEmail = findViewById(R.id.displayEmail);
-        drawerLayout = findViewById(R.id.drawLayout_profile);
-        navigationView = findViewById(R.id.navigation_view_profile);
-        toolbar = findViewById(R.id.toolbar);
-        mAuth = FirebaseAuth.getInstance();
         model = Model.getInstance();
 
-        //-------------------set data-----------------------------\\
-        displayName.setText(mAuth.getCurrentUser().getDisplayName());
-        displayEmail.setText(mAuth.getCurrentUser().getEmail());
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_profile);
-        Picasso.get().load(mAuth.getCurrentUser().getPhotoUrl()).into(profileImage);
-        toolbar.setTitle("");
+        setupView();
+
+        setCurrentUser();
 
     }
 
@@ -69,10 +54,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     protected void onStart() {
         super.onStart();
 
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        setupToolBar();
+
     }
 
     /**
@@ -86,8 +69,40 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             super.onBackPressed();
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Setup">
+    private void setCurrentUser() {
+        FirebaseUser currentUser = model.getCurrentUser();
+        tvUserName.setText(currentUser.getDisplayName());
+        tvEmail.setText(currentUser.getEmail());
 
+        Picasso.get().load(currentUser.getPhotoUrl()).into(ivProfile);
+    }
+
+    private void setupView() {
+        tvUserName = findViewById(R.id.displayName);
+        tvEmail = findViewById(R.id.displayEmail);
+        drawerLayout = findViewById(R.id.drawLayout_profile);
+        NavigationView navigationView = findViewById(R.id.navigation_view_profile);
+        ivProfile = findViewById(R.id.profileImage);
+        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_profile);
+    }
+
+    private void setupToolBar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Navigation">
     /**
      * sets up the content in the toolbar.
      * <p>
@@ -132,10 +147,5 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
+    //</editor-fold>
 }

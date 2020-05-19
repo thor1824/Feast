@@ -22,10 +22,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
+
     private static final String TAG = "LoginActivity";
 
     private GoogleSignInClient mSignInClient;
-    private SignInButton signInButton;
 
     private Model model;
 
@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         mSignInClient = GoogleSignIn.getClient(this, gso);
-        signInButton = findViewById(R.id.signInButton);
+        SignInButton signInButton = findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

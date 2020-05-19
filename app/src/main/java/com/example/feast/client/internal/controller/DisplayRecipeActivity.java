@@ -24,6 +24,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
+import com.example.feast.client.internal.utility.globals.ExtraKeys;
 import com.example.feast.client.internal.utility.globals.RequestCodes;
 import com.example.feast.client.internal.utility.handler.PermissionsManager;
 import com.example.feast.core.entities.IRecipe;
@@ -35,18 +36,16 @@ import com.google.android.material.navigation.NavigationView;
 
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
     private Toolbar toolbar;
     private ImageView recipeImage;
     private IRecipe recipeToBeDisplayed;
     private TextView textView;
-    private LinearLayout layoutForGram;
-    private LinearLayout layoutForName;
+    private LinearLayout layoutForGram, layoutForName;
     private FloatingActionButton btnShare;
     private Button btnPick;
 
-    private int estimatedTime;
     private Model model;
 
     //<editor-fold desc="Overrides">
@@ -132,7 +131,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
     private void setupViews() {
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
-        navigationView = findViewById(R.id.navigation_view_display_recipe);
+        NavigationView navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
         recipeImage = findViewById(R.id.imgRecipe);
         layoutForName = findViewById(R.id.LinLayIngredients);
@@ -225,9 +224,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
      */
     public void onNewRandomRecipe() {
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_KEY_TIME);
+        String message = intent.getStringExtra(ExtraKeys.EXTRA_KEY_TIME);
         assert message != null;
-        estimatedTime = Integer.parseInt(message);
+        int estimatedTime = Integer.parseInt(message);
         recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
         setRecipe(recipeToBeDisplayed);
     }

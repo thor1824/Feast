@@ -53,12 +53,6 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private final String KEY_NAME = "name";
     private final String KEY_AMOUNT = "amount";
 
-    private int editFieldId = 0;
-    private ArrayList<HashMap<String, Integer>> ingNameList;
-    private Uri imageUri;
-    private Model model;
-
-    //Views
     private EditText firstIngFiled, firstAmountField, estimatedTimeField, recipeNameField;
     private Button submitButton, takePickButton, picFromGalleryButton;
     private DrawerLayout drawerLayout;
@@ -67,6 +61,11 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private ImageView imageView;
     private ValidationTextWatcher txtWatcher;
     private ArrayList<LinearLayout> layouts;
+
+    private int editFieldId = 0;
+    private ArrayList<HashMap<String, Integer>> ingNameList;
+    private Uri imageUri;
+    private Model model;
 
     //<editor-fold desc="Overrides">
 
