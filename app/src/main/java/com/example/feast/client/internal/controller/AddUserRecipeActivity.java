@@ -43,6 +43,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.firestore.DocumentReference;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -52,6 +53,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private final String TAG = "AddUserRecipeActivity";
     private final String KEY_NAME = "name";
     private final String KEY_AMOUNT = "amount";
+    private final String KEY_URI = "imageUri";
 
     private EditText firstIngFiled, firstAmountField, estimatedTimeField, recipeNameField;
     private Button submitButton, takePickButton, picFromGalleryButton;
@@ -66,6 +68,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     private ArrayList<HashMap<String, Integer>> ingNameList;
     private Uri imageUri;
     private Model model;
+
 
     //<editor-fold desc="Overrides">
 
@@ -86,8 +89,22 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
         setupViews();
 
         txtWatcher = new ValidationTextWatcher(submitButton);
-        
+
         setupListener();
+
+        if ((savedInstanceState != null) && (savedInstanceState.getParcelable(KEY_URI) != null)) {
+            Log.d(TAG, "onCreate: get state");
+            imageUri = (Uri) savedInstanceState.getParcelable(KEY_URI);
+            Bitmap thumbnail = null;
+            try {
+                thumbnail = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), imageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            imageView.setImageBitmap(thumbnail);
+
+        }
     }
 
     /**
@@ -150,6 +167,20 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
                 Log.d(TAG, "onActivityResult: not setup for Request code " + requestCode);
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        state.putParcelable(KEY_URI, imageUri);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.v(TAG, "Inside of onRestoreInstanceState");
+        imageUri = (Uri) savedInstanceState.getParcelable(KEY_URI);
     }
 
     /**
@@ -269,6 +300,7 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
             values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
             imageUri = getContentResolver().insert(
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             if (intent.resolveActivity(getPackageManager()) != null) {

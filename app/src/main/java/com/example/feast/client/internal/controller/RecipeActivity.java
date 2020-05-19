@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,6 +50,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private final String TAG = "RecipeActivity";
     private final String KEY_NAME = "name";
     private final String KEY_AMOUNT = "amount";
+    private final String KEY_URI = "imageUri";
 
     private EditText etName, etTime;
     private ImageButton btnAddIngredients, btnTakePicture;
@@ -69,6 +71,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private boolean wasUpdated;
     private boolean isImageUpdated;
     private Model model;
+
 
 
     //<editor-fold desc="Override Methods">
@@ -94,6 +97,34 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         setUpListeners();
         setRecipe(mainRecipe);
         switchActivation(edit);
+
+        if (imageUri != null) {
+            Log.d(TAG, "onCreate: get state");
+            imageUri = (Uri) savedInstanceState.getParcelable(KEY_URI);
+            Bitmap thumbnail = null;
+            try {
+                thumbnail = MediaStore.Images.Media.getBitmap(
+                        getContentResolver(), imageUri);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            ivRecipe.setImageBitmap(thumbnail);
+
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        state.putParcelable(KEY_URI, imageUri);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.v(TAG, "Inside of onRestoreInstanceState");
+        imageUri = (Uri) savedInstanceState.getParcelable(KEY_URI);
     }
 
     /**
