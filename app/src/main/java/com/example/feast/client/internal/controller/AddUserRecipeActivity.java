@@ -72,9 +72,11 @@ public class AddUserRecipeActivity extends AppCompatActivity {
         model = Model.getInstance();
         ingNameList = new ArrayList<>();
         layouts = new ArrayList<>();
-        txtWatcher = new ValidationTextWatcher(submitButton);
 
         setupViews();
+
+        txtWatcher = new ValidationTextWatcher(submitButton);
+        
         setupListener();
     }
 

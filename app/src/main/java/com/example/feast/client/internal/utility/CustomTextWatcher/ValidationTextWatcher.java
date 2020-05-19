@@ -11,6 +11,7 @@ public class ValidationTextWatcher implements TextWatcher {
 
     private ArrayList<EditText> editTexts;
     private Button submitButton;
+
     public ValidationTextWatcher(Button submitButton) {
         this.editTexts = new ArrayList<>();
         this.submitButton = submitButton;

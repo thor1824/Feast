@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private  final String TAG = "LoginActivity";
+    private final String TAG = "LoginActivity";
 
     private GoogleSignInClient mSignInClient;
 
@@ -75,6 +75,12 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(TAG, "onActivityResult not setup for Result Code " + resultCode);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        model.CancelTasks();
+        super.onDestroy();
     }
     //</editor-fold>
 

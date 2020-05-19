@@ -38,8 +38,8 @@ public class ImageService implements IImageService {
      * @return
      */
     @Override
-    public Task<Uri> saveImage(Uri uri, String fileName) {
-        return imageRepo.saveImage(uri, fileName);
+    public Task<Uri> saveImage(Uri uri, String fileName, String userID) {
+        return imageRepo.saveImage(uri, fileName, userID);
     }
 
 }

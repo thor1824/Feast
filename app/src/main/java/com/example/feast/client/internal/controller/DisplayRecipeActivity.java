@@ -37,7 +37,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private  final String TAG = "DisplayRecipeActivity";
+    private final String TAG = "DisplayRecipeActivity";
 
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;

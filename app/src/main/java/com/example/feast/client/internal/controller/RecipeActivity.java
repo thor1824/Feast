@@ -2,15 +2,14 @@ package com.example.feast.client.internal.controller;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuItem;
@@ -28,30 +27,22 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
 import com.example.feast.client.internal.utility.concurrent.AsyncUpdate;
-import com.example.feast.client.internal.utility.concurrent.AsyncUpdateUserRecipe;
 import com.example.feast.client.internal.utility.globals.RequestCodes;
+import com.example.feast.client.internal.utility.handler.PermissionsManager;
 import com.example.feast.core.entities.Ingredient;
 import com.example.feast.core.entities.UserRecipe;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 
 public class RecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -59,18 +50,9 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private final String KEY_NAME = "name";
     private final String KEY_AMOUNT = "amount";
 
-    private UserRecipe mainRecipe;
-    private ArrayList<View> views;
-    private ArrayList<HashMap<String, EditText>> Ingredients;
-    private boolean edit;
-    private boolean wasUpdated;
-    private Model model;
-    private String currentPhotoPath;
-    private Uri imageUrl;
-
     private EditText etName, etTime;
-    private ImageButton btnAddIngredients, imageViewButton;
-    private ImageView imgRecipe;
+    private ImageButton btnAddIngredients, btnTakePicture;
+    private ImageView ivRecipe;
     private Toolbar toolbar;
     private ConstraintLayout mainLayout;
     private TableLayout tableIng;
@@ -78,9 +60,19 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private Button btnEdit, btnback, btnGallery;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private Uri imageUri;
+
+    private UserRecipe mainRecipe;
+    private ArrayList<View> views;
+    private ArrayList<HashMap<String, EditText>> Ingredients;
+    private boolean edit;
+    private boolean wasUpdated;
     private boolean isImageUpdated;
+    private Model model;
+
 
     //<editor-fold desc="Override Methods">
+
     /**
      * Creates the Activity and sets up the views.
      *
@@ -104,44 +96,6 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         switchActivation(edit);
     }
 
-
-
-    /**
-     * Checks the resultcode, and sets a property on a recipe.
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RequestCodes.RC_USERS && resultCode == RESULT_OK) {
-
-            File file = new File(currentPhotoPath);
-            imgRecipe.setImageURI(Uri.fromFile(file));
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            Uri contentUri = Uri.fromFile(file);
-            imageUrl = contentUri;
-
-            mediaScanIntent.setData(contentUri);
-            this.sendBroadcast(mediaScanIntent);
-            isImageUpdated = true;
-        }
-
-        if (requestCode == RequestCodes.RC_READ_FROM_GALLERY) {
-
-            if (resultCode == Activity.RESULT_OK) {
-                imageUrl = data.getData();
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "." + model.getFileExt(imageUrl, this);//todo put
-                Log.d("tag", "onActivityResult: Gallery Image Uri:  " + imageFileName);
-                imgRecipe.setImageURI(imageUrl);
-                isImageUpdated = true;
-            }
-        }
-    }
-
     /**
      * sets up the toolbar
      */
@@ -156,6 +110,47 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     }
 
     /**
+     * Checks the resultcode, and sets a property on a recipe.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case RequestCodes.RC_IMAGE_CAPTURE: {
+                if (resultCode == RESULT_OK) {
+                    try {
+                        Bitmap thumbnail = MediaStore.Images.Media.getBitmap(
+                                getContentResolver(), imageUri);
+                        ivRecipe.setImageBitmap(thumbnail);
+                        isImageUpdated = true;
+                        wasUpdated = true;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            }
+            case RequestCodes.RC_READ_FROM_GALLERY: {
+                if (resultCode == RESULT_OK) {
+                    imageUri = data.getData();
+                    ivRecipe.setImageURI(imageUri);
+                    isImageUpdated = true;
+                    wasUpdated = true;
+                }
+                break;
+            }
+            default: {
+                Log.d(TAG, "onActivityResult: not setup for Request code " + requestCode);
+            }
+        }
+
+    }
+
+    /**
      * checks if there is permission to use the camera or not.
      *
      * @param requestCode
@@ -164,11 +159,25 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == RequestCodes.RC_CODE_CAMERA) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                openCamera();
-            } else {
-                Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
+        switch (requestCode) {
+            case RequestCodes.RC_CAMERA_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onTakePicture();
+                } else {
+                    Toast.makeText(this, "Camera Permission is Required to Use camera.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+            case RequestCodes.RC_EXTERNAL_READ_PERMISSION: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onFromGallery();
+                } else {
+                    Toast.makeText(this, "External Read Permission is Required to access Gallery.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+            default: {
+                Log.d(TAG, "onPermissionRequestResult not setup for" + permissions[0]);
             }
         }
     }
@@ -196,18 +205,18 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         navigationView = findViewById(R.id.navigation_recipe);
         btnback = findViewById(R.id.button_back);
         toolbar = findViewById(R.id.toolbar);
-        imageViewButton = findViewById(R.id.imageButton);
+        btnTakePicture = findViewById(R.id.imageButton);
         mainLayout = findViewById(R.id.main);
         etName = findViewById(R.id.et_ur_name);
         etTime = findViewById(R.id.et_ur_time);
-        imgRecipe = findViewById(R.id.imgRecipe);
+        ivRecipe = findViewById(R.id.imgRecipe);
         btnEdit = findViewById(R.id.button_edit);
         btnAddIngredients = findViewById(R.id.button_add_ing);
         btnGallery = findViewById(R.id.button_gallery);
         addRow = findViewById(R.id.tr_add_ing);
         tableIng = findViewById(R.id.table_ing);
 
-        mainLayout.removeView(imageViewButton);
+        mainLayout.removeView(btnTakePicture);
         mainLayout.removeView(btnGallery);
         tableIng.removeView(addRow);
 
@@ -248,18 +257,18 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
             }
         });
 
-        imageViewButton.setOnClickListener(new View.OnClickListener() {
+        btnTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Image");
-                askCameraPermissions();
+                onTakePicture();
             }
         });
 
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPictureFromGallery();
+                onFromGallery();
             }
         });
 
@@ -283,7 +292,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                 @Override
                 public void onSuccess(byte[] bytes) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    imgRecipe.setImageBitmap(bitmap);
+                    ivRecipe.setImageBitmap(bitmap);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -300,6 +309,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     //</editor-fold>
 
     //<editor-fold desc="Button Actions">
+
     /**
      * sets the editState
      */
@@ -312,7 +322,6 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      * checks if the recipe wasUpdated and finishes the edit.
      */
     private void onBack() {
-        Log.d(TAG, "onBack: GO BACK");
         if (wasUpdated) {
             setResult(RESULT_OK, null);
             finish();
@@ -326,28 +335,15 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      */
     @SuppressWarnings("ConstantConditions")
     private void onSave() {
-        String id = mainRecipe.getId();
-        String name = etName.getText().toString();
-        long cookTime = Long.parseLong(etTime.getText().toString());
-        String userId = mainRecipe.getUserId();
-
-        ArrayList<Ingredient> ingredients = new ArrayList<>();
-        for (HashMap<String, EditText> map : Ingredients) {
-            String ingName = map.get(KEY_NAME).getText().toString();
-            long amount = Long.parseLong(map.get(KEY_AMOUNT).getText().toString());
-
-            ingredients.add(new Ingredient(ingName, amount));
-        }
-
-        UserRecipe ur = new UserRecipe(ingredients, id, cookTime, name, userId, "");
+        UserRecipe ur = extractUserRecipe();
         if (isImageUpdated) {
             updateUserRecipeWithImage(ur);
         } else {
             updateUserRecipeNoImage(ur);
         }
         wasUpdated = true;
-
     }
+
 
     /**
      * sets the recipe when clicked.
@@ -374,16 +370,13 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         btnDeleteIngredient.setImageResource(R.drawable.delete_icon);
         btnDeleteIngredient.setBackgroundResource(R.color.transparant);
         btnDeleteIngredient.setEnabled(edit);
+
         views.add(btnDeleteIngredient);
 
         final TableRow trIngredient = new TableRow(this);
         trIngredient.addView(etName);
         trIngredient.addView(etAmount);
         trIngredient.addView(btnDeleteIngredient);
-
-        // Places the view one index beneath the addIngredients button
-        int index = tableIng.getChildCount() >= 2 ? tableIng.getChildCount() - 1 : 0;
-        tableIng.addView(trIngredient, index);
 
         btnDeleteIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -397,81 +390,73 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         temp.put(KEY_NAME, etName);
         temp.put(KEY_AMOUNT, etAmount);
         Ingredients.add(temp);
+
+        // Places the view one index beneath the addIngredients button
+        int index = tableIng.getChildCount() >= 2 ? tableIng.getChildCount() - 1 : 0;
+        tableIng.addView(trIngredient, index);
     }
-    //</editor-fold>
 
-    //<editor-fold desc="Camera and Gallery">
+    private void onTakePicture() {
+        if (!PermissionsManager.isGrantedPermission(Manifest.permission.CAMERA, this)
+                && !PermissionsManager.isGrantedPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, this)) {
 
-    /**
-     * checks if the permission to the camera is granted
-     */
-    private void askCameraPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, RequestCodes.RC_CODE_CAMERA);
+            PermissionsManager.askPermission(
+                    new String[]{
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.CAMERA
+                    },
+                    RequestCodes.RC_CAMERA_PERMISSION,
+                    this
+            );
         } else {
-            openCamera();
-        }
-
-    }
-
-    /**
-     * gets an image from the gallery.
-     */
-    private void getPictureFromGallery() {
-        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, RequestCodes.RC_READ_FROM_GALLERY);
-    }
-
-    /**
-     * opens the camera and creates a new image.
-     */
-    private void openCamera() {
-        Intent cameraIntend = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (cameraIntend.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntend, RequestCodes.RC_USERS);
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Log.d("----------TAG----------", "openCamera: " + ex);
-                ex.printStackTrace();
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, System.currentTimeMillis() + "");
+            values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+            imageUri = getContentResolver().insert(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(intent, RequestCodes.RC_IMAGE_CAPTURE);
             }
-
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.feast.android.fileProvider",
-                        photoFile);
-                cameraIntend.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(cameraIntend, RequestCodes.RC_USERS);
-            }
-
         }
     }
 
-    /**
-     * creates the image which has been taken
-     *
-     * @return
-     * @throws IOException
-     */
-    private File createImageFile() throws IOException {
+    private void onFromGallery() {
+        if (!PermissionsManager.isGrantedPermission(Manifest.permission.READ_EXTERNAL_STORAGE, this)) {
+            PermissionsManager.askPermission(
+                    new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    },
+                    RequestCodes.RC_EXTERNAL_READ_PERMISSION,
+                    this
+            );
+        } else {
+            Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(gallery, RequestCodes.RC_READ_FROM_GALLERY);
+        }
 
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        currentPhotoPath = image.getAbsolutePath();
-        Log.d(TAG, "createImageFile: " + image.getAbsolutePath());
-        return image;
     }
     //</editor-fold>
 
     //<editor-fold desc="Helper Functions">
+    private UserRecipe extractUserRecipe() {
+        String id = mainRecipe.getId();
+        String name = etName.getText().toString();
+        long cookTime = Long.parseLong(etTime.getText().toString());
+        String userId = mainRecipe.getUserId();
+
+        ArrayList<Ingredient> ingredients = new ArrayList<>();
+        for (HashMap<String, EditText> map : Ingredients) {
+            String ingName = map.get(KEY_NAME).getText().toString();
+            long amount = Long.parseLong(map.get(KEY_AMOUNT).getText().toString());
+
+            ingredients.add(new Ingredient(ingName, amount));
+        }
+
+        return new UserRecipe(ingredients, id, cookTime, name, userId, "");
+    }
+
     private EditText createIngredientEditText(String value) {
         EditText et = new EditText(this);
         et.setText(value);
@@ -507,7 +492,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
             });
 
             tableIng.addView(addRow);
-            mainLayout.addView(imageViewButton);
+            mainLayout.addView(btnTakePicture);
             mainLayout.addView(btnGallery);
         } else {
             btnEdit.setText("Edit");
@@ -525,7 +510,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                 }
             });
             tableIng.removeView(addRow);
-            mainLayout.removeView(imageViewButton);
+            mainLayout.removeView(btnTakePicture);
             mainLayout.removeView(btnGallery);
 
         }
@@ -566,12 +551,12 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
      * @param recipe
      */
     private void updateUserRecipeWithImage(final UserRecipe recipe) {
-        if (imageUrl != null) {
+        if (imageUri != null) {
             final ProgressDialog pd = new ProgressDialog(this);
             pd.setMessage("Updating");
             pd.show();
 
-            AsyncUpdateUserRecipe a = new AsyncUpdateUserRecipe(imageUrl, recipe, this, new AsyncUpdate<Void>() {
+            model.updateUserRecipeWithImage(imageUri, recipe, this, new AsyncUpdate<Void>() {
                 @Override
                 public void update(Void entity) {
                     pd.dismiss();
@@ -579,11 +564,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                     switchActivation(edit);
                 }
             });
-
-            a.execute();
-
         }
-
     }
     //</editor-fold>
 

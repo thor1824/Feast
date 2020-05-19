@@ -7,5 +7,5 @@ import com.google.android.gms.tasks.Task;
 public interface IImageService {
     Task<byte[]> getImage(String imgUrl);
 
-    Task<Uri> saveImage(Uri imgUrl, String fileName);
+    Task<Uri> saveImage(Uri imgUrl, String fileName, String userId);
 }

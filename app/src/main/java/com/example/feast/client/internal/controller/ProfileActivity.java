@@ -32,6 +32,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private Model model;
 
     //<editor-fold desc="Overrides">
+
     /**
      * creates the activity and sets the views.
      *
@@ -104,6 +105,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     //</editor-fold>
 
     //<editor-fold desc="Navigation">
+
     /**
      * sets up the content in the toolbar.
      * <p>

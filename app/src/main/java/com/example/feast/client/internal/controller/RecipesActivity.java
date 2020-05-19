@@ -39,6 +39,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     private Model model;
 
     //<editor-fold desc="Overrides">
+
     /**
      * sets up the activity, and sets the views.
      *
@@ -163,6 +164,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     //</editor-fold>
 
     //<editor-fold desc="Button Actions">
+
     /**
      * starts a activity to update userRecipe
      *
@@ -185,6 +187,7 @@ public class RecipesActivity extends AppCompatActivity implements NavigationView
     //</editor-fold>
 
     //<editor-fold desc="Navigation">
+
     /**
      * sets up the toolbar with navigation or messages
      *
