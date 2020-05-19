@@ -78,12 +78,14 @@ public class AddUserRecipeActivity extends AppCompatActivity implements Navigati
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_user_recipe);
+
         model = Model.getInstance();
         ingNameList = new ArrayList<>();
         layouts = new ArrayList<>();
+        txtWatcher = new ValidationTextWatcher(submitButton);
+
         setupViews();
         setupListener();
-        txtWatcher = new ValidationTextWatcher(submitButton);
     }
 
     /**

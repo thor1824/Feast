@@ -69,7 +69,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private Uri imageUrl;
 
     private EditText etName, etTime;
-    private ImageButton btnAddIng, imageViewButton;
+    private ImageButton btnAddIngredients, imageViewButton;
     private ImageView imgRecipe;
     private Toolbar toolbar;
     private ConstraintLayout mainLayout;
@@ -80,9 +80,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     private NavigationView navigationView;
     private boolean isImageUpdated;
 
-
     //<editor-fold desc="Override Methods">
-
     /**
      * Creates the Activity and sets up the views.
      *
@@ -100,10 +98,13 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         wasUpdated = false;
 
         setUpViews();
+        setupNavigation();
         setUpListeners();
         setRecipe(mainRecipe);
         switchActivation(edit);
     }
+
+
 
     /**
      * Checks the resultcode, and sets a property on a recipe.
@@ -185,7 +186,6 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     }
     //</editor-fold>
 
-
     //<editor-fold desc="Setup">
 
     /**
@@ -202,22 +202,25 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         etTime = findViewById(R.id.et_ur_time);
         imgRecipe = findViewById(R.id.imgRecipe);
         btnEdit = findViewById(R.id.button_edit);
-        btnAddIng = findViewById(R.id.button_add_ing);
+        btnAddIngredients = findViewById(R.id.button_add_ing);
         btnGallery = findViewById(R.id.button_gallery);
         addRow = findViewById(R.id.tr_add_ing);
         tableIng = findViewById(R.id.table_ing);
-
-        navigationView.bringToFront();
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.nav_addRecipe);
 
         mainLayout.removeView(imageViewButton);
         mainLayout.removeView(btnGallery);
         tableIng.removeView(addRow);
 
-        views.add(btnAddIng);
+        views.add(btnAddIngredients);
         views.add(etName);
         views.add(etTime);
+    }
+
+    private void setupNavigation() {
+        navigationView = findViewById(R.id.navigation_recipe);
+        navigationView.bringToFront();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_addRecipe);
     }
 
     /**
@@ -230,12 +233,21 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                 onEdit();
             }
         });
-        btnAddIng.setOnClickListener(new View.OnClickListener() {
+
+        btnback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addIngredient(null);
+                onBack();
             }
         });
+
+        btnAddIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAddIngredient(null);
+            }
+        });
+
         imageViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -243,12 +255,7 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
                 askCameraPermissions();
             }
         });
-        btnback.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBack();
-            }
-        });
+
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -287,130 +294,31 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         }
         tableIng.removeAllViews();
         for (Ingredient ing : ur.getIngredients()) {
-            addIngredient(ing);
+            onAddIngredient(ing);
         }
     }
     //</editor-fold>
 
-    //<editor-fold desc="ButtonActions">
-
-    /**
-     * sets the views to be editable, and sets the save button and cancel in the layout
-     *
-     * @param edit
-     */
-    @SuppressLint("SetTextI18n")
-    private void switchActivation(boolean edit) {
-        for (View v : views) {
-            v.setEnabled(edit);
-            v.setAlpha(1);
-        }
-        if (edit) {
-            btnEdit.setText("Save");
-            btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onSave();
-                }
-            });
-            btnback.setText("Cancel");
-            btnback.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onCancel();
-                }
-            });
-
-            tableIng.addView(addRow);
-            mainLayout.addView(imageViewButton);
-            mainLayout.addView(btnGallery);
-        } else {
-            btnEdit.setText("Edit");
-            btnEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onEdit();
-                }
-            });
-            btnback.setText("Back");
-            btnback.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBack();
-                }
-            });
-            tableIng.removeView(addRow);
-            mainLayout.removeView(imageViewButton);
-            mainLayout.removeView(btnGallery);
-
-        }
-
-    }
-
-    /**
-     * sets the recipe when clicked.
-     */
-    private void onCancel() {
-        setRecipe(mainRecipe);
-        edit = false;
-        switchActivation(edit);
-    }
-
-    /**
-     * creates a new set of editTextViews, and sets the ingriedient to the recipes arraylist
-     *
-     * @param ing
-     */
-    private void addIngredient(Ingredient ing) {
-        EditText etName = new EditText(this);
-        etName.setText(ing != null ? ing.getName() : "");
-        etName.setEnabled(edit);
-        views.add(etName);
-
-        EditText etAmount = new EditText(this);
-        etAmount.setText(ing != null ? ing.getAmount() + "" : "");
-        etAmount.setEnabled(edit);
-        views.add(etAmount);
-
-
-        ImageButton btnDeleteIng = new ImageButton(this);
-        views.add(btnDeleteIng);
-
-
-        btnDeleteIng.setImageResource(R.drawable.delete_icon);
-        btnDeleteIng.setBackgroundResource(R.color.transparant);
-        btnDeleteIng.setEnabled(edit);
-        views.add(btnDeleteIng);
-
-        final TableRow tr = new TableRow(this);
-        tr.addView(etName);
-        tr.addView(etAmount);
-        tr.addView(btnDeleteIng);
-
-        Log.d(TAG, "addIngredient: " + tableIng.getChildCount());
-        final int index = tableIng.getChildCount() >= 2 ? tableIng.getChildCount() - 1 : 0;
-        tableIng.addView(tr, index);
-
-        btnDeleteIng.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "onClick: index " + index);
-                tableIng.removeView(tr);
-            }
-        });
-
-        HashMap<String, EditText> temp = new HashMap<>();
-        temp.put(KEY_NAME, etName);
-        temp.put(KEY_AMOUNT, etAmount);
-        Ingredients.add(temp);
-    }
-
+    //<editor-fold desc="Button Actions">
     /**
      * sets the editState
      */
     private void onEdit() {
         edit = true;
         switchActivation(edit);
+    }
+
+    /**
+     * checks if the recipe wasUpdated and finishes the edit.
+     */
+    private void onBack() {
+        Log.d(TAG, "onBack: GO BACK");
+        if (wasUpdated) {
+            setResult(RESULT_OK, null);
+            finish();
+        } else {
+            finish();
+        }
     }
 
     /**
@@ -442,73 +350,55 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     }
 
     /**
-     * saves the recipe without a image
-     *
-     * @param ur
+     * sets the recipe when clicked.
      */
-    private void updateUserRecipeNoImage(UserRecipe ur) {
-        final ProgressDialog pd = new ProgressDialog(this);
-        pd.setMessage("Updating");
-        pd.show();
-        model.updateUserRecipe(ur).addOnSuccessListener(new OnSuccessListener<Void>() {
+    private void onCancel() {
+        setRecipe(mainRecipe);
+        edit = false;
+        switchActivation(edit);
+    }
+
+    /**
+     * creates a new set of editTextViews, and sets the ingredients to the recipes arraylist
+     *
+     * @param ing
+     */
+    private void onAddIngredient(Ingredient ing) {
+        EditText etName = createIngredientEditText(ing != null ? ing.getName() : "");
+        views.add(etName);
+
+        EditText etAmount = createIngredientEditText(ing != null ? ing.getAmount() + "" : "");
+        views.add(etAmount);
+
+        ImageButton btnDeleteIngredient = new ImageButton(this);
+        btnDeleteIngredient.setImageResource(R.drawable.delete_icon);
+        btnDeleteIngredient.setBackgroundResource(R.color.transparant);
+        btnDeleteIngredient.setEnabled(edit);
+        views.add(btnDeleteIngredient);
+
+        final TableRow trIngredient = new TableRow(this);
+        trIngredient.addView(etName);
+        trIngredient.addView(etAmount);
+        trIngredient.addView(btnDeleteIngredient);
+
+        // Places the view one index beneath the addIngredients button
+        int index = tableIng.getChildCount() >= 2 ? tableIng.getChildCount() - 1 : 0;
+        tableIng.addView(trIngredient, index);
+
+        btnDeleteIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "onSuccess: ");
-                pd.dismiss();
-                edit = false;
-                switchActivation(edit);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w(TAG, "onFailure: ", e);
-                pd.dismiss();
-                edit = true;
-                switchActivation(edit);
+            public void onClick(View v) {
+                tableIng.removeView(trIngredient);
             }
         });
-    }
 
-    /**
-     * saves the recipe with an image.
-     *
-     * @param recipe
-     */
-    private void updateUserRecipeWithImage(final UserRecipe recipe) {
-        if (imageUrl != null) {
-            final ProgressDialog pd = new ProgressDialog(this);
-            pd.setMessage("Updating");
-            pd.show();
-
-            AsyncUpdateUserRecipe a = new AsyncUpdateUserRecipe(imageUrl, recipe, this, new AsyncUpdate<Void>() {
-                @Override
-                public void update(Void entity) {
-                    pd.dismiss();
-                    edit = false;
-                    switchActivation(edit);
-                }
-            });
-
-            a.execute();
-
-        }
-
-    }
-
-    /**
-     * checks if the recipe wasUpdated and finishes the edit.
-     */
-    private void onBack() {
-        Log.d(TAG, "onBack: GO BACK");
-        if (wasUpdated) {
-            setResult(RESULT_OK, null);
-            finish();
-        } else {
-            finish();
-        }
+        //places the EditTexts into a HashMap and then places it into an array
+        HashMap<String, EditText> temp = new HashMap<>();
+        temp.put(KEY_NAME, etName);
+        temp.put(KEY_AMOUNT, etAmount);
+        Ingredients.add(temp);
     }
     //</editor-fold>
-
 
     //<editor-fold desc="Camera and Gallery">
 
@@ -581,6 +471,122 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
     }
     //</editor-fold>
 
+    //<editor-fold desc="Helper Functions">
+    private EditText createIngredientEditText(String value) {
+        EditText et = new EditText(this);
+        et.setText(value);
+        et.setEnabled(edit);
+        return et;
+    }
+
+    /**
+     * sets the views to be editable, and sets the save button and cancel in the layout
+     *
+     * @param edit
+     */
+    @SuppressLint("SetTextI18n")
+    private void switchActivation(boolean edit) {
+        for (View v : views) {
+            v.setEnabled(edit);
+            v.setAlpha(1);
+        }
+        if (edit) {
+            btnEdit.setText("Save");
+            btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSave();
+                }
+            });
+            btnback.setText("Cancel");
+            btnback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onCancel();
+                }
+            });
+
+            tableIng.addView(addRow);
+            mainLayout.addView(imageViewButton);
+            mainLayout.addView(btnGallery);
+        } else {
+            btnEdit.setText("Edit");
+            btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onEdit();
+                }
+            });
+            btnback.setText("Back");
+            btnback.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBack();
+                }
+            });
+            tableIng.removeView(addRow);
+            mainLayout.removeView(imageViewButton);
+            mainLayout.removeView(btnGallery);
+
+        }
+
+    }
+
+    /**
+     * saves the recipe without a image
+     *
+     * @param ur
+     */
+    private void updateUserRecipeNoImage(UserRecipe ur) {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("Updating");
+        pd.show();
+        model.updateUserRecipe(ur).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "onSuccess: ");
+                pd.dismiss();
+                edit = false;
+                switchActivation(edit);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w(TAG, "onFailure: ", e);
+                pd.dismiss();
+                edit = true;
+                switchActivation(edit);
+            }
+        });
+    }
+
+    /**
+     * saves the recipe with an image.
+     *
+     * @param recipe
+     */
+    private void updateUserRecipeWithImage(final UserRecipe recipe) {
+        if (imageUrl != null) {
+            final ProgressDialog pd = new ProgressDialog(this);
+            pd.setMessage("Updating");
+            pd.show();
+
+            AsyncUpdateUserRecipe a = new AsyncUpdateUserRecipe(imageUrl, recipe, this, new AsyncUpdate<Void>() {
+                @Override
+                public void update(Void entity) {
+                    pd.dismiss();
+                    edit = false;
+                    switchActivation(edit);
+                }
+            });
+
+            a.execute();
+
+        }
+
+    }
+    //</editor-fold>
+
     //<editor-fold desc="Navigation">
 
     /**
@@ -629,6 +635,4 @@ public class RecipeActivity extends AppCompatActivity implements NavigationView.
         return true;
     }
     //</editor-fold>
-
-
 }

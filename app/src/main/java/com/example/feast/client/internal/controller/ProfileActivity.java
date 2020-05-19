@@ -21,7 +21,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    
+
+    private final String TAG = "ProfileActivity";
+
     private DrawerLayout drawerLayout;
     private ImageView ivProfile;
     private TextView tvUserName;
@@ -39,12 +41,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         model = Model.getInstance();
 
         setupView();
-
         setCurrentUser();
-
     }
 
     /**

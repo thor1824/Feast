@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "LoginActivity";
+    private  final String TAG = "LoginActivity";
 
     private GoogleSignInClient mSignInClient;
 
@@ -40,9 +40,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         model = Model.getInstance();
-
-
     }
 
     @Override
