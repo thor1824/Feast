@@ -238,7 +238,6 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     //</editor-fold>
 
     //<editor-fold desc="Helper Functions">
-
     /**
      * sets the recipe in the views, and checks if the recipe has a picture.
      *
