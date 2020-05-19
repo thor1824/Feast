@@ -8,4 +8,5 @@ public class RequestCodes {
     public static final int REQUEST_CAMERA_PERMISSION = 105;
     public static final int REQUEST_IMAGE_CAPTURE = 106;
     public static final int REQUEST_EXTERNAL_READ_PERMISSION = 107;
+    public static final int REQUEST_CODE_SHARE = 108;
 }

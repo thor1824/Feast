@@ -19,13 +19,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.feast.R;
 import com.example.feast.client.internal.model.Model;
+import com.example.feast.client.internal.utility.globals.RequestCodes;
+import com.example.feast.client.internal.utility.handler.PermissionsManager;
 import com.example.feast.core.entities.IRecipe;
 import com.example.feast.core.entities.Ingredient;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -35,20 +35,24 @@ import com.google.android.material.navigation.NavigationView;
 
 
 public class DisplayRecipeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    public static final int REQUEST_CODE_SHARE = 106;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private Toolbar toolbar;
-    private int estimatedTime;
     private ImageView recipeImage;
     private IRecipe recipeToBeDisplayed;
     private TextView textView;
     private LinearLayout layoutForGram;
     private LinearLayout layoutForName;
+    private FloatingActionButton btnShare;
+    private Button btnPick;
 
+    private int estimatedTime;
     private Model model;
 
+    //<editor-fold desc="Overrides">
+    /**
+     * sets up the toolbar
+     */
     /**
      * creates the activity and setup up the views.
      *
@@ -60,7 +64,67 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         setContentView(R.layout.activity_display_recipe);
         model = Model.getInstance();
 
-        //---------------------instantiate----------------------\\
+        onNewRandomRecipe();
+        setupViews();
+        setupListener();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setupToolBar();
+    }
+
+
+    /**
+     * checkes if the toolbar is opened
+     */
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * checks the result of the permissions.
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == RequestCodes.REQUEST_CODE_SHARE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                sendIngredientsAsSMS();
+            } else {
+                Toast.makeText(this, "Permission TO Share Is Required For Sending A Recipe", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Setup">
+    private void setupListener() {
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onShare();
+            }
+        });
+
+        btnPick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onNewRandomRecipe();
+            }
+        });
+    }
+
+    private void setupViews() {
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         navigationView = findViewById(R.id.navigation_view_display_recipe);
         toolbar = findViewById(R.id.toolbar);
@@ -68,33 +132,104 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         layoutForName = findViewById(R.id.LinLayIngredients);
         textView = findViewById(R.id.txtHeader);
         layoutForGram = findViewById(R.id.LinLayAmount);
-        FloatingActionButton btnShare = findViewById(R.id.fab);
-        btnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                askSharePermissions();
-            }
-        });
-        final Button btnPick = findViewById(R.id.button_pickAnother);
-        btnPick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getNewRandomRecipe();
-            }
-        });
-
-
-        //--------------------setData--------------------------\\
+        btnShare = findViewById(R.id.fab);
+        btnPick = findViewById(R.id.button_pickAnother);
 
         navigationView.bringToFront();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_profile);
-        toolbar.setTitle("");
-
-        //------------------component generator-----------------\\
-        getNewRandomRecipe();
-
     }
+
+    private void setupToolBar() {
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Navigation">
+
+    /**
+     * sets up the toolbar with navigation or messages
+     *
+     * @param item
+     * @return
+     */
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_home:
+                Intent home_intent = new Intent(this, MainActivity.class);
+                startActivity(home_intent);
+                finish();
+                break;
+            case R.id.nav_addRecipe:
+                Intent recipe_intent = new Intent(this, RecipesActivity.class);
+                startActivity(recipe_intent);
+                finish();
+                break;
+            case R.id.nav_profile:
+                Intent profile_intent = new Intent(this, ProfileActivity.class);
+                startActivity(profile_intent);
+                finish();
+                break;
+
+            case R.id.nav_settings:
+                Toast.makeText(this, "We Have No Settings", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_contact:
+                Toast.makeText(this, "We Can't Be Contacted", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_rating:
+                Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_logOut:
+                model.signOut();
+                Intent signOutIntent = new Intent(this, LoginActivity.class);
+                startActivity(signOutIntent);
+                finishAffinity();
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Button Actions">
+    public void onShare() {
+        if (!PermissionsManager.isGrantedPermission(Manifest.permission.SEND_SMS, this)) {
+
+            PermissionsManager.askPermission(
+                    new String[]{
+                            Manifest.permission.SEND_SMS
+                    },
+                    RequestCodes.REQUEST_CODE_SHARE,
+                    this
+            );
+        } else {
+            sendIngredientsAsSMS();
+        }
+    }
+
+    /**
+     * gets a random recipe from firebase
+     */
+    public void onNewRandomRecipe() {
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
+        assert message != null;
+        estimatedTime = Integer.parseInt(message);
+        model = Model.getInstance();
+        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
+        setRecipe(recipeToBeDisplayed);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Helper Functions">
 
     /**
      * sets the recipe in the views, and checks if the recipe has a picture.
@@ -164,118 +299,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         Intent shareIntent = Intent.createChooser(sendIntent, "Choose your character");
         startActivity(shareIntent);
     }
+    //</editor-fold>
 
 
-    /**
-     * sets up the toolbar
-     */
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-    }
-
-    /**
-     * checkes if the toolbar is opened
-     */
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    /**
-     * sets up the toolbar with navigation or messages
-     *
-     * @param item
-     * @return
-     */
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_home:
-                Intent home_intent = new Intent(this, MainActivity.class);
-                startActivity(home_intent);
-                finish();
-                break;
-            case R.id.nav_addRecipe:
-                Intent recipe_intent = new Intent(this, RecipesActivity.class);
-                startActivity(recipe_intent);
-                finish();
-                break;
-            case R.id.nav_profile:
-                Intent profile_intent = new Intent(this, ProfileActivity.class);
-                startActivity(profile_intent);
-                finish();
-                break;
-
-            case R.id.nav_settings:
-                Toast.makeText(this, "We Have No Settings", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.nav_contact:
-                Toast.makeText(this, "We Can't Be Contacted", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.nav_rating:
-                Toast.makeText(this, "You Have Rated Us 5 Stars. Thank You <3", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.nav_logOut:
-                model.signOut();
-                Intent signOutIntent = new Intent(this, LoginActivity.class);
-                startActivity(signOutIntent);
-                finishAffinity();
-        }
-        drawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    /**
-     * checks if the permissions to use the sms app is granted or not.
-     */
-    private void askSharePermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, REQUEST_CODE_SHARE);
-        } else {
-            sendIngredientsAsSMS();
-        }
-    }
-
-    /**
-     * checks the result of the permissions.
-     *
-     * @param requestCode
-     * @param permissions
-     * @param grantResults
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_CODE_SHARE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                sendIngredientsAsSMS();
-            } else {
-                Toast.makeText(this, "Permission TO Share Is Required For Sending A Recipe", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    /**
-     * gets a random recipe from firebase
-     */
-    public void getNewRandomRecipe() {
-        Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
-        assert message != null;
-        estimatedTime = Integer.parseInt(message);
-        model = Model.getInstance();
-        recipeToBeDisplayed = model.getRandomRecipe(estimatedTime);
-        setRecipe(recipeToBeDisplayed);
-    }
 }
