@@ -78,6 +78,7 @@ public class AsyncGetAllRecipes extends AsyncUpdateTask<RecipeContainer> {
             isComplete = true;
             return rc;
         } catch (InterruptedException e) {
+            isComplete = true;
             e.printStackTrace();
         }
         return null;

@@ -79,7 +79,6 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        model.CancelTasks();
         super.onDestroy();
     }
     //</editor-fold>
