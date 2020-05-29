@@ -270,6 +270,11 @@ public class AddUserRecipeActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * checks if it is allow to read from external storage.
+     *
+     * if true it fires a intent
+     */
     public void onFromGallery() {
         if (!PermissionsManager.isGrantedPermission(Manifest.permission.READ_EXTERNAL_STORAGE, this)) {
             PermissionsManager.askPermission(
@@ -324,7 +329,6 @@ public class AddUserRecipeActivity extends AppCompatActivity {
     //</editor-fold>
 
     //<editor-fold desc="Helper functions">
-
     private UserRecipe extractUserRecipe() {
         final String recipeName = recipeNameField.getText().toString();
         final long estimatedTime = Long.parseLong(estimatedTimeField.getText().toString());
@@ -447,72 +451,6 @@ public class AddUserRecipeActivity extends AppCompatActivity {
         return deleteIngButton;
 
 
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Navigation">
-
-    /**
-     * Navigation is setup through a switch statement, either displays a message or
-     * navigate to another activity
-     *
-     * @param item
-     * @return
-     */
-
-    //</editor-fold>
-
-    //<editor-fold desc="to be removed">
-
-    /**
-     * gets the files extension (Jpg, Png, etc)
-     *
-     * @param contentUri
-     * @return
-     */
-    private String getFileExt(Uri contentUri) {
-        ContentResolver c = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(c.getType(contentUri));
-    }
-
-    public String getRealPathFromURI(Uri contentUri) {
-        String res = null;
-        String[] proj = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
-        if (cursor.moveToFirst()) {
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            res = cursor.getString(column_index);
-        }
-        cursor.close();
-        return res;
-    }
-
-    /**
-     * check whether the imageUrl on a recipe is null, if false,
-     * it opens a progressDialog, gets a firebase Reference, and upload the file to firebase firestore.
-     * when it is done it closes the ProgressDialog.
-     * <p>
-     * if it fails it prints the Stacktrace to the Console.
-     *
-     * @param recipe
-     */
-    private void uploadImage(final UserRecipe recipe) {
-        if (imageUri != null) {
-            final ProgressDialog pd = new ProgressDialog(this);
-            pd.setMessage("Uploading");
-            pd.show();
-
-            model.createUserRecipeWithImage(imageUri, recipe, this, new AsyncUpdate<Void>() {
-                @Override
-                public void update(Void entity) {
-                    Toast.makeText(AddUserRecipeActivity.this, "image was uploaded", Toast.LENGTH_SHORT).show();
-                    pd.dismiss();
-
-                    clearFields();
-                }
-            });
-        }
     }
     //</editor-fold>
 }

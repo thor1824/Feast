@@ -51,9 +51,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     private Model model;
 
     //<editor-fold desc="Overrides">
-    /**
-     * sets up the toolbar
-     */
+
     /**
      * creates the activity and setup up the views.
      *
@@ -68,6 +66,7 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
 
         setupViews();
         setupListener();
+        Log.d(TAG, "onCreate: ");
         onNewRandomRecipe();
     }
 
@@ -114,6 +113,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     //</editor-fold>
 
     //<editor-fold desc="Setup">
+    /**
+     * sets up the Listeners
+     */
     private void setupListener() {
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -130,6 +132,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         });
     }
 
+    /**
+     * sets up the Views
+     */
     private void setupViews() {
         drawerLayout = findViewById(R.id.drawLayout_display_recipe);
         NavigationView navigationView = findViewById(R.id.navigation_view_display_recipe);
@@ -146,6 +151,9 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
         navigationView.setCheckedItem(R.id.nav_profile);
     }
 
+    /**
+     * sets up the toolbar
+     */
     private void setupToolBar() {
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -171,11 +179,13 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
                 startActivity(home_intent);
                 finish();
                 break;
+
             case R.id.nav_addRecipe:
                 Intent recipe_intent = new Intent(this, RecipesActivity.class);
                 startActivity(recipe_intent);
                 finish();
                 break;
+
             case R.id.nav_profile:
                 Intent profile_intent = new Intent(this, ProfileActivity.class);
                 startActivity(profile_intent);
@@ -206,6 +216,10 @@ public class DisplayRecipeActivity extends AppCompatActivity implements Navigati
     //</editor-fold>
 
     //<editor-fold desc="Button Actions">
+
+    /**
+     * Checks if it is allowed to send SMS Messages
+     */
     public void onShare() {
         if (!PermissionsManager.isGrantedPermission(Manifest.permission.SEND_SMS, this)) {
             PermissionsManager.askPermission(
